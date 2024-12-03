@@ -1,4 +1,5 @@
-import { HeaderContainer } from "./components/header/headerContainer";
+import { FooterContainer } from "../shared/footer/footerContainer";
+import { HeaderContainer } from "../shared/header/headerContainer";
 
 export default function HomeLayout({
   children,
@@ -8,8 +9,9 @@ export default function HomeLayout({
   return (
     <html lang="en">
       <body>
-              <HeaderContainer />
-              <main className="container mx-auto">{children}</main>
+        <HeaderContainer />
+        <main className="container mx-auto">{children}</main>
+        <FooterContainer />
       </body>
     </html>
   );
