@@ -9,8 +9,8 @@ export const FeturedProducts = () => {
       </div>
 
       <div className="flex flex-row justify-center items-center gap-1 flex-wrap">
-        {products.map((product) => (
-          <ProductsCard key={product.id} product={product} />
+        {products.map((product , index) => (
+          <ProductsCard key={index} product={product} />
         ))}
       </div>
     </div>
