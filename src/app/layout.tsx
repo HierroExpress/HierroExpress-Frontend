@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import MapProvider from "./shared/maps/constextMap";
+import { HeaderContainer } from "./shared/header/headerContainer";
+import { FooterContainer } from "./shared/footer/footerContainer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,7 +30,9 @@ export default function RootLayout({
     <MapProvider>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} `}>
+          <HeaderContainer/>
           {children}
+          <FooterContainer/>
         </body>
       </html>
     </MapProvider>

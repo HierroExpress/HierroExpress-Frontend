@@ -9,9 +9,9 @@ export default function HomeLayout({
   return (
     <html lang="en">
       <body>
-        <HeaderContainer />
+        {/* <HeaderContainer /> */}
         <main className="container mx-auto">{children}</main>
-        <FooterContainer />
+        {/* <FooterContainer /> */}
       </body>
     </html>
   );
