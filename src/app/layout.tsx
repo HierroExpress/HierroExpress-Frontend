@@ -3,6 +3,7 @@ import "./globals.css";
 import MapProvider from "./shared/maps/constextMap";
 import { HeaderContainer } from "./shared/header/headerContainer";
 import { FooterContainer } from "./shared/footer/footerContainer";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,14 +16,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <MapProvider>
-      <html lang="en">
-        <body>
-          <HeaderContainer />
-          {children}
-          <FooterContainer />
-        </body>
-      </html>
-    </MapProvider>
+    <AuthProvider>
+      <MapProvider>
+        <html lang="en">
+          <body>
+            <HeaderContainer />
+            {children}
+            <FooterContainer />
+          </body>
+        </html>
+      </MapProvider>
+    </AuthProvider>
   );
 }
