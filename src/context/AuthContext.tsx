@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     setError(null);
   };
-    
+
 const Register = async ({
     name,
     email,

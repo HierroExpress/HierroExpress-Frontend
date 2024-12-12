@@ -23,13 +23,13 @@ export const footerArray = {
         icono: ClockIcon,
       },
       {
-        title: "consultas",
+        title: "Consultas",
         describe: "We're here to help",
         link: "https://www.google.com",
         icono: QueueListIcon,
       },
       {
-        title: "telefono",
+        title: "Teléfono",
         describe: "We're hiring",
         link: "https://www.google.com",
         icono: PhoneIcon,
@@ -68,7 +68,7 @@ export const footerArray = {
     ],
   },
   copyright: {
-    title: "copyright",
+    title: "Copyright",
     options: [
       {
         title: "Copyright",
@@ -88,20 +88,20 @@ export const footerArray = {
     ],
   },
   clienteSupot: {
-    title: "soporte al cliente",
+    title: "Soporte",
     options: [
       {
-        title: "preguntas frecuentes",
+        title: "Preguntas frecuentes",
         describe: "We're hiring",
         link: "https://www.google.com",
       },
       {
-        title: "seguimiento a pedidos ",
+        title: "Seguimiento a pedidos ",
         describe: "We're hiring",
         link: "https://www.google.com",
       },
       {
-        title: "nuestro servicio",
+        title: "Nuestro servicio",
         describe: "We're hiring",
         link: "https://www.google.com",
       },
