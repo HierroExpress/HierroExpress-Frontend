@@ -1,33 +1,37 @@
 "use client";
+
 import { postLogin } from "@/utils/api/auth/login";
 import { postRegister } from "@/utils/api/auth/register";
 import React, { createContext, useState, useContext } from "react";
 
-const AuthContext = createContext({
-  user: null,
-  error: null,
-  isLoggedIn: false,
-  Justregistered: false,
-  token: null,
+interface AuthContextType {
+  user: any;
+  error: string | null;
+  isLoggedIn: boolean;
+  Justregistered: boolean;
+  token: string | null;
+  login: (data: { email: string; password: string }) => Promise<void>;
+  logout: () => void;
+  register: (data: {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    phone: string;
+    NIN: string;
+  }) => Promise<void>;
+}
 
-  login: () => {},
-  logout: () => {},
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState<string | null>(null);
   const [Justregistered, setJustregistered] = useState(false);
 
-  const login = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
+  const login = async ({ email, password }: { email: string; password: string }) => {
     try {
       const response = await postLogin({ email, password });
       if (!response.ok) {
@@ -37,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoggedIn(true);
       setToken(response.token);
       setError(null);
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message);
       setIsLoggedIn(false);
       setToken(null);
@@ -51,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setError(null);
   };
 
-const Register = async ({
+  const register = async ({
     name,
     email,
     password,
@@ -67,29 +71,38 @@ const Register = async ({
     NIN: string;
   }) => {
     try {
-        const response = await postRegister({
-            name,
-            email,
-            password,
-            confirmPassword,
-            phone,
-            NIN,
-        });
-        if (!response.ok) {
-            throw new Error("Registration failed");
-        }
-        setUser(response.user);
-        setError(null);
-        setJustregistered(true);
-    } catch (error) {
-        setError(error.message);
+      const response = await postRegister({
+        name,
+        email,
+        password,
+        confirmPassword,
+        phone,
+        NIN,
+      });
+      if (!response.ok) {
+        throw new Error("Registration failed");
+      }
+      setUser(response.user);
+      setError(null);
+      setJustregistered(true);
+    } catch (error: any) {
+      setError(error.message);
     }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, error, isLoggedIn, logout }}>
+    <AuthContext.Provider
+      value={{ user, error, isLoggedIn, Justregistered, token, login, logout, register }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
