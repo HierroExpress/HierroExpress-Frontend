@@ -18,10 +18,11 @@ export const HeaderContainer = () => {
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark", !isDarkMode);
+    
   };
 
   return (
-    <header className="h-16 lg:h-24 bg-primary-500 flex flex-row items-center justify-between px-4">
+    <header className="h-16 lg:h-24 bg-primary-500 flex flex-row items-center justify-between px-4 ">
       <div className="flex items-center gap-3">
         <Bars3Icon className="h-8 w-8 text-white" />
         <Link href="/home">

@@ -32,4 +32,27 @@ export const arraySignupForm = [
     placeholder: "******",
     label: "Contraseña",
   },
+  {
+    name: "confirmPassword",
+    type: "password",
+    placeholder: "******",
+    label: "vuelve a ingresar la Contraseña",
+  },
+  {
+    name: "phone",
+    type: "phone",
+    placeholder: "+57 2605045988",
+    label: "telefono",
+    
+  },
+  {
+    name: "NIN",
+    type: "number",
+    placeholder: "1234656487",
+    label: "NIN",
+    
+  },
+  
+
+
 ];
