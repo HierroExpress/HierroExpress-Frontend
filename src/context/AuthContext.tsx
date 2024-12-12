@@ -34,15 +34,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async ({ email, password }: { email: string; password: string }) => {
     try {
       const response = await postLogin({ email, password });
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
+      console.log(response);      
       setUser(response.user);
       setIsLoggedIn(true);
-      setToken(response.token);
+      setToken(response.access_token);
       setError(null);
     } catch (error: any) {
-      setError(error.message);
+      console.log(error);      
+      setError(error.response?.data?.message || error.message);
       setIsLoggedIn(false);
       setToken(null);
     }
@@ -79,14 +78,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         phone,
         NIN,
       });
-      if (!response.ok) {
-        throw new Error("Registration failed");
-      }
-      setUser(response.user);
+
+      console.log(response);
+      
+      
       setError(null);
       setJustregistered(true);
+      setIsLoggedIn(false)
+      setUser(null)
     } catch (error: any) {
-      setError(error.message);
+      console.log(error);
+      
+      setError(error.response?.data?.message || error.message);
     }
   };
 

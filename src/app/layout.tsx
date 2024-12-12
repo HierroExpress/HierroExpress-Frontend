@@ -4,6 +4,7 @@ import MapProvider from "./shared/maps/constextMap";
 import { HeaderContainer } from "./shared/header/headerContainer";
 import { FooterContainer } from "./shared/footer/footerContainer";
 import { useEffect, useState } from "react";
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({
   children,
@@ -35,13 +36,16 @@ export default function RootLayout({
 
   return (
     <MapProvider>
-      <html lang="en">
+      <AuthProvider>
+        <html lang="en">
         <body className="min-h-screen bg-white dark:bg-gray-900 dark:text-white text-black transition-colors">
           <HeaderContainer />
           {children}
           <FooterContainer />
         </body>
       </html>
+      </AuthProvider>
+      
     </MapProvider>
   );
 }
