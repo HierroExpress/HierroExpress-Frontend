@@ -1,20 +1,9 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import MapProvider from "./shared/maps/constextMap";
 import { HeaderContainer } from "./shared/header/headerContainer";
 import { FooterContainer } from "./shared/footer/footerContainer";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -27,14 +16,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <MapProvider>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} `}>
-          <HeaderContainer/>
-          {children}
-          <FooterContainer/>
-        </body>
-      </html>
-    </MapProvider>
+    <AuthProvider>
+      <MapProvider>
+        <html lang="en">
+          <body>
+            <HeaderContainer />
+            {children}
+            <FooterContainer />
+          </body>
+        </html>
+      </MapProvider>
+    </AuthProvider>
   );
 }
