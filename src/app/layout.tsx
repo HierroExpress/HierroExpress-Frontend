@@ -5,6 +5,7 @@ import { HeaderContainer } from "./shared/header/headerContainer";
 import { FooterContainer } from "./shared/footer/footerContainer";
 import { useEffect, useState } from "react";
 import { AuthProvider } from "@/context/AuthContext";
+import { ShoppingCartProvider } from "@/context/CartContext";
 
 export default function RootLayout({
   children,
@@ -37,15 +38,16 @@ export default function RootLayout({
   return (
     <MapProvider>
       <AuthProvider>
-        <html lang="en">
-        <body className="min-h-screen bg-white dark:bg-gray-900 dark:text-white text-black transition-colors">
-          <HeaderContainer />
-          {children}
-          <FooterContainer />
-        </body>
-      </html>
+        <ShoppingCartProvider>
+          <html lang="en">
+            <body className="min-h-screen bg-white dark:bg-gray-900 dark:text-white text-black transition-colors">
+              <HeaderContainer />
+              {children}
+              <FooterContainer />
+            </body>
+          </html>
+        </ShoppingCartProvider>
       </AuthProvider>
-      
     </MapProvider>
   );
 }

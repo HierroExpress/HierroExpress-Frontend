@@ -12,13 +12,14 @@ import { useState } from "react";
 import HeaderLogo from "@/../public/HeaderLogo.png";
 import { Buscador } from "./buscador";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 export const HeaderContainer = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const { user, isLoggedIn } = useAuth();
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark", !isDarkMode);
-    
   };
 
   return (
@@ -43,18 +44,26 @@ export const HeaderContainer = () => {
       <div className="flex items-center gap-3">
         <button
           onClick={toggleDarkMode}
-          className="text-white hover:bg-white/20 p-2 rounded-full transition-colors"
-        >
+          className="text-white hover:bg-white/20 p-2 rounded-full transition-colors">
           {isDarkMode ? (
             <SunIcon className="h-6 w-6" />
           ) : (
             <MoonIcon className="h-6 w-6" />
           )}
         </button>
-        <Link href="/auth/login">
-          <UserIcon className="h-8 w-8 text-white" />
-        </Link>{" "}
-        <ShoppingCartIcon className="h-8 w-8 text-white" />
+        {}
+        {isLoggedIn ? (
+          <Link href="/auth/logout">
+            {user.name.split(" ")[0]}
+          </Link>
+        ) : (
+          <Link href="/auth/login">
+            <UserIcon className="h-8 w-8 text-white" />
+          </Link>
+        )}
+        <Link href="/cart">
+          <ShoppingCartIcon className="h-8 w-8 text-white" />
+        </Link>
       </div>
     </header>
   );
