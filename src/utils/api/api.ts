@@ -1,34 +1,29 @@
-import axios from 'axios';
-import { baseURL } from './env';
+import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
+import { baseURL } from "./env";
 
+const useAxiosInterceptor = () => {
+  const { token } = useAuth();
 
-export const axiosApi = axios.create({
-  baseURL: baseURL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+  const axiosInstance = axios.create({
+    baseURL: baseURL,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-axiosApi.interceptors.request.use(
-  async (config) => {
-    const session = await getServerSession(); // Obtiene el token
-    const token = session?.token;
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    console.log('Token obtenido:', token);
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
+      console.log("Token en interceptor:", token);
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
 
-axiosApi.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  return axiosInstance;
+};
+
+export default useAxiosInterceptor;

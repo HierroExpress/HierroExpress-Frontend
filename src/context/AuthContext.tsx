@@ -2,7 +2,7 @@
 
 import { postLogin } from "@/utils/api/auth/login";
 import { postRegister } from "@/utils/api/auth/register";
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 
 interface AuthContextType {
   user: any;
@@ -25,35 +25,75 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState(null);
+  // Estado local para mantener los datos del usuario
+  const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const [Justregistered, setJustregistered] = useState(false);
 
-  const login = async ({ email, password }: { email: string; password: string }) => {
+  // Recuperar el estado del localStorage al iniciar
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
+    const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if (storedUser && storedToken && storedIsLoggedIn === "true") {
+      setUser(JSON.parse(storedUser));
+      setToken(storedToken);
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  // Función de login
+  const login = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
     try {
       const response = await postLogin({ email, password });
-      console.log(response);      
+      console.log(response);
+
+      // Guardar en el localStorage
       setUser(response.user);
       setIsLoggedIn(true);
       setToken(response.access_token);
       setError(null);
+
+      // Guardar en el localStorage
+      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("token", response.access_token);
+      localStorage.setItem("isLoggedIn", "true");
     } catch (error: any) {
-      console.log(error);      
+      console.log(error);
       setError(error.response?.data?.message || error.message);
       setIsLoggedIn(false);
       setToken(null);
+
+      // Eliminar cualquier dato en caso de error
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.setItem("isLoggedIn", "false");
     }
   };
 
+  // Función de logout
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
     setToken(null);
     setError(null);
+
+    // Limpiar el localStorage
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.setItem("isLoggedIn", "false");
   };
 
+  // Función de register
   const register = async ({
     name,
     email,
@@ -80,23 +120,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       console.log(response);
-      
-      
+
       setError(null);
       setJustregistered(true);
-      setIsLoggedIn(false)
-      setUser(null)
+      setIsLoggedIn(false);
+      setUser(null);
+
+      // Limpiar cualquier dato relacionado al usuario
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.setItem("isLoggedIn", "false");
     } catch (error: any) {
       console.log(error);
-      
       setError(error.response?.data?.message || error.message);
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, error, isLoggedIn, Justregistered, token, login, logout, register }}
-    >
+      value={{
+        user,
+        error,
+        isLoggedIn,
+        Justregistered,
+        token,
+        login,
+        logout,
+        register,
+      }}>
       {children}
     </AuthContext.Provider>
   );

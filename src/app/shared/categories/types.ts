@@ -4,3 +4,9 @@ export interface Category {
   description: string;
   image: React.FC<React.SVGProps<SVGSVGElement>>;
 }
+export interface CategoryResponse {
+  id: number;
+  name: string;
+  icon: string;
+  subcategories?: [];
+}
