@@ -37,28 +37,76 @@ const BotoneraContainer = () => {
   }, []);
 
   // Manejar selección de categoría
-  const handleSelectCategory = async (categoryId: number) => {
+  // const handleSelectCategory = async (categoryId: number) => {
+  //   setLoading(true);
+  //   setSelectedCategory(categoryId);
+  //   try {
+  //     // Obtener subcategorías de la categoría seleccionada
+  //     const category = categories.find((c) => c.id === categoryId);
+  //     setSubcategories(category?.subcategories || []);
+  //     // Obtener atributos de la categoría seleccionada
+  //     const attributesResponse = await getAtrtributesByCategory({ categoryId });
+  //     setAttributes(attributesResponse);
+  //     // Obtener productos de la categoría seleccionada
+  //     const productsResponse = await filterProductsByCategoryAndAttributes({
+  //       categoryId,
+  //       attributes: [],
+  //     });
+  //     setProducts(productsResponse);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setError("Error al cargar los datos de la categoría");
+  //     setLoading(false);
+  //   }
+  // };
+  const handleSelectCategory = async (
+    categoryId: number,
+    isSubcategory = false
+  ) => {
     setLoading(true);
-    setSelectedCategory(categoryId);
+
+    // Si es una subcategoría, no reinicies el estado de las subcategorías
+    if (isSubcategory) {
+      try {
+        // Obtener productos de la subcategoría seleccionada
+        const productsResponse = await filterProductsByCategoryAndAttributes({
+          categoryId,
+          attributes: [],
+        });
+        setProducts(productsResponse);
+      } catch (error) {
+        setError("Error al cargar los productos de la subcategoría");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // Si es una categoría principal, actualiza subcategorías y atributos
     try {
+      setSelectedCategory(categoryId);
+
       // Obtener subcategorías de la categoría seleccionada
       const category = categories.find((c) => c.id === categoryId);
       setSubcategories(category?.subcategories || []);
+
       // Obtener atributos de la categoría seleccionada
       const attributesResponse = await getAtrtributesByCategory({ categoryId });
       setAttributes(attributesResponse);
+
       // Obtener productos de la categoría seleccionada
       const productsResponse = await filterProductsByCategoryAndAttributes({
         categoryId,
         attributes: [],
       });
       setProducts(productsResponse);
-      setLoading(false);
     } catch (error) {
       setError("Error al cargar los datos de la categoría");
+    } finally {
       setLoading(false);
     }
   };
+
 
   const handleToggleAttribute = async (attributeId: number, value: string) => {
     const selectedAttributes = [...attributes]; // Suponiendo que tienes el estado de los atributos seleccionados
