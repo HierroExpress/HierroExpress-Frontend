@@ -1,53 +1,52 @@
-"use client";
-import "./globals.css";
-import MapProvider from "./shared/maps/constextMap";
-import { HeaderContainer } from "./shared/header/headerContainer";
-import { FooterContainer } from "./shared/footer/footerContainer";
-import { useEffect, useState } from "react";
-import { AuthProvider } from "@/context/AuthContext";
-import { ShoppingCartProvider } from "@/context/CartContext";
+import type { Metadata } from 'next';
+import { Poppins, Mochiy_Pop_One } from 'next/font/google';
+import './globals.css';
+import Footer from './components/footer/footer';
+import { Navbar } from './components/NavBar/navBar';
+import { AuthProvider } from './contexts/AuthContext';
+import { CacheProvider } from './contexts/CacheContext';
+import ToastProvider from './contexts/ToastProvider';
+import { SocketProvider } from './contexts/socketContext';
+import ReactQueryProvider from './contexts/ReactQueryProvider';
+import ChatBot from '@/components/ui/chatbot';
+
+const mochily = Mochiy_Pop_One({ weight: '400', subsets: ['latin'] });
+const poppins = Poppins({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+});
+
+export const metadata: Metadata = {
+  title: 'Hierro Express',
+  description: 'Hierro Express',
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
-    if (
-      storedTheme === "dark" ||
-      (!storedTheme &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    ) {
-      document.documentElement.classList.add("dark");
-      setIsDarkMode(true);
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  const toggleDarkMode = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    document.documentElement.classList.toggle("dark", newDarkMode);
-    localStorage.setItem("theme", newDarkMode ? "dark" : "light");
-  };
-
   return (
-    <MapProvider>
-      <AuthProvider>
-        <ShoppingCartProvider>
-          <html lang="en">
-            <body className="min-h-screen bg-white dark:bg-gray-900 dark:text-white text-black transition-colors">
-              <HeaderContainer />
-              {children}
-              <FooterContainer />
-            </body>
-          </html>
-        </ShoppingCartProvider>
-      </AuthProvider>
-    </MapProvider>
+    <html
+      lang="en"
+      className="flex flex-col w-full justify-center items-center"
+    >
+      <body
+        className={`${mochily.className} ${poppins.className} flex justify-center max-w-7xl flex-col w-full p-4 max-lg:p-0  `}
+      >
+        <AuthProvider>
+          <CacheProvider>
+            <SocketProvider>
+              <Navbar />
+              <ReactQueryProvider>
+                <ToastProvider>{children}</ToastProvider>
+              </ReactQueryProvider>
+              <Footer />
+            </SocketProvider>
+          </CacheProvider>
+        </AuthProvider>
+        <ChatBot />
+      </body>
+    </html>
   );
 }

@@ -1,107 +1,196 @@
-"use client";
+'use client';
+import { useAuth } from '../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { CartItemType, ProductsInOrder } from '@/types';
+import { toast } from 'react-toastify';
+import Image from 'next/image';
+import { FiMinus, FiPlus, FiTrash } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
+import RouteGuard from '@/helpers/routeGuard';
 
-import { useShoppingCart } from "@/context/CartContext";
-import Image from "next/image";
-import Link from "next/link";
+const CartPage: React.FC = () => {
+  const { isAuthenticated, address, user } = useAuth();
+  const [items, setItems] = useState<CartItemType[]>([]);
+  const [orderInstructions, setOrderInstructions] = useState('');
+  const router = useRouter();
 
-const CartPage = () => {
-  const {
-    cart,
-    updateQuantity,
-    removeFromCart,
-    getCartTotal,
-    getCartItemCount,
-  } = useShoppingCart();
+  useEffect(() => {
+    if (isAuthenticated) {
+      const storedItems = localStorage.getItem('cartItems');
+      if (storedItems) {
+        setItems(JSON.parse(storedItems));
+      }
+    }
+  }, [isAuthenticated]);
+
+  const updateQuantity = (id: number, increment: number) => {
+    if (!isAuthenticated) {
+      toast.warn('Debes iniciar sesión para actualizar el carrito.');
+      return;
+    }
+
+    const updatedItems = items.map((item) => {
+      if (item.id === id) {
+        const newQuantity = item.quantity + increment;
+        if (newQuantity > item.stock) {
+          toast.warn('No hay suficiente stock disponible.', {
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          return item;
+        }
+        return { ...item, quantity: Math.max(1, newQuantity) };
+      }
+      return item;
+    });
+
+    setItems(updatedItems);
+    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+  };
+
+  const removeItem = (id: number) => {
+    if (!isAuthenticated) {
+      toast.warn('Debes iniciar sesión para actualizar el carrito.');
+      return;
+    }
+
+    const updatedItems = items.filter((item) => item.id !== id);
+    setItems(updatedItems);
+    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+  };
+
+  const calculateTotal = () => {
+    return items.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const proceedToCheckout = () => {
+    if (!address) {
+      toast.warn(
+        'Por favor, proporciona tu dirección antes de proceder al checkout.',
+      );
+      localStorage.setItem('fromCart', 'true');
+      router.push('/address');
+      return;
+    }
+
+    const productsInOrder: ProductsInOrder[] = items.map((item) => ({
+      productId: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+    }));
+
+    const order = {
+      userId: Number(user?.id),
+      productsInOrder,
+      orderInstructions,
+      address: Number(address.id),
+      total: calculateTotal(),
+    };
+
+    localStorage.setItem('order', JSON.stringify(order));
+    console.log('Order saved to localStorage:', order);
+    router.push('/checkout');
+  };
 
   return (
-    <div className="min-h-screen bg-background-100 dark:bg-background-800 text-primary-500 dark:text-primary-100 p-4">
-      <h1 className="text-2xl font-bold mb-6">Carrito de Compras</h1>
-
-      {cart.length > 0 ? (
-        <>
-          <div className="space-y-4">
-            {cart.map((item) => (
-              <div
-                key={item.productId}
-                className="flex items-center justify-between p-4 bg-white dark:bg-primary-700 shadow rounded-md">
-                {/* Imagen del Producto */}
-                <div className="flex items-center gap-4">
-                  {item.img ? (
-                    <img src={item.img} className="rounded-md w-28 h-28" />
-                  ) : (
-                    <div className="h-20 w-20 bg-gray-200 rounded-md flex items-center justify-center text-gray-400">
-                      Sin Imagen
+    <RouteGuard allowedRoles={['user']}>
+      <div className="min-h-screen flex flex-col">
+        {items.length === 0 ? (
+          <div className="max-w-md mx-auto text-center py-12 px-4 flex-grow">
+            <h2 className="text-2xl font-semibold mb-4">
+              Tu carrito está vacío
+            </h2>
+            <p className="mb-4">
+              Agrega algunos productos para comenzar a comprar.
+            </p>
+            <Link href="/menu" className="text-blue-500 hover:underline">
+              Volver al menú
+            </Link>
+          </div>
+        ) : (
+          <div className="max-w-md mx-auto p-4 sm:max-w-2xl md:max-w-4xl flex-grow">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between py-4 border-b"
+                >
+                  <div className="flex items-center space-x-4">
+                    <Image
+                      src={item.img}
+                      alt={item.name}
+                      width={60}
+                      height={60}
+                      className="rounded-md"
+                    />
+                    <div>
+                      <h3 className="font-semibold">{item.name}</h3>
+                      <p className="text-gray-600">${item.price}</p>
                     </div>
-                  )}
-                  {/* Detalles del Producto */}
-                  <div>
-                    <h2 className="text-lg font-semibold">{item.name}</h2>
-                    <p className="text-sm text-gray-500">
-                      Precio: ${item.price.toFixed(2)}
-                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => updateQuantity(item.id, -1)}
+                      className="text-gray-500 hover:text-gray-700 p-2 rounded-full bg-gray-200 hover:bg-gray-300"
+                    >
+                      <FiMinus size={24} />
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.id, 1)}
+                      className="text-gray-500 hover:text-gray-700 p-2 rounded-full bg-gray-200 hover:bg-gray-300"
+                    >
+                      <FiPlus size={24} />
+                    </button>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      className="ml-2 text-red-500 hover:text-red-700 p-2 rounded-full bg-blue-100 hover:bg-blue-200"
+                    >
+                      <FiTrash size={24} />
+                    </button>
                   </div>
                 </div>
-
-                {/* Controles de Cantidad */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      updateQuantity({
-                        productId: item.productId,
-                        quantity: item.quantity - 1,
-                      })
-                    }
-                    className="px-2 py-1 bg-secondary-500 text-white rounded-md hover:bg-secondary-600">
-                    -
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() =>
-                      updateQuantity({
-                        productId: item.productId,
-                        quantity: item.quantity + 1,
-                      })
-                    }
-                    className="px-2 py-1 bg-secondary-500 text-white rounded-md hover:bg-secondary-600">
-                    +
-                  </button>
-                </div>
-
-                {/* Botón de Eliminar */}
-                <button
-                  onClick={() => removeFromCart({ productId: item.productId })}
-                  className="text-red-500 hover:text-red-600">
-                  Eliminar
-                </button>
+              ))}
+              <div className="mt-4">
+                <h3 className="font-semibold mb-2">
+                  Instrucciones del Pedido:
+                </h3>
+                <textarea
+                  value={orderInstructions}
+                  onChange={(e) => setOrderInstructions(e.target.value)}
+                  className="w-full p-2 border rounded-md"
+                  rows={3}
+                />
               </div>
-            ))}
+            </div>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex justify-between mb-2">
+                <span>Subtotal:</span>
+                <span>${calculateTotal().toFixed(2)}</span>
+              </div>
+              <button
+                onClick={proceedToCheckout}
+                className="block w-full bg-blue-600 text-white text-center font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+              >
+                Ir al checkout
+              </button>
+            </div>
+            <div className="mt-4 text-center">
+              <Link href="/" className="text-blue-500 hover:underline">
+                ← Volver al Menu
+              </Link>
+            </div>
           </div>
-
-          {/* Resumen del Carrito */}
-          <div className="mt-6 p-4 bg-white dark:bg-primary-700 shadow rounded-md">
-            <h2 className="text-xl font-semibold">Resumen</h2>
-            <p className="mt-2">
-              Total de Artículos: <strong>{getCartItemCount()}</strong>
-            </p>
-            <p className="mt-2">
-              Total: <strong>${getCartTotal().toFixed(2)}</strong>
-            </p>
-            <button className="w-full mt-4 bg-secondary-500 text-white py-2 rounded-md hover:bg-secondary-600">
-              Finalizar Compra
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="text-center">
-          <p className="text-lg text-gray-500">Tu carrito está vacío.</p>
-          <Link
-            href="/home"
-            className="mt-4 inline-block bg-secondary-500 text-white py-2 px-4 rounded-md hover:bg-secondary-600">
-            Seguir Comprando
-          </Link>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </RouteGuard>
   );
 };
 
