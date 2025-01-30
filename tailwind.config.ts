@@ -1,65 +1,93 @@
-import type { Config } from "tailwindcss";
+/** @type {import('tailwindcss').Config} */
+const twanim = require('tailwindcss-animate');
 
-export default {
+module.exports = {
+  darkMode: ['class'],
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
-  darkMode: "class",
   theme: {
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
     extend: {
       colors: {
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         primary: {
-          50: "#f0f3f5",
-          100: "#d2dae0",
-          200: "#a6b0b8",
-          300: "#7a868f",
-          400: "#4f6b66",
-          500: "#272c33",
-          600: "#23292f",
-          700: "#1e2226",
-          800: "#181b1f",
-          900: "#101215",
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+          light: '#4DC66B',
+          dark: '#064D47',
+          medium: '#30946D',
+        },
+        neutral: {
+          light: '#FFFFFF',
+          dark: '#2D2D2D',
         },
         secondary: {
-          50: "#fff9d4", // Tono más claro
-          100: "#fff4a3",
-          200: "#ffe86f",
-          300: "#ffdc3b",
-          400: "#ffcf16",
-          500: "#febe10", // Tono base
-          600: "#e5a60f",
-          700: "#c88b0d",
-          800: "#a6710a",
-          900: "#8b5908", // Tono más oscuro
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+          background: 'hsl(var(--secondary-background))',
         },
-        tertiary: {
-          50: "#f7f8f9", // Tono más claro
-          100: "#e2e4e7",
-          200: "#c6c9cc",
-          300: "#a9afb2",
-          400: "#8c9497",
-          500: "#bebfc1", // Tono base
-          600: "#a0a3a5",
-          700: "#828688",
-          800: "#646767",
-          900: "#474b4d", // Tono más oscuro
+        outline: {
+          DEFAULT: 'hsl(var(--outline))',
         },
-        background: {
-          50: "#ffffff", // Tono más claro (blanco)
-          100: "#f5f5f5",
-          200: "#e0e0e0",
-          300: "#c0c0c0",
-          400: "#a0a0a0",
-          500: "#808080", // Tono medio (gris)
-          600: "#606060",
-          700: "#404040",
-          800: "#202020",
-          900: "#000000", // Tono más oscuro (negro)
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: 0 },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: 0 },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },
-  plugins: [],
-} satisfies Config;
+  plugins: [
+    twanim,
+    require('tailwind-scrollbar-hide')
+  ],
+};
+
