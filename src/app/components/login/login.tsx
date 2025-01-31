@@ -1,6 +1,8 @@
 'use client';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/app/components/ui/button';
+import { FcGoogle } from 'react-icons/fc';
+import { FaFacebook } from 'react-icons/fa';
 import {
   Form,
   FormControl,
@@ -38,60 +40,54 @@ export function LoginForm() {
     return () => subscription.unsubscribe();
   }, [watch, trigger]);
 
-async function onSubmit(values: typeof formSchema) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/signin`,
-      {
-        method: 'POST',
-        headers: {
-          accept: '*/*',
-          'Content-Type': 'application/json',
+  async function onSubmit(values: typeof formSchema) {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/signin`,
+        {
+          method: 'POST',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password,
+          }),
         },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-        }),
-      },
-    );
+      );
 
-    if (response.status === 201) {
-      const data = await response.json();
-      login(data.user, data.access_token);
-      showToast('success', <p>Has iniciado sesión correctamente</p>);
+      if (response.status === 201) {
+        const data = await response.json();
+        login(data.user, data.access_token);
+        showToast('success', <p>Has iniciado sesión correctamente</p>);
 
-      
-      if (data.user.role === 'admin') {
-        router.push('/admin-history'); 
-      } else if (data.user.role === 'superadmin') {
-        router.push('/superadmin/dashboard'); 
+        if (data.user.role === 'admin') {
+          router.push('/admin-history');
+        } else if (data.user.role === 'superadmin') {
+          router.push('/superadmin/dashboard');
+        } else {
+          router.push('/address');
+        }
       } else {
-        router.push('/address'); 
+        const res = await response.json();
+        showToast('error', <p>{res.message}</p>);
       }
-    } else {
-      const res = await response.json();
+    } catch (error) {
+      console.error('Error durante el inicio de sesión:', error);
       showToast(
         'error',
         <p>
-          {res.message}
+          Ocurrió un error durante el inicio de sesión, por favor intenta de
+          nuevo más tarde
         </p>,
       );
     }
-  } catch (error) {
-    console.error('Error durante el inicio de sesión:', error);
-    showToast(
-      'error',
-      <p>
-        Ocurrió un error durante el inicio de sesión, por favor intenta de nuevo
-        más tarde
-      </p>,
-    );
   }
-}
 
-function handleGoogleLogin() {
-  router.push(`${process.env.NEXT_PUBLIC_API_URL}/auth/google/login`);
-}
+  function handleGoogleLogin() {
+    router.push(`${process.env.NEXT_PUBLIC_API_URL}/auth/google/login`);
+  }
 
   return (
     <Form {...form}>
@@ -155,9 +151,21 @@ function handleGoogleLogin() {
         type="submit"
         variant="submit"
         size="submit"
-        className="w-[320px] bg-white h-[40px] text-black mb-[15px]"
+        className="w-[320px] bg-white h-[40px] text-black mb-[15px] flex items-center justify-center gap-2 hover:bg-gray-50"
       >
-        Ingresar con google
+        <FcGoogle className="text-xl" />
+        Ingresar con Google
+      </Button>
+
+      <Button
+        onClick={() => ''}
+        type="submit"
+        variant="submit"
+        size="submit"
+        className="w-[320px] bg-[#1877F2] h-[40px] text-white mb-[15px] flex items-center justify-center gap-2 hover:bg-[#1864F2]"
+      >
+        <FaFacebook className="text-xl" />
+        Ingresar con Facebook
       </Button>
     </Form>
   );
