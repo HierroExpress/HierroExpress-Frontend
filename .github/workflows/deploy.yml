@@ -2,6 +2,7 @@ name: Deploy to VPS
 on:
   push:
     branches: [main]
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -25,28 +26,33 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.PASSWORD }}
           script: |
             PROJECT_DIR="/root/HierroExpress-Frontend"
-            REPO_URL="git@github.com:HierroExpress/HierroExpress-Frontend.git"
+            REPO_URL="https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/HierroExpress/HierroExpress-Frontend.git"
             BRANCH="main"
             NODE_VERSION="18"
 
+            # Instalar dependencias necesarias si no están presentes
             command -v git >/dev/null 2>&1 || apt update && apt install -y git
             command -v node >/dev/null 2>&1 || curl -fsSL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash - && apt install -y nodejs
             command -v pm2 >/dev/null 2>&1 || npm install -g pm2
 
+            # Clonar o actualizar el repositorio
             if [ -d "$PROJECT_DIR" ]; then
               cd "$PROJECT_DIR"
+              git reset --hard
               git pull origin $BRANCH
             else
               git clone -b $BRANCH $REPO_URL $PROJECT_DIR
               cd "$PROJECT_DIR"
             fi
 
+            # Instalar dependencias y compilar el proyecto
             npm install
             npm run build
 
+            # Iniciar o reiniciar el servidor con PM2
             pm2 delete HierroExpress || true
             pm2 start "npm run start" --name HierroExpress --cwd "$PROJECT_DIR"
             pm2 save
