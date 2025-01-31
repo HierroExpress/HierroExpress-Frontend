@@ -52,7 +52,7 @@ const Footer = () => {
           </div>
           <p className="mt-4">
             Todos los derechos reservados &copy; {new Date().getFullYear()}{' '}
-            Donde Chily.
+            Hierro Express.
           </p>
         </div>
       </div>
