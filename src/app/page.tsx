@@ -37,7 +37,7 @@ export default function Home() {
           <CategoryFilter />
           <Horarios />
           <Popular />
-          <RenderCategory />
+          {/* <RenderCategory /> */}
           {showScrollTopButton && (
             <button
               className="fixed bottom-8 right-8 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50"

@@ -110,8 +110,9 @@ export const CategoryFilter = () => {
             {categories
               .filter(
                 (category) =>
-                  parseInt(category.id.toString()) <= 32 &&
-                  category.products.length > 0,
+                  // parseInt(category.id.toString()) <= 32 &&
+                  category.parentCategory===null,
+                // category.products.length > 0,
               )
               .map((category) => (
                 <button
@@ -125,7 +126,7 @@ export const CategoryFilter = () => {
                       alt={category.name}
                       layout="fill"
                       objectFit="cover"
-                      className="transition-opacity duration-300 group-hover:opacity-80"
+                      className="transition-opacity duration-300 group-hover:opacity-80 p-4"
                     />
                   </div>
                   <span className="text-xs sm:text-sm md:text-base text-center text-gray-600 truncate w-full">
