@@ -125,7 +125,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <Image
             src={product.img}
             alt={product.name}
-            layout="fill"
+            width={400}
+            height={400}
             objectFit="cover"
             className="rounded-lg"
           />

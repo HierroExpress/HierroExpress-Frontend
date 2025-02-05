@@ -9,7 +9,6 @@ const AboutUs = () => {
           <Image
             src="/chillyyyy.jpg"
             alt="chily"
-            layout="fill"
             objectFit="cover"
             className="rounded-lg"
           />
