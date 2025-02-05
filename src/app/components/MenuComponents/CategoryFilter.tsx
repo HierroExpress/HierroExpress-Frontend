@@ -1,28 +1,24 @@
 'use client';
 import React, { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useCache } from '@/app/contexts/CacheContext';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
+import { useRouter } from 'next/navigation';
+
 
 export const CategoryFilter = () => {
   const { categories } = useCache();
-  const router = useRouter();
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
 
-  const scrollToCategory = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  const router = useRouter();
+  const handleCategoryClick = (id: number) => {
+    
+    router.push(`/menu2?category=${id}`);
   };
-
-  const handleViewAllProducts = () => {
-    router.push('/menu');
-  };
+ 
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -91,22 +87,8 @@ export const CategoryFilter = () => {
           }}
         >
           <div className="flex justify-start space-x-2 sm:space-x-3 md:space-x-4 p-2 sm:p-3 md:p-4 w-full">
-            <button
-              className="flex flex-col items-center focus:outline-none group flex-shrink-0"
-              onClick={handleViewAllProducts}
-            >
-              <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 relative mb-2 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
-                <Image
-                  src="/HierroLogo.png"
-                  alt="Ver Todos"
-                  layout="fill"
-                  objectFit="contain"
-                />
-              </div>
-              <span className="text-xs sm:text-sm md:text-base text-center text-gray-600 truncate w-full">
-                VER TODOS
-              </span>
-            </button>
+           
+            
             {categories
               .filter(
                 (category) =>
@@ -117,14 +99,15 @@ export const CategoryFilter = () => {
               .map((category) => (
                 <button
                   key={category.id}
-                  className="flex flex-col items-center focus:outline-none group flex-shrink-0"
-                  onClick={() => scrollToCategory(category.id.toString())}
+                  className="flex flex-col items-center focus:outline-none group flex-shrink-0 "
+                  onClick={() => handleCategoryClick(category.id)}
                 >
                   <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 relative mb-2 rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
                     <Image
                       src={category.icon}
                       alt={category.name}
-                      layout="fill"
+                      width={400}
+                      height={400}
                       objectFit="cover"
                       className="transition-opacity duration-300 group-hover:opacity-80 p-4"
                     />

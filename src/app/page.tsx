@@ -2,7 +2,6 @@
 import { Popular } from '../app/components/HomeComponents/Popular';
 import { CategoryFilter } from '../app/components/MenuComponents/CategoryFilter';
 import Horarios from './components/HomeComponents/Horarios';
-import { RenderCategory } from './components/HomeComponents/RenderCategory';
 import { useEffect, useState } from 'react';
 import { IoIosArrowUp } from 'react-icons/io';
 

@@ -4,7 +4,7 @@ import SearchBar from '../components/SearchBar/searchBar';
 import { getProducts } from '@/helpers/peticiones';
 import ProductCard from '@/app/components/Cards/ProductCard';
 import Pagination from '@/app/components/HomeComponents/Pagination';
-import MenuFilters from '../components/MenuComponents/MenuFilter2';
+import MenuFilters from '../components/MenuComponents/MenuFilter';
 import { Product } from '@/types';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 

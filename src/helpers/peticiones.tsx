@@ -134,3 +134,56 @@ export async function getAllCategories(): Promise<Category[]> {
     throw error;
   }
 }
+
+export const filterProductsByCategoryAndAttributes = async ({
+  categoryId,
+  attributes,
+}: {
+  categoryId: number;
+  attributes: { attributeId: number; value: string }[];
+}) => {
+  const attributeParams = attributes.map((attribute) => {
+    return `${attribute.attributeId}:${attribute.value}`;
+  });
+  const attributeString = attributeParams.join(',');
+
+  try {
+    const response = await fetch(
+      `${API_URL}/products/filterByCategoryIdAndAtributes?categoryId=${categoryId}&attributes=${attributeString}`,
+    );
+
+    // Verificamos si la respuesta fue exitosa
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error al obtener productos:', error);
+    throw error;
+  }
+};
+
+export const getAtrtributesByCategory = async ({
+  categoryId,
+}: {
+  categoryId: number;
+}) => {
+  try {
+    const response = await fetch(
+      `${API_URL}/products/attributesByCategoryId/${categoryId}`,
+    );
+
+    // Verificamos si la respuesta fue exitosa
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error al obtener atributos:', error);
+    throw error;
+  }
+};

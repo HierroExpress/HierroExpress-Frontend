@@ -1,120 +1,121 @@
-import { getAllCategories } from '@/helpers/peticiones';
 import { Category } from '@/types';
-import { get } from 'http';
-import React, { useEffect, useState } from 'react';
 
 interface MenuFiltersProps {
-  applyFilters: (
-    newFilters: Partial<{ min?: number; max?: number; price?: 'min' | 'max' }>,
-  ) => void;
-  selectedFilters: string[];
-  handleFilterChange: (filter: string) => void;
+  handleSelectCategory: (categoryId: number, isSubcategory?: boolean) => void;
+  subCategories: Category[];
+  categories: Category[];
+  selectedCategory: number | undefined;
+  selectedSubcategory: number | undefined;
+  attributes: {
+    id: number;
+    name: string;
+    units: string;
+    productAtributes: { value: string }[];
+  }[];
+  selectedAttributes: { attributeId: number; value: string }[];
+  handleToggleAttribute: (attributeId: number, value: string) => void;
 }
 
-const MenuFilters: React.FC<MenuFiltersProps> = ({
-  applyFilters,
-  selectedFilters,
-  handleFilterChange,
+const MenuFilters2: React.FC<MenuFiltersProps> = ({
+  handleSelectCategory,
+  subCategories,
+  categories,
+  selectedCategory,
+  selectedSubcategory,
+  attributes,
+  selectedAttributes,
+  handleToggleAttribute,
 }) => {
-  const filterOptions = [
-    { value: '18', label: 'Vegetariana', category: 'Tipo de Comida' },
-    { value: '16', label: 'Carnes', category: 'Tipo de Comida' },
-    { value: '3', label: 'Entradas', category: 'Tipo de Comida' },
-    { value: '6', label: 'Quesadillas', category: 'Tipo de Comida' },
-    { value: '7', label: 'Tacos', category: 'Tipo de Comida' },
-    { value: '14', label: 'Burritos', category: 'Tipo de Comida' },
-    { value: '27', label: 'Papas', category: 'Tipo de Comida' },
-    { value: '28', label: 'Ensaladas', category: 'Tipo de Comida' },
-    { value: 'min', label: 'Menor precio', category: 'Precio' },
-    { value: 'max', label: 'Mayor precio', category: 'Precio' },
-    { value: '19', label: 'Con alcohol', category: 'Bebidas' },
-    { value: '20', label: 'Sin alcohol', category: 'Bebidas' },
-    { value: '25', label: 'Jugos', category: 'Bebidas' },
-    { value: '24', label: 'Vinos', category: 'Bebidas' },
-    { value: '22', label: 'Cervezas', category: 'Bebidas' },
-    { value: '21', label: 'Gaseosas', category: 'Bebidas' },
-  ];
+ 
 
-  const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
-  const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
-
-  const [Categories, setCategories] = useState<Category[]>([]);
-
-
-  const categorylist = async () => {
-    const response = await getAllCategories();
-    setCategories(response);
-    
-   }
-  useEffect(() => { categorylist() }, []);
-
-
-  const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    const newMinPrice = !isNaN(value) ? value : undefined;
-    setMinPrice(newMinPrice);
-    applyFilters({ min: newMinPrice, max: maxPrice, price: getPriceFilter() });
-  };
-
-  const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    const newMaxPrice = !isNaN(value) ? value : undefined;
-    setMaxPrice(newMaxPrice);
-    applyFilters({ min: minPrice, max: newMaxPrice, price: getPriceFilter() });
-  };
-
-  const getPriceFilter = () => {
-    return selectedFilters.includes('min')
-      ? 'min'
-      : selectedFilters.includes('max')
-        ? 'max'
-        : undefined;
-  };
+ 
 
   return (
-    <div className="border p-4 rounded-lg shadow-md mb-4">
-      <h2 className="text-lg font-bold mb-2">Filtros</h2>
-      <div className="space-y-2">
-        {['Tipo de Comida', 'Precio', 'Bebidas'].map((category) => (
-          <div key={category}>
-            <p className="text-sm font-semibold">{category}:</p>
-            {Categories.filter(
-              (category) => category.parentCategory === null,
-            ).map((option) => (
-              <label key={option.value} className="flex items-center">
-                <input
-                  type="checkbox"
-                  value={option.value}
-                  checked={selectedFilters.includes(option.value)}
-                  onChange={() => handleFilterChange(option.value)}
-                  className="mr-2"
-                />
-                {option.name}
-              </label>
-            ))}
-            {category === 'Precio' && (
-              <div className="">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={minPrice ?? ''}
-                  onChange={handleMinPriceChange}
-                  className="border p-2 rounded mt-2"
-                />
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={maxPrice ?? ''}
-                  onChange={handleMaxPriceChange}
-                  className="border p-2 rounded mb-2"
-                />
-              </div>
-            )}
+    <div className="border sm:p-0 md:p-4 rounded-lg shadow-md mb-4 ">
+      <h2 className="text-lg font-bold mb-2 text-center">Filtros</h2>
+      <div className=" flex ">
+        <div className=" w-1/2 border-r p-4">
+          <div>
+            <h3 className="text-lg font-bold mb-2">Categorías</h3>
+
+            {categories
+              .filter((category) => category.parentCategory === null)
+              .map((category) => (
+                <div
+                  key={category.id}
+                  className={`flex items-center border-b p-2 ${selectedCategory === category.id ? 'bg-blue-100' : ''}`}
+                  onClick={() => handleSelectCategory(category.id, false)}
+                >
+                  <img
+                    src={category.icon} // Renderiza la URL como una imagen
+                    alt={category.name}
+                    className="h-6 w-6 object-contain"
+                  />
+
+                  {category.name}
+                </div>
+              ))}
           </div>
-        ))}
+        </div>
+
+        <div className="w-1/2 p-4 m-0">
+          <div>
+            <h3 className="text-lg font-bold mb-2">Subcategorías</h3>
+
+            {subCategories.map((subcategory) => (
+              <div
+                key={subcategory.id}
+                className={`flex items-center p-2 border-b  ${selectedSubcategory === subcategory.id ? 'bg-blue-100' : ''}`}
+                onClick={() => handleSelectCategory(subcategory.id, true)}
+              >
+                <img
+                  src={subcategory.icon} // Renderiza la URL como una imagen
+                  alt={subcategory.name}
+                  className="h-6 w-6 object-contain"
+                />
+
+              
+                {subcategory.name}
+              </div>
+            ))}
+          </div>
+
+          <div>
+            <h3 className="text-lg font-bold mb-2">atributos</h3>
+
+            {attributes.map((attribute) => (
+              <div key={attribute.id} className="attribute-group">
+                <h4 className="text-lg font-bold mb-2">
+                  {attribute.name} ({attribute.units})
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {attribute.productAtributes.map((attrValue) => (
+                    <button
+                      key={attrValue.value}
+                      className={`border-2 py-1 px-3 rounded hover:bg-primary-600 ${
+                        selectedAttributes.find(
+                          (attr) =>
+                            attr.attributeId === attribute.id &&
+                            attr.value === attrValue.value,
+                        )
+                          ? 'bg-orange-400'
+                          : 'bg-orange-50'
+                      }`}
+                      onClick={() =>
+                        handleToggleAttribute(attribute.id, attrValue.value)
+                      }
+                    >
+                      {attrValue.value}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default MenuFilters;
+export default MenuFilters2;

@@ -14,6 +14,8 @@ export interface Category {
   name: string;
   icon: string;
   products: Product[];
+  parentCategory: Category | null;
+  subcategories:Category[]
 }
 
 export interface User {
