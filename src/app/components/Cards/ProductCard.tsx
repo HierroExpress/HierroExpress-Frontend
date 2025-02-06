@@ -131,9 +131,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="rounded-lg"
           />
         </div>
-        <h3 className="font-bold text-sm sm:text-base md:text-lg lg:text-xl truncate">
+        <h3 className="font-bold text-base ">
           {product.name}
         </h3>
+        <p className="text-xs">{ product.description.slice(0,30)}...</p>
         <p className="text-sm sm:text-base md:text-lg lg:text-xl">
           ${product.price.toFixed(2)}
         </p>
