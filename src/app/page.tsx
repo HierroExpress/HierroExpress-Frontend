@@ -4,6 +4,7 @@ import { CategoryFilter } from '../app/components/MenuComponents/CategoryFilter'
 import Horarios from './components/HomeComponents/Horarios';
 import { useEffect, useState } from 'react';
 import { IoIosArrowUp } from 'react-icons/io';
+import AlmacenLocation from './components/LocationHierro/LocationConfirmation';
 
 export default function Home() {
   const [showScrollTopButton, setShowScrollTopButton] = useState(false);
@@ -36,6 +37,7 @@ export default function Home() {
           <CategoryFilter />
           <Horarios />
           <Popular />
+          <AlmacenLocation />
           {/* <RenderCategory /> */}
           {showScrollTopButton && (
             <button
