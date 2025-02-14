@@ -12,7 +12,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import MenuFilters2 from '@/app/components/MenuComponents/MenuFilter2';
 
 interface MenuProps {
-  categoryId: number; // Recibimos la categoría como prop
+  categoryId?: number ; // Recibimos la categoría como prop
 }
 
 export default function Menu2({ categoryId }: MenuProps) {
