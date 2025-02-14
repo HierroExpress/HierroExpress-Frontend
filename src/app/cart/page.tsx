@@ -110,7 +110,7 @@ const CartPage: React.FC = () => {
             <p className="mb-4">
               Agrega algunos productos para comenzar a comprar.
             </p>
-            <Link href="/menu" className="text-blue-500 hover:underline">
+            <Link href="/menu2" className="text-blue-500 hover:underline">
               Volver al menú
             </Link>
           </div>

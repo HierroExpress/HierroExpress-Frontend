@@ -45,7 +45,7 @@ export default function RootLayout({
             </SocketProvider>
           </CacheProvider>
         </AuthProvider>
-        <ChatBot />
+        {/* <ChatBot /> */}
       </body>
     </html>
   );
