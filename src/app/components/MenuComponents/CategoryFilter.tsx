@@ -16,7 +16,7 @@ export const CategoryFilter = () => {
   const router = useRouter();
   const handleCategoryClick = (id: number) => {
     
-    router.push(`/menu2?category=${id}`);
+    router.push(`/menu2/${id}`);
   };
  
 
