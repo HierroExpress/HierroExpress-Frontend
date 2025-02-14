@@ -19,7 +19,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       setSearchText('');
 
       // Redirigir a la ruta del menú sin parámetros de búsqueda en la URL
-      router.push('/menu');
+      router.push('/menu2');
     }
   };
 

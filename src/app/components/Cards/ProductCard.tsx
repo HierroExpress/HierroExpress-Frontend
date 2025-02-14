@@ -120,38 +120,47 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <Link href={`/product/${product.id}`} passHref>
-      <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 relative max-w-xs ">
+      <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 relative md:h-96 flex flex-col gap-4 ">
         <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-56 mb-4">
           <Image
             src={product.img}
             alt={product.name}
-            width={400}
-            height={400}
+            fill
             objectFit="cover"
-            className="rounded-lg"
+            className="rounded-lg "
           />
         </div>
-        <h3 className="font-bold text-base ">
-          {product.name}
-        </h3>
-        <p className="text-xs">{ product.description.slice(0,30)}...</p>
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl">
-          ${product.price.toFixed(2)}
-        </p>
-        {quantity > 0 ? (
-          <div className="absolute bottom-2 right-2 flex items-center space-x-2">
+        <div>
+          <h3 className="font-bold text-base ">{product.name}</h3>
+          <p className="text-xs">{product.description.slice(0, 30)}...</p>
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl">
+            ${product.price.toFixed(2)}
+          </p>
+          {quantity > 0 ? (
+            <div className="absolute bottom-2 right-2 flex items-center space-x-2">
+              <button
+                className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleRemoveFromCart();
+                }}
+              >
+                <FaMinus />
+              </button>
+              <span>{quantity}</span>
+              <button
+                className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 focus:outline-none"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleAddToCart();
+                }}
+              >
+                <FaPlus />
+              </button>
+            </div>
+          ) : (
             <button
-              className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none"
-              onClick={(e) => {
-                e.preventDefault();
-                handleRemoveFromCart();
-              }}
-            >
-              <FaMinus />
-            </button>
-            <span>{quantity}</span>
-            <button
-              className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 focus:outline-none"
+              className="absolute bottom-2 right-2 bg-blue-400 text-white p-2 rounded-full hover:bg-yellow-500 focus:outline-none"
               onClick={(e) => {
                 e.preventDefault();
                 handleAddToCart();
@@ -159,18 +168,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             >
               <FaPlus />
             </button>
-          </div>
-        ) : (
-          <button
-            className="absolute bottom-2 right-2 bg-blue-400 text-white p-2 rounded-full hover:bg-yellow-500 focus:outline-none"
-            onClick={(e) => {
-              e.preventDefault();
-              handleAddToCart();
-            }}
-          >
-            <FaPlus />
-          </button>
-        )}
+          )}
+        </div>
       </div>
     </Link>
   );
