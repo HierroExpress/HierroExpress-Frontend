@@ -1,58 +1,33 @@
-name: Deploy to VPS
+name: Deploy Node.js PM2 App (Production)
+
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - uses: actions/checkout@v2
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        script: |                    
+          cd /root/HierroExpress-Frontend
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
+          git config --global user.name "${{ secrets.GIT_USERNAME }}"
+          git config --global user.email "noreply@github.com"
+          git remote set-url origin https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/HierroExpress/HierroExpress-Frontend.git
 
-      - name: Install Dependencies
-        run: npm install
+          git fetch --all
+          git reset --hard origin/main
+          git pull origin main
 
-      - name: Build
-        run: npm run build
-
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script: |
-            PROJECT_DIR="/root/HierroExpress-Frontend"
-            REPO_URL="https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/HierroExpress/HierroExpress-Frontend.git"
-            BRANCH="main"
-            NODE_VERSION="18"
-
-            # Instalar dependencias necesarias si no están presentes
-            command -v git >/dev/null 2>&1 || apt update && apt install -y git
-            command -v node >/dev/null 2>&1 || curl -fsSL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash - && apt install -y nodejs
-            command -v pm2 >/dev/null 2>&1 || npm install -g pm2
-
-            # Clonar o actualizar el repositorio
-            if [ -d "$PROJECT_DIR" ]; then
-              cd "$PROJECT_DIR"
-              git reset --hard
-              git pull origin $BRANCH
-            else
-              git clone -b $BRANCH $REPO_URL $PROJECT_DIR
-              cd "$PROJECT_DIR"
-            fi
-
-            # Instalar dependencias y compilar el proyecto
-            npm install
-            npm run build
-
-            # Iniciar o reiniciar el servidor con PM2
-            pm2 delete HierroExpress || true
-            pm2 start "npm run start" --name HierroExpress --cwd "$PROJECT_DIR"
-            pm2 save
+          npm install
+          npm run build
+          pm2 restart frontend
+          
+          # pm2 start npm --name "frontend" -- start
