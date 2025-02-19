@@ -7,7 +7,6 @@ import CouponInput from './CuponInput';
 import { useAuth } from '@/app/contexts/AuthContext';
 import Link from 'next/link';
 
-
 const SHIPPING_COST = 5.5;
 
 interface ProductsInOrder {
