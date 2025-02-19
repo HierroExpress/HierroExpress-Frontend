@@ -12,7 +12,6 @@ interface AdminFormData {
   email: string;
   password: string;
   confirmPassword: string;
-  nin: string; // Keep it as string initially
   phone: string;
 }
 
@@ -22,7 +21,6 @@ const AdminAccountForm: React.FC<AdminAccountFormProps> = ({ onSuccess }) => {
     email: '',
     password: '',
     confirmPassword: '',
-    nin: '', // Initialize as string
     phone: '',
   });
   const [passwordError, setPasswordError] = useState<string>('');
@@ -50,11 +48,8 @@ const AdminAccountForm: React.FC<AdminAccountFormProps> = ({ onSuccess }) => {
       return;
     }
 
-    // Create a new object excluding 'nin' and including 'NIN'
-    const { nin, ...restFormData } = formData;
     const formDataToSend = {
-      ...restFormData,
-      NIN: nin.toUpperCase(), // Ensure it's sent as a string in uppercase
+      ...formData,
     };
 
     try {
@@ -82,7 +77,6 @@ const AdminAccountForm: React.FC<AdminAccountFormProps> = ({ onSuccess }) => {
         email: '',
         password: '',
         confirmPassword: '',
-        nin: '', // Reset to string
         phone: '',
       });
       if (onSuccess) {
@@ -171,24 +165,6 @@ const AdminAccountForm: React.FC<AdminAccountFormProps> = ({ onSuccess }) => {
           value={formData.confirmPassword}
           onChange={handleChange}
           minLength={8}
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label
-          className="block text-gray-700 text-sm font-bold mb-2"
-          htmlFor="nin"
-        >
-          NIN
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="nin"
-          type="text"
-          placeholder="Número de Documento"
-          name="nin"
-          value={formData.nin}
-          onChange={handleChange}
           required
         />
       </div>
