@@ -31,7 +31,6 @@ const Checkout: React.FC = () => {
   const [order, setOrder] = useState<Order | null>(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>('efectivo');
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalType, setModalType] = useState<'success' | 'error'>('success');
@@ -85,7 +84,6 @@ const Checkout: React.FC = () => {
         );
         const data = await response.json();
         console.log(data);
-        setClientSecret(data.clientSecret);
       };
 
       fetchClientSecret();
