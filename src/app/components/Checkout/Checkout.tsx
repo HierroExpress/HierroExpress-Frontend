@@ -1,18 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import CheckoutForm from './CheckoutForm';
 import CustomModal from './modals';
 import { useRouter } from 'next/navigation';
 import CouponInput from './CuponInput';
 import { useAuth } from '@/app/contexts/AuthContext';
 import Link from 'next/link';
 
-const stripePromise = loadStripe(
-  `${process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY}`,
-);
 
 const SHIPPING_COST = 5.5;
 
@@ -38,7 +32,6 @@ const Checkout: React.FC = () => {
   const [order, setOrder] = useState<Order | null>(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>('efectivo');
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalType, setModalType] = useState<'success' | 'error'>('success');
@@ -92,7 +85,6 @@ const Checkout: React.FC = () => {
         );
         const data = await response.json();
         console.log(data);
-        setClientSecret(data.clientSecret);
       };
 
       fetchClientSecret();
