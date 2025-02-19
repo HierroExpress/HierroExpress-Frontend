@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import CheckoutForm from './CheckoutForm';
 import CustomModal from './modals';
 import { useRouter } from 'next/navigation';
 import CouponInput from './CuponInput';
