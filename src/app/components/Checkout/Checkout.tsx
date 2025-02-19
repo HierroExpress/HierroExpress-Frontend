@@ -8,10 +8,6 @@ import CouponInput from './CuponInput';
 import { useAuth } from '@/app/contexts/AuthContext';
 import Link from 'next/link';
 
-const stripePromise = loadStripe(
-  `${process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY}`,
-);
-
 const SHIPPING_COST = 5.5;
 
 interface ProductsInOrder {
