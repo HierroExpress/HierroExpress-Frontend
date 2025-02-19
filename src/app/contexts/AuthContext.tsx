@@ -14,7 +14,6 @@ type Role = 'user' | 'admin' | 'superadmin';
 
 interface Credential {
   id: string;
-  NIN: string;
   phone: string;
 }
 
@@ -24,7 +23,6 @@ interface User {
   id: string;
   role: Role;
   name: string;
-  NIN: string;
   email: string;
   googleAuth: boolean;
   phone: string;

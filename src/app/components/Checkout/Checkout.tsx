@@ -221,6 +221,30 @@ const Checkout: React.FC = () => {
     }
   };
 
+  const generateLinkMercadoPago = async () => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/createPayment/mercadopago`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        amount: order.total,
+        userId: order.userId,
+        items: order.productsInOrder.map((item) => {
+          return {
+            title: item.name,
+            quantity: item.quantity,
+            currency_id: 'ARS',
+            unit_price: item.price
+          }
+        })
+      })
+    })
+    const data = await response.json();
+    console.log(data);
+    window.location.href = data.init_point;
+  }
   return (
     <div className="max-w-full mx-auto bg-white p-6">
       <h2 className="text-lg font-semibold mb-4">Resumen del pedido</h2>
@@ -262,7 +286,7 @@ const Checkout: React.FC = () => {
             </div>
             <span>{calle}</span>
           </div>
-          Tiempo estimado: 15 – 30mins
+          Tiempo estimado: 1 - 3 días
         </div>
       </div>
 
@@ -301,7 +325,7 @@ const Checkout: React.FC = () => {
           💳
         </div>
         <div>
-          <h3 className="font-semibold">Tarjeta de débito/crédito</h3>
+          <h3 className="font-semibold">Mercado Pago (Tarjeta)</h3>
         </div>
         {selectedPaymentMethod === 'tarjeta' && (
           <div className="ml-auto">
@@ -310,10 +334,13 @@ const Checkout: React.FC = () => {
         )}
       </div>
 
-      {selectedPaymentMethod === 'tarjeta' && clientSecret && (
-        <Elements stripe={stripePromise} options={{ clientSecret }}>
-          <CheckoutForm handlePayment={handlePayment} />
-        </Elements>
+      {selectedPaymentMethod === 'tarjeta' && (
+        <button
+          onClick={() => generateLinkMercadoPago()}
+          className="w-full bg-blue-600 text-white text-center py-3 rounded-lg hover:bg-blue-600 transition duration-300 mt-4"
+        >
+          Pagar ahora
+        </button>
       )}
 
       {selectedPaymentMethod === 'efectivo' && (

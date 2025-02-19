@@ -44,10 +44,6 @@ const formSchema = z
         message: 'La contraseña debe contener al menos un carácter especial.',
       }),
     confirmPassword: z.string(),
-    nin: z
-      .string()
-      .min(6, { message: 'El NIN debe tener al menos 6 caracteres.' })
-      .regex(/^\d+$/, { message: 'El NIN debe contener solo números.' }),
     phone: z
       .string()
       .min(10, { message: 'El teléfono debe tener al menos 10 caracteres.' }),
@@ -67,7 +63,6 @@ export function RegisterForm() {
       email: '',
       password: '',
       confirmPassword: '',
-      nin: '',
       phone: '',
     },
     mode: 'onChange',
@@ -96,7 +91,6 @@ export function RegisterForm() {
           },
           body: JSON.stringify({
             name: values.name,
-            NIN: values.nin,
             email: values.email,
             password: values.password,
             confirmPassword: values.confirmPassword,
@@ -204,18 +198,6 @@ export function RegisterForm() {
                   />
                 </FormControl>
               </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="nin"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input placeholder="NIN" {...field} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}
