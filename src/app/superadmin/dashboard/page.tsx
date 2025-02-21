@@ -24,6 +24,13 @@ const DashboardPage: React.FC = () => {
             </Link>
           </div>
           <div className="w-full max-w-md">
+            <Link href="/superadmin/attributes">
+              <div className="bg-blue-600 text-white px-4 py-2 mb-4 hover:bg-blue-100 rounded mr-2 flex justify-between items-center">
+                Gestionar Atributos
+              </div>
+            </Link>
+          </div>
+          <div className="w-full max-w-md">
             <Link href="/admin-history">
               <div className="bg-blue-600 text-white px-4 py-2 mb-4 hover:bg-blue-100 rounded mr-2 flex justify-between items-center">
                 Gestionar Órdenes

@@ -8,6 +8,11 @@ export interface Product {
   isPopular: boolean;
   category: Category[];
 }
+export interface Attribute {
+  id: number;
+  name: string;
+  units: string;
+}
 
 export interface Category {
   id: number;
