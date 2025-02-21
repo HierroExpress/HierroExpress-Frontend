@@ -1,4 +1,4 @@
-import { Category, Product} from '@/types';
+import { Attribute, Category, Product} from '@/types';
 import { TransactionInfo } from '@/app/components/SuperAdminStripe/TransactionList';
  export interface TransactionResponse {
   orders: TransactionInfo[],
@@ -39,6 +39,8 @@ export const fetchProducts = async (): Promise<Product[]> => {
   return products;
 };
 
+
+
 export const createProduct = async (data: any, token: string) => {
   try {
     const response = await fetch(`${API_URL}/products/create`, {
@@ -49,10 +51,37 @@ export const createProduct = async (data: any, token: string) => {
       },
       body: JSON.stringify(data),
     });
-
+    
     return await handleResponse(response);
   } catch (error) {
     console.error('Error al crear el producto', error);
+    throw error;
+  }
+};
+
+export const fetchAttributes = async (): Promise<Attribute[]> => {
+  const response = await fetch(`${API_URL}/products/atributes`);
+  if (!response.ok) {
+    throw new Error('Error al obtener los atributos');
+  }
+  const attributes: Attribute[] = await response.json();
+  return attributes;
+};
+
+export const createAttribute = async (data: any, token: string) => {
+  try {
+    const response = await fetch(`${API_URL}/products/atributes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    
+    return await handleResponse(response);
+  } catch (error) {
+    console.error('Error al crear el atributo', error);
     throw error;
   }
 };
