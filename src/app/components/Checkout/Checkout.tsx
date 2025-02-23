@@ -59,6 +59,8 @@ const Checkout: React.FC = () => {
           total: parsedOrder.total - discountAmount,
         });
 
+      
+
         setCouponDiscount(discountPercentage);
       } else {
         setOrder(parsedOrder);
