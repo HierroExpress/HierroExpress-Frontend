@@ -118,7 +118,7 @@ const handlePayment = useCallback(async (success: boolean) => {
       setModalType('error');
     } else {
       setIsModalOpen(true);
-      setModalMessage('El pago fue cancelado, vuelve a intentar.');
+      setModalMessage('El pago fue cancelado, vuelve a intentarlo');
       setModalType('error');
     }
   }, [router, handlePayment]);

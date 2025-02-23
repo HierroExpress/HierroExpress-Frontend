@@ -236,7 +236,7 @@ const Checkout: React.FC = () => {
     })
     const data = await response.json();
     console.log(data);
-    window.location.href = data.init_point;
+    window.location.href = data.sandbox_init_point;
   }
   return (
     <div className="max-w-full mx-auto bg-white p-6">
