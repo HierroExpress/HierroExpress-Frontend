@@ -8,9 +8,15 @@ import AlmacenLocation from './components/LocationHierro/LocationConfirmation';
 import { FaWhatsapp } from "react-icons/fa"; 
 import { FiFilter } from "react-icons/fi"; 
 import Link from 'next/link';
+import PopUpProvisional from '@/components/ui/popUpProvisional';
 
 export default function Home() {
   const [showScrollTopButton, setShowScrollTopButton] = useState(false);
+  const [showPopup, setShowPopup] = useState(true);
+
+   const closePopup = () => {
+     setShowPopup(false);
+   };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,7 +78,7 @@ export default function Home() {
           )}
           {/* WhatsApp Button (bottom-left corner, fixed) */}
           <a
-            href="https://wa.me/+59898654665?text=Hola%20Hierro%20express,%20quiero%20más%20información%20de%20sus%20productos"
+            href="https://wa.me/+59898151680?text=Hola%20Hierro%20express,%20quiero%20más%20información%20de%20sus%20productos"
             target="_blank"
             rel="noopener noreferrer"
             className="fixed bottom-8 left-8 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-700 transition-colors z-50"
@@ -88,6 +94,8 @@ export default function Home() {
           </button>
         </main>
       </div>
+
+      {showPopup && <PopUpProvisional closePopup={closePopup} />}
     </>
   );
 }
