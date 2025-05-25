@@ -9,7 +9,7 @@ const AboutUs = () => {
           <Image
             src="/chillyyyy.jpg"
             alt="chily"
-            objectFit="cover"
+            style={{ objectFit: 'cover' }}
             className="rounded-lg"
           />
         </div>

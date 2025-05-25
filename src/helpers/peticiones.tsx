@@ -142,17 +142,22 @@ export const filterProductsByCategoryAndAttributes = async ({
   categoryId: number;
   attributes: { attributeId: number; value: string }[];
 }) => {
-  const attributeParams = attributes.map((attribute) => {
-    return `${attribute.attributeId}:${attribute.value}`;
-  });
-  const attributeString = attributeParams.join(',');
-
   try {
-    const response = await fetch(
-      `${API_URL}/products/filterByCategoryIdAndAtributes?categoryId=${categoryId}&attributes=${attributeString}`,
-    );
+    const url = new URL(`${API_URL}/products/filterByCategoryIdAndAtributes`);
+    url.searchParams.append('categoryId', categoryId.toString());
 
-    // Verificamos si la respuesta fue exitosa
+    if (attributes.length > 0) {
+      const attributeParams = attributes.map((attribute) => {
+        return `${attribute.attributeId}:${attribute.value}`;
+      });
+      url.searchParams.append('attributes', attributeParams.join(','));
+    }
+
+    console.log('Fetching:', url.toString());
+
+    const response = await fetch(url.toString());
+    console.log('Response3333333333333333333:', response);
+
     if (!response.ok) {
       throw new Error(`Error en la solicitud: ${response.statusText}`);
     }
@@ -164,6 +169,7 @@ export const filterProductsByCategoryAndAttributes = async ({
     throw error;
   }
 };
+
 
 export const getAtrtributesByCategory = async ({
   categoryId,

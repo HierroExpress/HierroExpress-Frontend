@@ -87,13 +87,11 @@ export const CategoryFilter = () => {
           }}
         >
           <div className="flex justify-start space-x-2 sm:space-x-3 md:space-x-4 p-2 sm:p-3 md:p-4 w-full">
-           
-            
             {categories
               .filter(
                 (category) =>
                   // parseInt(category.id.toString()) <= 32 &&
-                  category.parentCategory===null,
+                  category.parentCategory === null,
                 // category.products.length > 0,
               )
               .map((category) => (
@@ -108,7 +106,7 @@ export const CategoryFilter = () => {
                       alt={category.name}
                       width={400}
                       height={400}
-                      objectFit="cover"
+                      style={{ objectFit: 'cover' }}
                       className="transition-opacity duration-300 group-hover:opacity-80 p-4"
                     />
                   </div>

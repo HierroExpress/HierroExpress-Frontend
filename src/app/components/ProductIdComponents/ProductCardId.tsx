@@ -43,19 +43,7 @@ const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
   }, [params.productId]);
 
   const handleIncrease = () => {
-    if (product && quantity < product.stock) {
-      setQuantity(quantity + 1);
-    } else {
-      toast.warn('No hay suficiente stock disponible.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
+    setQuantity(quantity + 1);
   };
 
   const handleDecrease = () => {
@@ -85,52 +73,25 @@ const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
         draggable: true,
         progress: undefined,
       });
-    return;
-  }
-    if(!product) {
       return;
     }
+
+    if (!product) return;
 
     const storedCart = localStorage.getItem('cartItems');
     let cartItems = storedCart ? JSON.parse(storedCart) : [];
 
-    const existingItem = cartItems.find((item:any) => item.id === product.id);
+    const existingItem = cartItems.find((item: any) => item.id === product.id);
 
-    if(existingItem) {
-      if(existingItem.quantity >= product.stock) {
-        toast.warn('No hay suficiente stock disponible.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      return;
+    if (existingItem) {
+      cartItems = cartItems.map((item: any) =>
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + quantity }
+          : item,
+      );
+    } else {
+      cartItems.push({ ...product, quantity });
     }
-
-    cartItems = cartItems.map((item: any) =>
-    item.id === product?.id
-  ? {...item, quantity: item.quantity + quantity}
-:item,
-);
-    }else {
-      if(product.stock <= 0) {
-        toast.warn('No hay suficiente stock disponible.', {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        return;
-      }
-      cartItems.push({...product, quantity});
-    }
-
 
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
     toast.success('Producto añadido al carrito.', {
@@ -145,14 +106,6 @@ const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
 
   if (!product) {
     return <div className="text-center py-10">Cargando...</div>;
-  }
-
-  if (product.stock <= 0) {
-    return (
-      <div className="text-center py-10">
-        <p>Producto no disponible.</p>
-      </div>
-    );
   }
 
   return (
@@ -175,8 +128,8 @@ const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
           </p>
         </div>
         <div className="flex flex-col items-center lg:items-start lg:mb-0 mr-4 mb-4">
-          <p className="text-gray-600 text-sm sm:text-base md:text-lg lg:text-xl">
-            Stock : {product.stock}
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg lg:text-xl italic">
+            Bajo pedido
           </p>
           <CartButtons
             quantity={quantity}
