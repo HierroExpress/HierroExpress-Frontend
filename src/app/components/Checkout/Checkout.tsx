@@ -221,6 +221,7 @@ const Checkout: React.FC = () => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
+      credentials: 'include',
       body: JSON.stringify({
         amount: order.total,
         userId: order.userId,
@@ -236,7 +237,7 @@ const Checkout: React.FC = () => {
     })
     const data = await response.json();
     console.log(data);
-    window.location.href = data.sandbox_init_point;
+    window.location.href = data.init_point;
   }
   return (
     <div className="max-w-full mx-auto bg-white p-6">
