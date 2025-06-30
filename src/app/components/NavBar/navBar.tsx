@@ -18,7 +18,6 @@ export const Navbar: React.FC = () => {
   const panelRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const currentPage = '';
   const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
@@ -75,19 +74,18 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="relative top-0 left-0 right-0 bg-blue-600 text-white p-4 z-50">
+      <nav className="sticky top-0 left-0 right-0 bg-blue-600 text-white p-4 z-50 shadow-md">
         <div className="container flex justify-between items-center">
           <div className="flex items-center">
-            <Image
-              src="/HierroBanner.png"
-              alt="HierroExpress"
-              id="logo"
-              className="max-w-full h-auto rounded-xl"
-              width={500}
-              height={500}
-            />
-            <a href="/" className="text-4xl font-bold">
-              {currentPage}
+            <a href="/" className="text-decoration-none">
+              <Image
+                src="/HierroBanner.png"
+                alt="HierroExpress"
+                id="logo"
+                className="w-full max-w-xs h-auto rounded-xl"
+                width={500}
+                height={500}
+              />
             </a>
           </div>
 
@@ -204,14 +202,6 @@ export const Navbar: React.FC = () => {
           className="relative left-0 right-0 bg-blue-600 text-white p-4 z-10 w-full md:w-4/5 mx-auto rounded-xl border-2 shadow-lg"
           ref={menuRef}
         >
-          <Link
-            href="/"
-            className="block p-2 hover:text-gray-300"
-            onClick={handleMenuLinkClick}
-          >
-            Home
-          </Link>
-
           {isAuthenticated ? (
             <>
               <Link
