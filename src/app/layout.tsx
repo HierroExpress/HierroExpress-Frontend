@@ -32,7 +32,7 @@ export default function RootLayout({
       className="flex flex-col w-full justify-center items-center"
     >
       <body
-        className={`${mochily.className} ${poppins.className} flex justify-center max-w-7xl flex-col w-full p-4 max-lg:p-0  `}
+        className={`${mochily.className} ${poppins.className} flex justify-center max-w-7xl flex-col w-full max-lg:p-0  `}
       >
         <AuthProvider>
           <CacheProvider>
