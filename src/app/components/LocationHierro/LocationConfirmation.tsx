@@ -1,72 +1,73 @@
 'use client';
 import { useState } from 'react';
-import { GoogleMap, LoadScript, Polygon } from '@react-google-maps/api';
 
-const ZonaEntrega = () => {
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
+const AlmacenLocation = () => {
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  // Centro de Montevideo para centrar el mapa
-  const montevideoCenter = {
-    lat: -34.9032,
-    lng: -56.1882,
-  };
-
-  // Definir la zona de entrega (ejemplo: zona céntrica de Montevideo)
-  const zonaEntregaCoords = [
-    { lat: -34.8950, lng: -56.2100 }, // Norte-Oeste
-    { lat: -34.8950, lng: -56.1650 }, // Norte-Este
-    { lat: -34.9150, lng: -56.1650 }, // Sur-Este
-    { lat: -34.9150, lng: -56.2100 }, // Sur-Oeste
-  ];
-
-  // Opciones de estilo para el polígono
-  const polygonOptions = {
-    fillColor: '#4CAF50',
-    fillOpacity: 0.3,
-    strokeColor: '#2E7D32',
-    strokeOpacity: 1,
-    strokeWeight: 2,
-  };
-
-  const handleMapLoad = () => {
-    setIsMapLoaded(true);
+  const handleIframeLoad = () => {
+    setMapLoaded(true);
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Zona de Entrega - Montevideo</h2>
+      <h2 className="text-2xl font-bold mb-4">Zonas de Entrega - Montevideo y Área Metropolitana</h2>
       <div className="mb-4">
         <p className="text-gray-600 mb-2">
-          El área verde representa nuestra zona de entrega disponible.
+          Consulta nuestras zonas de entrega disponibles en el mapa interactivo.
+        </p>
+        <p className="text-sm text-gray-500">
+          Puedes hacer zoom y explorar cada zona para ver los detalles específicos.
         </p>
       </div>
-      <div className="mb-4" style={{ height: '400px', width: '100%' }}>
-        <LoadScript
-          googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
-          onLoad={handleMapLoad}
+
+      <div className="mb-4 relative overflow-hidden rounded-lg border border-gray-200" style={{ height: '500px', width: '100%' }}>
+        {!mapLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+              <p className="text-gray-600">Cargando mapa...</p>
+            </div>
+          </div>
+        )}
+
+        <iframe
+          src="https://www.google.com/maps/d/embed?mid=1ZxdcJnurObNLbegwaRS8tOupeMsEcCU&ehbc=2E312F"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen={true}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          onLoad={handleIframeLoad}
+          title="Mapa de Zonas de Entrega"
+        />
+      </div>
+
+      <div className="bg-blue-50 p-4 rounded-lg">
+        <h3 className="text-lg font-semibold mb-2 text-blue-800">Información del Mapa</h3>
+        <ul className="text-sm text-blue-700 space-y-1">
+          <li>• Haz clic en las zonas coloreadas para ver detalles específicos</li>
+          <li>• Usa los controles de zoom para explorar áreas específicas</li>
+          <li>• Las diferentes zonas pueden tener tiempos de entrega distintos</li>
+          <li>• Contacta con nosotros si tu ubicación no está clara en el mapa</li>
+        </ul>
+      </div>
+
+      <div className="mt-4 text-center">
+        <a
+          href="https://www.google.com/maps/d/viewer?mid=1ZxdcJnurObNLbegwaRS8tOupeMsEcCU"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
         >
-          {isMapLoaded && (
-            <GoogleMap
-              center={montevideoCenter}
-              zoom={13}
-              mapContainerStyle={{ height: '100%', width: '100%' }}
-            >
-              <Polygon
-                paths={zonaEntregaCoords}
-                options={polygonOptions}
-              />
-            </GoogleMap>
-          )}
-        </LoadScript>
-      </div>
-      <div className="text-sm text-gray-500">
-        <p>
-          <span className="inline-block w-4 h-4 bg-green-400 opacity-50 mr-2"></span>
-          Zona de entrega disponible
-        </p>
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          Abrir mapa en pantalla completa
+        </a>
       </div>
     </div>
   );
 };
 
-export default ZonaEntrega;
+export default AlmacenLocation;

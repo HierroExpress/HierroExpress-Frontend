@@ -6,7 +6,6 @@ import { Navbar } from './components/NavBar/navBar';
 import { AuthProvider } from './contexts/AuthContext';
 import { CacheProvider } from './contexts/CacheContext';
 import ToastProvider from './contexts/ToastProvider';
-import { SocketProvider } from './contexts/socketContext';
 import ReactQueryProvider from './contexts/ReactQueryProvider';
 // import ChatBot from '@/components/ui/chatbot';
 
@@ -27,22 +26,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className="flex flex-col w-full justify-center items-center"
-    >
-      <body
-        className={`${mochily.className} ${poppins.className} flex justify-center max-w-7xl flex-col w-full max-lg:p-0  `}
-      >
+<html
+  lang="en"
+  className="h-full w-full"
+>
+  <body
+    className={`${mochily.className} ${poppins.className} flex flex-col min-h-full w-full bg-white`}
+  >
         <AuthProvider>
           <CacheProvider>
-            <SocketProvider>
               <Navbar />
               <ReactQueryProvider>
                 <ToastProvider>{children}</ToastProvider>
               </ReactQueryProvider>
               <Footer />
-            </SocketProvider>
           </CacheProvider>
         </AuthProvider>
         {/* <ChatBot /> */}

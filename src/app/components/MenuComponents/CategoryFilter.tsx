@@ -99,12 +99,12 @@ export const CategoryFilter = () => {
   return (
     <div className="w-full p-3 sm:p-6 md:p-8">
       <div className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-8">
-        {renderCategoryBlock('MATERIALES', grouped.materiales)}
+        {renderCategoryBlock('BARRAS Y PERFILES', grouped.materiales)}
         {renderCategoryBlock('CHAPAS Y MALLAS', grouped.chapasYMallas)}
       </div>
       
       <div className="mt-4 sm:mt-6 md:mt-8">
-        {renderCategoryBlock('COSAS CHICAS', grouped.cosasChicas, true)}
+        {renderCategoryBlock('INSUMOS Y ACCESORIOS', grouped.cosasChicas, true)}
       </div>
     </div>
   );
