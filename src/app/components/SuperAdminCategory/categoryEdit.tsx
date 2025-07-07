@@ -10,8 +10,6 @@ import { useAuth } from '@/app/contexts/AuthContext';
 import { toast } from 'react-toastify';
 import  {useRouter} from 'next/navigation';
 
-
-
 interface CategoryEditProps {
   categoryId: string;
 }
@@ -25,7 +23,6 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({categoryId}) => {
   const router = useRouter();
   const {accessToken} = useAuth();
 
-
   useEffect(() => {
     if(!accessToken) {
       console.error('No se encontró el token de autenticación.');
@@ -35,7 +32,7 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({categoryId}) => {
       try{
           setLoading(true)
           const categoryData = await getCategoryById(categoryId, accessToken);
-          console.log('Datos del producto cargado:', categoryData);
+          console.log('Datos de la categoría cargada:', categoryData);
           setCategory(categoryData);
       }catch (error) {
         console.error('Error al obtener la categoría', error);
@@ -48,14 +45,25 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({categoryId}) => {
     fetchCategory();
   }, [categoryId, accessToken]);
 
-  const handleUpdate= (data: Category) => {
-      setUpdateData(data);
-      setModalOpen(true);
+  // CAMBIO PRINCIPAL: Ahora recibe tanto data como iconUrl
+  const handleUpdate = (data: Category, iconUrl?: string) => {
+    console.log('Data recibida:', data);
+    console.log('Icon URL recibida:', iconUrl);
+    
+    // Crear el objeto de actualización con la URL del icono
+    const updatedData = {
+      ...data,
+      icon: iconUrl || data.icon || category?.icon // Usar la nueva URL, la del data, o la original
+    };
+    
+    console.log('Datos finales para actualizar:', updatedData);
+    setUpdateData(updatedData);
+    setModalOpen(true);
   };
 
   const confirmUpdate = async () => {
     if(!accessToken || !updateData) {
-      console.error('No se encontró el token de autenticación o los datos de actualizacion.');
+      console.error('No se encontró el token de autenticación o los datos de actualización.');
       return;
     }
 
@@ -65,6 +73,9 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({categoryId}) => {
         name: updateData.name,
         icon: updateData.icon,
       };
+      
+      console.log('Payload enviado al backend:', updatePayload);
+      
       await updateCategory(categoryId, updatePayload, accessToken);
       setError(null);
       setModalOpen(false);
@@ -117,7 +128,11 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({categoryId}) => {
       <>
       <div className="flex items-center">
       </div>
-      <CategoryForm defaultValues={{...category, icon: category.icon}} onSubmit={handleUpdate} isEditMode/>
+      <CategoryForm 
+        defaultValues={{...category, icon: category.icon}} 
+        onSubmit={handleUpdate} 
+        isEditMode={true}
+      />
       <ConfirmModal
        isOpen={modalOpen}
        onConfirm={confirmUpdate}

@@ -7,7 +7,7 @@ import CouponInput from './CuponInput';
 import { useAuth } from '@/app/contexts/AuthContext';
 import Link from 'next/link';
 
-const SHIPPING_COST = 5.5;
+const STORE_ADDRESS = "Setembrino Pereda 3233, 11600 Montevideo, Departamento de Montevideo, Uruguay";
 
 interface ProductsInOrder {
   productId: number;
@@ -27,6 +27,13 @@ interface Order {
   formBuy: 'efectivo' | 'tarjeta';
 }
 
+interface ShippingInfo {
+  cost: number;
+  distance: number;
+  canDeliver: boolean;
+  message?: string;
+}
+
 const Checkout: React.FC = () => {
   const [order, setOrder] = useState<Order | null>(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -36,9 +43,269 @@ const Checkout: React.FC = () => {
   const [modalType, setModalType] = useState<'success' | 'error'>('success');
   const router = useRouter();
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
+  const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
+    cost: 0,
+    distance: 0,
+    canDeliver: false
+  });
+  const [isLoadingShipping, setIsLoadingShipping] = useState(false);
   const { accessToken, address } = useAuth();
   const token = accessToken;
   const calle = address?.address;
+
+  // Función para calcular el costo de envío según la lógica especificada
+  const calculateShippingCost = (distance: number, orderTotal: number): ShippingInfo => {
+    // Verificar si la distancia está dentro del rango de entrega (hasta 13 km)
+
+    // DISTANCIA 1 - Hasta 2 km
+    if (distance <= 2) {
+      // Compra mínima: $1.000
+      if (orderTotal < 1000) {
+        return {
+          cost: 0,
+          distance,
+          canDeliver: false,
+          message: "Compra mínima de $1.000 para envíos hasta 2 km"
+        };
+      }
+      
+      // Envío gratis si supera $4.000
+      if (orderTotal >= 4000) {
+        return {
+          cost: 0,
+          distance,
+          canDeliver: true,
+          message: "Envío gratis"
+        };
+      }
+      
+      // Costo fijo de $500 si no supera $4.000
+      return {
+        cost: 500,
+        distance,
+        canDeliver: true
+      };
+    }
+
+    // DISTANCIA 2 - Más de 2 km hasta 9 km
+    if (distance > 2 && distance <= 9) {
+      // Compra mínima: $2.000
+      if (orderTotal < 2000) {
+        return {
+          cost: 0,
+          distance,
+          canDeliver: false,
+          message: "Compra mínima de $2.000 para envíos entre 2-9 km"
+        };
+      }
+      
+      // Envío gratis si supera $6.000
+      if (orderTotal >= 6000) {
+        return {
+          cost: 0,
+          distance,
+          canDeliver: true,
+          message: "Envío gratis"
+        };
+      }
+      
+      // Cálculo según tramos y montos
+      if (orderTotal >= 1000 && orderTotal < 2500) {
+        return {
+          cost: distance <= 5 ? 600 : 800,
+          distance,
+          canDeliver: true
+        };
+      }
+      
+      if (orderTotal >= 2500 && orderTotal < 3500) {
+        return {
+          cost: distance <= 5 ? 600 : 700,
+          distance,
+          canDeliver: true
+        };
+      }
+      
+      if (orderTotal >= 3500 && orderTotal < 4500) {
+        return {
+          cost: 600,
+          distance,
+          canDeliver: true
+        };
+      }
+      
+      if (orderTotal >= 4500 && orderTotal < 6000) {
+        return {
+          cost: 500,
+          distance,
+          canDeliver: true
+        };
+      }
+    }
+
+    // DISTANCIA 3 - Más de 9 km hasta 13 km
+    if (distance > 9 && distance <= 13) {
+      // Compra mínima: $2.000
+      if (orderTotal < 2000) {
+        return {
+          cost: 0,
+          distance,
+          canDeliver: false,
+          message: "Compra mínima de $2.000 para envíos entre 9-13 km"
+        };
+      }
+      
+      // Envío gratis si supera $8.000
+      if (orderTotal >= 8000) {
+        return {
+          cost: 0,
+          distance,
+          canDeliver: true,
+          message: "Envío gratis"
+        };
+      }
+      
+      // Cálculo según montos
+      if (orderTotal >= 2000 && orderTotal < 4000) {
+        return { cost: 800, distance, canDeliver: true };
+      }
+      if (orderTotal >= 4000 && orderTotal < 5000) {
+        return { cost: 700, distance, canDeliver: true };
+      }
+      if (orderTotal >= 5000 && orderTotal < 6000) {
+        return { cost: 600, distance, canDeliver: true };
+      }
+      if (orderTotal >= 6000 && orderTotal < 8000) {
+        return { cost: 500, distance, canDeliver: true };
+      }
+    }
+
+    // Caso por defecto (no debería llegar aquí)
+    // DISTANCIA 4 - Más de 13 km
+if (distance > 13) {
+  // Compra mínima: $10.000
+  if (orderTotal < 10000) {
+    return {
+      cost: 0,
+      distance,
+      canDeliver: false,
+      message: "Compra mínima de $10.000 para envíos a más de 13 km"
+    };
+  }
+
+  // Calcular costo base: km * $58
+  let cost = Math.ceil(distance * 58);
+
+  // Aplicar redondeo según monto:
+  if (cost <= 1500) {
+    cost = Math.ceil(cost / 50) * 50;
+  } else {
+    cost = Math.ceil(cost / 100) * 100;
+  }
+
+  // Verificar zonas especiales de peaje
+  const lowerCaseAddress = calle?.toLowerCase() || '';
+
+  if (lowerCaseAddress.includes('jaureguiberry') || lowerCaseAddress.includes('peaje de pando') || lowerCaseAddress.includes('costa de oro')) {
+    // Costa de Oro: agregar $500 por peaje
+    cost += 500;
+  }
+
+  // Ciudad de la Costa no suma peaje
+  // Pero si necesitas identificarla, puedes hacerlo así:
+  // if (lowerCaseAddress.includes('solymar') || lowerCaseAddress.includes('el pinar') || lowerCaseAddress.includes('ciudad de la costa')) {
+  //   // No agregar peaje
+  // }
+
+  return {
+    cost,
+    distance,
+    canDeliver: true,
+    message: "Entrega con flete particular a coordinar"
+  };
+}
+    return {
+      cost: 0,
+      distance,
+      canDeliver: false,
+      message: "Error al calcular el envío"
+    };
+  };
+
+  // Función para obtener la distancia usando el endpoint del backend
+  const calculateDistance = async (destinationAddress: string): Promise<number> => {
+    try {
+      // Llamar al endpoint del backend
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/google-maps/calculate-distance`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          destinationAddress: destinationAddress
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al calcular la distancia');
+      }
+      
+      const data = await response.json();
+      const distanceKm = data.distanceInKm > 1000 ? data.distanceInKm / 1000 : data.distanceInKm;
+
+      return distanceKm; // Ya viene en kilómetros
+      
+    } catch (error) {
+      console.error('Error calculando distancia:', error);
+      
+      // Fallback: usar coordenadas aproximadas para Montevideo
+      // Esto es un cálculo muy básico solo como backup
+      const storeCoords = { lat: -34.9011, lng: -56.1645 };
+      
+      // Estimar distancia basada en zona de Montevideo
+      // Esto es solo un estimado muy básico
+      if (destinationAddress.toLowerCase().includes('centro') || 
+          destinationAddress.toLowerCase().includes('ciudad vieja')) {
+        return 3; // Aproximadamente 3 km al centro
+      } else if (destinationAddress.toLowerCase().includes('pocitos') || 
+                 destinationAddress.toLowerCase().includes('punta carretas')) {
+        return 6; // Aproximadamente 6 km a la costa
+      } else if (destinationAddress.toLowerCase().includes('malvin') || 
+                 destinationAddress.toLowerCase().includes('buceo')) {
+        return 8; // Aproximadamente 8 km al este
+      } else {
+        return 5; // Distancia promedio por defecto
+      }
+    }
+  };
+
+  // Calcular costo de envío cuando cambie la orden o la dirección
+  useEffect(() => {
+    const calculateShipping = async () => {
+      if (!order || !calle) return;
+      
+      setIsLoadingShipping(true);
+      
+      try {
+        const distance = await calculateDistance(calle);
+        const shipping = calculateShippingCost(distance, order.total);
+        setShippingInfo(shipping);
+      } catch (error) {
+        console.error('Error calculating shipping:', error);
+        setShippingInfo({
+          cost: 0,
+          distance: 0,
+          canDeliver: false,
+          message: "Error al calcular el envío"
+        });
+      } finally {
+        setIsLoadingShipping(false);
+      }
+    };
+
+    calculateShipping();
+  }, [order, calle]);
 
   useEffect(() => {
     const storedOrder = localStorage.getItem('order');
@@ -58,8 +325,6 @@ const Checkout: React.FC = () => {
           couponId: couponCode,
           total: parsedOrder.total - discountAmount,
         });
-
-      
 
         setCouponDiscount(discountPercentage);
       } else {
@@ -117,6 +382,14 @@ const Checkout: React.FC = () => {
         throw new Error('Error al enviar la orden.');
       }
 
+      // Verificar si se puede realizar el envío
+      if (!shippingInfo.canDeliver) {
+        setModalType('error');
+        setModalMessage(shippingInfo.message || 'No se puede realizar el envío a esta dirección.');
+        setIsModalOpen(true);
+        return;
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/orders`,
         {
@@ -125,10 +398,16 @@ const Checkout: React.FC = () => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(order),
+          body: JSON.stringify({
+            ...order,
+            shippingCost: shippingInfo.cost,
+            distance: shippingInfo.distance
+          }),
         },
       );
+      
       console.log('esta es la order:', order);
+      
       if (!response.ok) {
         throw new Error('Error al enviar la orden.');
       }
@@ -186,7 +465,6 @@ const Checkout: React.FC = () => {
           couponCode,
         };
 
-        // Guardar en localStorage
         localStorage.setItem('couponDiscount', JSON.stringify(discountData));
 
         setCouponDiscount(discountPercentage);
@@ -215,6 +493,13 @@ const Checkout: React.FC = () => {
   };
 
   const generateLinkMercadoPago = async () => {
+    if (!shippingInfo.canDeliver) {
+      setModalType('error');
+      setModalMessage(shippingInfo.message || 'No se puede realizar el envío a esta dirección.');
+      setIsModalOpen(true);
+      return;
+    }
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/createPayment/mercadopago`, {
       method: 'POST',
       headers: {
@@ -223,7 +508,7 @@ const Checkout: React.FC = () => {
       },
       credentials: 'include',
       body: JSON.stringify({
-        amount: order.total,
+        amount: order.total + shippingInfo.cost,
         userId: order.userId,
         items: order.productsInOrder.map((item) => {
           return {
@@ -234,11 +519,15 @@ const Checkout: React.FC = () => {
           }
         })
       })
-    })
+    });
+    
     const data = await response.json();
     console.log(data);
     window.location.href = data.init_point;
-  }
+  };
+
+  const finalTotal = order.total + shippingInfo.cost;
+
   return (
     <div className="max-w-full mx-auto bg-white p-6">
       <h2 className="text-lg font-semibold mb-4">Resumen del pedido</h2>
@@ -249,30 +538,55 @@ const Checkout: React.FC = () => {
             <span>${(item.price * item.quantity).toFixed(2)}</span>
           </div>
         ))}
+        
         <div className="flex justify-between">
           <span>Costos de entrega:</span>
-          <span>$5.5</span>
+          <span>
+            {isLoadingShipping ? (
+              "Calculando..."
+            ) : !shippingInfo.canDeliver ? (
+              <span className="text-red-500">No disponible</span>
+            ) : shippingInfo.cost === 0 ? (
+              <span className="text-green-500">Gratis</span>
+            ) : (
+              `$${shippingInfo.cost.toFixed(2)}`
+            )}
+          </span>
         </div>
+        
+        {shippingInfo.distance > 0 && (
+          <div className="text-sm text-gray-500">
+            Distancia: {shippingInfo.distance.toFixed(1)} km
+          </div>
+        )}
+        
+        {shippingInfo.message && (
+          <div className={`text-sm mt-1 ${shippingInfo.canDeliver ? 'text-green-600' : 'text-red-600'}`}>
+            {shippingInfo.message}
+          </div>
+        )}
+        
         <CouponInput onApplyCoupon={handleApplyCoupon} />
+        
         {couponDiscount > 0 && (
           <div className="flex justify-between text-green-600">
             <span>Descuento del cupón:</span>
             <span>-{couponDiscount.toFixed(2)}%</span>
           </div>
         )}
+        
         <div className="flex justify-between border-t border-gray-300 pt-2 mt-2">
           <span className="font-bold">Total:</span>
           <span className="font-bold">
-            ${(order.total + SHIPPING_COST).toFixed(2)}
+            ${finalTotal.toFixed(2)}
           </span>
         </div>
+        
         <div className="text-sm text-gray-500 mt-1">
           <div className="flex flex-col">
             <div className="flex justify-between items-center">
               <span>Dirección:</span>
               <div className="flex justify-end mt-1">
-                {' '}
-                {/* Ajusta el margen superior según necesites */}
                 <Link href={'/address?from=checkout'} className="text-blue-500">
                   Cambiar dirección
                 </Link>
@@ -307,6 +621,7 @@ const Checkout: React.FC = () => {
           )}
         </div>
       </div>
+      
       <div
         className={`flex items-center p-4 border rounded-lg cursor-pointer ${
           selectedPaymentMethod === 'tarjeta'
@@ -331,20 +646,31 @@ const Checkout: React.FC = () => {
       {selectedPaymentMethod === 'tarjeta' && (
         <button
           onClick={() => generateLinkMercadoPago()}
-          className="w-full bg-blue-600 text-white text-center py-3 rounded-lg hover:bg-blue-600 transition duration-300 mt-4"
+          disabled={!shippingInfo.canDeliver || isLoadingShipping}
+          className={`w-full text-white text-center py-3 rounded-lg transition duration-300 mt-4 ${
+            !shippingInfo.canDeliver || isLoadingShipping
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700'
+          }`}
         >
-          Pagar ahora
+          {isLoadingShipping ? 'Calculando envío...' : 'Pagar ahora'}
         </button>
       )}
 
       {selectedPaymentMethod === 'efectivo' && (
         <button
           onClick={() => handlePayment(true)}
-          className="w-full bg-blue-600 text-white text-center py-3 rounded-lg hover:bg-blue-600 transition duration-300 mt-4"
+          disabled={!shippingInfo.canDeliver || isLoadingShipping}
+          className={`w-full text-white text-center py-3 rounded-lg transition duration-300 mt-4 ${
+            !shippingInfo.canDeliver || isLoadingShipping
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700'
+          }`}
         >
-          Pagar ahora
+          {isLoadingShipping ? 'Calculando envío...' : 'Pagar ahora'}
         </button>
       )}
+      
       <CustomModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

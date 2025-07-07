@@ -199,7 +199,7 @@ export const Navbar: React.FC<SearchProps> = ({ onSelectProduct }) => {
             <div className="flex-shrink-0">
               <Link href="/" className="block">
                 <Image
-                  src="/HierroBanner.png"
+                  src="/banner.png"
                   alt="HierroExpress"
                   className="h-10 w-auto rounded-lg hover:scale-105 transition-transform duration-200"
                   width={150}

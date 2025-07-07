@@ -33,6 +33,9 @@ const CartPage: React.FC = () => {
     const updatedItems = items.map((item) => {
       if (item.id === id) {
         const newQuantity = item.quantity + increment;
+        if(item.stock == 0) {
+                  return { ...item, quantity: Math.max(1, newQuantity) };
+        }
         if (newQuantity > item.stock) {
           toast.warn('No hay suficiente stock disponible.', {
             position: 'top-center',
@@ -45,7 +48,6 @@ const CartPage: React.FC = () => {
           });
           return item;
         }
-        return { ...item, quantity: Math.max(1, newQuantity) };
       }
       return item;
     });
