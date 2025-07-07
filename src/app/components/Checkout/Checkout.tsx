@@ -7,7 +7,7 @@ import CouponInput from './CuponInput';
 import { useAuth } from '@/app/contexts/AuthContext';
 import Link from 'next/link';
 
-const STORE_ADDRESS = "Setembrino Pereda 3233, 11600 Montevideo, Departamento de Montevideo, Uruguay";
+//const STORE_ADDRESS = "Setembrino Pereda 3233, 11600 Montevideo, Departamento de Montevideo, Uruguay";
 
 interface ProductsInOrder {
   productId: number;
