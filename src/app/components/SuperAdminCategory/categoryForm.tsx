@@ -28,7 +28,6 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
   } = useForm({
     resolver: zodResolver(CategoryData),
     defaultValues,

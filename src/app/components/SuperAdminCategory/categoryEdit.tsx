@@ -18,7 +18,7 @@ const CategoryEdit: React.FC<CategoryEditProps> = ({categoryId}) => {
   const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [updateData, setUpdateData] = useState<Category | null>(null);
+  const [updateData, setUpdateData] = useState<any | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const {accessToken} = useAuth();

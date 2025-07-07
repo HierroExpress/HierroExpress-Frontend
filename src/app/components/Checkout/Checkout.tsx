@@ -261,7 +261,7 @@ if (distance > 13) {
       
       // Fallback: usar coordenadas aproximadas para Montevideo
       // Esto es un cálculo muy básico solo como backup
-      const storeCoords = { lat: -34.9011, lng: -56.1645 };
+    //  const storeCoords = { lat: -34.9011, lng: -56.1645 };
       
       // Estimar distancia basada en zona de Montevideo
       // Esto es solo un estimado muy básico
