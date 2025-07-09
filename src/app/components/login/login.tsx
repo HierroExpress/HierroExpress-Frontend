@@ -2,7 +2,6 @@
 import { useForm } from 'react-hook-form';
 import { Button } from '@/app/components/ui/button';
 import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
 import {
   Form,
   FormControl,
@@ -155,17 +154,6 @@ export function LoginForm() {
       >
         <FcGoogle className="text-xl" />
         Ingresar con Google
-      </Button>
-
-      <Button
-        onClick={() => ''}
-        type="submit"
-        variant="submit"
-        size="submit"
-        className="w-[320px] bg-[#1877F2] h-[40px] text-white mb-[15px] flex items-center justify-center gap-2 hover:bg-[#1864F2]"
-      >
-        <FaFacebook className="text-xl" />
-        Ingresar con Facebook
       </Button>
     </Form>
   );

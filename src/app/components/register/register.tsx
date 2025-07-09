@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { showToast } from '@/lib/utils';
+import { FcGoogle } from 'react-icons/fc';
 
 const formSchema = z
   .object({
@@ -208,7 +209,7 @@ export function RegisterForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="+577751488347" {...field} />
+                <Input placeholder="+598 XXXX XXXX." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -230,9 +231,10 @@ export function RegisterForm() {
         type="submit"
         variant="submit"
         size="submit"
-        className="w-[320px] bg-white h-[40px] text-black mb-[15px]"
+        className="w-[320px] bg-white h-[40px] text-black mb-[15px] flex items-center justify-center gap-2 hover:bg-gray-50"
       >
-        Registrarme con google
+        <FcGoogle className="text-xl" />
+        Ingresar con Google
       </Button>
     </Form>
   );

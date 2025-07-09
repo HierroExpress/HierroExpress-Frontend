@@ -47,8 +47,8 @@ export const CategoryFilter = () => {
                 alt={category.name}
                 width={48}
                 height={48}
-                    className="transition-all duration-300 group-hover:opacity-90 mix-blend-multiply p-0.5"
-                  />
+                className="transition-all duration-300 group-hover:opacity-90 mix-blend-multiply p-0.5"
+              />
             </div>
             <span className="text-[10px] sm:text-xs md:text-sm text-center text-gray-700 mt-1 break-words max-w-[80px]">
               {category.name}
@@ -60,7 +60,7 @@ export const CategoryFilter = () => {
   );
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-blue-900 via-[#023047] to-blue-800 flex flex-col items-center justify-start py-6 px-4 sm:px-6 md:px-8">
+    <div className="w-full flex flex-col items-center justify-start py-6 px-4 sm:px-6 md:px-8">
       <div className="w-full max-w-7xl bg-white rounded-2xl shadow-2xl border border-blue-100 overflow-hidden flex flex-col">
         <div className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 py-4 sm:py-6">
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center text-gray-800">CATEGORÍAS DE PRODUCTOS</h1>

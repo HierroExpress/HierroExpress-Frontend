@@ -26,13 +26,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-<html
-  lang="en"
-  className="h-full w-full"
->
-  <body
-    className={`${mochily.className} ${poppins.className} flex flex-col min-h-full w-full bg-white`}
-  >
+    <html
+      lang="en"
+      className="h-full w-full"
+    >
+      <body
+        className={`${mochily.className} ${poppins.className} flex flex-col min-h-full w-full bg-gradient-to-br from-blue-900 via-[#023047] to-blue-800`}
+      >
         <AuthProvider>
           <CacheProvider>
               <Navbar />

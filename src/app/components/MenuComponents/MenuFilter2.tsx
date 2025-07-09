@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Category } from '@/types';
-import { inchToMmMap } from '@/lib/unitConversion'; // importa tu mapping
+import { inchToMmMap } from '@/lib/unitConversion';
 
 interface MenuFiltersProps {
   handleSelectCategory: (categoryId: number, isSubcategory?: boolean) => void;
@@ -29,74 +29,156 @@ const MenuFilters2: React.FC<MenuFiltersProps> = ({
   handleToggleAttribute,
 }) => {
   const [showInInches, setShowInInches] = useState(false);
+  const subcategoriesRef = useRef<HTMLDivElement>(null);
+  const attributesRef = useRef<HTMLDivElement>(null);
 
   const convertMmToInches = (mmValue: string): string | null => {
     const match = inchToMmMap.find((entry) => entry.mm === mmValue);
     return match ? match.in : null;
   };
 
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+    // Solo hacer scroll en móvil
+    if (window.innerWidth < 1024 && ref.current) {
+      setTimeout(() => {
+        ref.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+      }, 100);
+    }
+  };
+
+  const handleCategoryClick = (categoryId: number, isSubcategory: boolean) => {
+    handleSelectCategory(categoryId, isSubcategory);
+    
+    if (!isSubcategory) {
+      // Si seleccionó una categoría principal, scroll a subcategorías
+      scrollToSection(subcategoriesRef);
+    } else {
+      // Si seleccionó una subcategoría, scroll a atributos
+      scrollToSection(attributesRef);
+    }
+  };
+
   return (
-    <div className="border sm:p-0 md:p-4 rounded-lg shadow-md mb-4">
-      <h2 className="text-lg font-bold mb-2 text-center">Filtros</h2>
-      <div className="flex">
-        <div className="w-1/2 border-r p-4">
-          <h3 className="text-lg font-bold mb-2">Categorías</h3>
-          {categories
-            .filter((category) => category.parentCategory === null)
-            .map((category) => (
-              <div
-                key={category.id}
-                className={`flex items-center gap-2 border-b p-2 cursor-pointer ${selectedCategory === category.id ? 'bg-blue-100' : ''}`}
-                onClick={() => handleSelectCategory(category.id, false)}
-              >
-                <img
-                  src={category.icon}
-                  alt={category.name}
-                  className="h-6 w-6 object-contain"
-                />
-                {category.name}
-              </div>
-            ))}
+    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl shadow-lg mb-6 overflow-hidden">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-white/20 p-4">
+        <h2 className="text-xl font-bold text-white text-center">Filtros</h2>
+      </div>
+
+      <div className="flex flex-col lg:flex-row">
+        {/* Categorías */}
+        <div className="lg:w-1/3 border-r border-white/20 p-4">
+          <h3 className="text-lg font-semibold mb-4 text-white flex items-center">
+            <div className="w-1 h-6 bg-blue-400 rounded-full mr-3"></div>
+            Categorías
+          </h3>
+          <div className="space-y-2">
+            {categories
+              .filter((category) => category.parentCategory === null)
+              .map((category) => (
+                <div
+                  key={category.id}
+                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-white/10 ${
+                    selectedCategory === category.id 
+                      ? 'bg-blue-500/30 border border-blue-400/50 shadow-md' 
+                      : 'bg-white/5 hover:bg-white/10'
+                  }`}
+                  onClick={() => handleCategoryClick(category.id, false)}
+                >
+                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                    <img
+                      src={category.icon}
+                      alt={category.name}
+                      className="h-5 w-5 object-contain"
+                    />
+                  </div>
+                  <span className="text-white font-medium">{category.name}</span>
+                </div>
+              ))}
+          </div>
         </div>
 
-        <div className="w-1/2 p-4">
-          <h3 className="text-lg font-bold mb-2">Subcategorías</h3>
-          {subCategories.map((subcategory) => (
-            <div
-              key={subcategory.id}
-              className={`flex items-center gap-2 p-2 border-b cursor-pointer ${selectedSubcategory === subcategory.id ? 'bg-blue-100' : ''}`}
-              onClick={() => handleSelectCategory(subcategory.id, true)}
-            >
-              <img
-                src={subcategory.icon}
-                alt={subcategory.name}
-                className="h-6 w-6 object-contain"
-              />
-              {subcategory.name}
-            </div>
-          ))}
+        {/* Subcategorías */}
+        <div ref={subcategoriesRef} className="lg:w-1/3 border-r border-white/20 p-4">
+          <h3 className="text-lg font-semibold mb-4 text-white flex items-center">
+            <div className="w-1 h-6 bg-purple-400 rounded-full mr-3"></div>
+            Subcategorías
+          </h3>
+          <div className="space-y-2">
+            {subCategories.map((subcategory) => (
+              <div
+                key={subcategory.id}
+                className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-white/10 ${
+                  selectedSubcategory === subcategory.id 
+                    ? 'bg-purple-500/30 border border-purple-400/50 shadow-md' 
+                    : 'bg-white/5 hover:bg-white/10'
+                }`}
+                onClick={() => handleCategoryClick(subcategory.id, true)}
+              >
+                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                  <img
+                    src={subcategory.icon}
+                    alt={subcategory.name}
+                    className="h-5 w-5 object-contain"
+                  />
+                </div>
+                <span className="text-white font-medium">{subcategory.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-          <div className="mt-4">
-            <h3 className="text-lg font-bold mb-2 flex justify-between items-center">
+        {/* Atributos */}
+        <div ref={attributesRef} className="lg:w-1/3 p-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-white flex items-center">
+              <div className="w-1 h-6 bg-orange-400 rounded-full mr-3"></div>
               Atributos
-              <label className="text-sm font-normal">
-                <input
-                  type="checkbox"
-                  checked={showInInches}
-                  onChange={() => setShowInInches(!showInInches)}
-                  className="mr-1"
-                />
-                Mostrar en pulgadas
-              </label>
             </h3>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-white/80">mm</span>
+              <button
+                onClick={() => setShowInInches(!showInInches)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  showInInches ? 'bg-blue-600' : 'bg-white/20'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    showInInches ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+              <span className="text-sm text-white/80">in</span>
+            </div>
+          </div>
 
+          <div className="space-y-4 max-h-96 overflow-y-auto">
             {attributes.map((attribute) => (
-              <div key={attribute.id} className="mb-4">
-                <h4 className="text-base font-semibold mb-1">
-                  {attribute.name} ({attribute.units})
+              <div key={attribute.id} className="bg-white/5 rounded-lg p-4">
+                <h4 className="text-base font-semibold mb-3 text-white">
+                  {attribute.name} 
+                  <span className="text-white/60 ml-1">({attribute.units})</span>
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {attribute.productAtributes.map((attrValue) => {
+                  {attribute.productAtributes
+                    .sort((a, b) => {
+                      // Verificar si ambos valores son números
+                      const aNum = parseFloat(a.value);
+                      const bNum = parseFloat(b.value);
+                      
+                      if (!isNaN(aNum) && !isNaN(bNum)) {
+                        return bNum - aNum; // Orden descendente (mayor a menor)
+                      }
+                      
+                      // Si no son números, ordenar alfabéticamente
+                      return a.value.localeCompare(b.value);
+                    })
+                    .map((attrValue) => {
                     const displayValue =
                       showInInches && attribute.units.toLowerCase() === 'mm'
                         ? convertMmToInches(attrValue.value) || attrValue.value
@@ -111,8 +193,10 @@ const MenuFilters2: React.FC<MenuFiltersProps> = ({
                     return (
                       <button
                         key={attrValue.value}
-                        className={`border-2 py-1 px-3 rounded hover:bg-primary-600 ${
-                          isSelected ? 'bg-orange-400' : 'bg-orange-50'
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          isSelected 
+                            ? 'bg-orange-500 text-white shadow-lg transform scale-105' 
+                            : 'bg-white/10 text-white hover:bg-white/20 hover:scale-105'
                         }`}
                         onClick={() =>
                           handleToggleAttribute(attribute.id, attrValue.value)

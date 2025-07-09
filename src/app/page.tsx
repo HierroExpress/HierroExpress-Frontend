@@ -36,7 +36,7 @@ export default function Home() {
       <link rel="icon" href="/HierroLogo.png" />
       <link rel="manifest" href="/manifest.json" />
       
-      {/* Contenedor principal sin restricciones de ancho */}
+      {/* Contenedor principal - ahora sin fondo porque lo hereda del layout */}
       <div className="min-h-screen w-full">
         <main className="w-full px-4 py-4 lg:px-8 xl:px-12 2xl:px-16">
           <CategoryFilter />
@@ -70,16 +70,15 @@ export default function Home() {
           </div>
           
           {/* Botón de scroll to top */}
-{showScrollTopButton && (
-  <button
-    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-    className="fixed bottom-8 right-8 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50"
-  >
-    <IoIosArrowUp className="text-2xl" />
-  </button>
-)}
+          {showScrollTopButton && (
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="fixed bottom-8 right-8 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50"
+            >
+              <IoIosArrowUp className="text-2xl" />
+            </button>
+          )}
 
-          
           {/* WhatsApp Button fijo */}
           <a
             href="https://wa.me/+59898151680?text=Hola%20Hierro%20express,%20quiero%20más%20información%20de%20sus%20productos"
@@ -94,9 +93,8 @@ export default function Home() {
           <button
             className="fixed bottom-20 left-8 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50"
           >
-            <Link
-            href="/menu2">
-            <FiFilter className="text-2xl" />
+            <Link href="/menu2">
+              <FiFilter className="text-2xl" />
             </Link>
           </button>
         </main>
