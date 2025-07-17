@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import {
   GoogleMap,
   LoadScript,
@@ -7,7 +7,7 @@ import {
   Autocomplete,
 } from '@react-google-maps/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 interface Location {
@@ -15,7 +15,7 @@ interface Location {
   lng: number;
 }
 
-const LocationConfirmation = () => {
+const LocationConfirmationContent = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [addressInput, setAddressInput] = useState('');
   const [note, setNote] = useState('');
@@ -24,6 +24,7 @@ const LocationConfirmation = () => {
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const { user, setAddress, accessToken } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const token = accessToken;
 
   useEffect(() => {
@@ -102,8 +103,15 @@ const LocationConfirmation = () => {
           console.log('Nueva dirección seteada:', newAddressFromServer);
 
           toast.success('Ubicación confirmada y dirección guardada.');
+          
+          // Check if coming from checkout
+          const fromCheckout = searchParams.get('from') === 'checkout';
           const fromCart = localStorage.getItem('fromCart');
-          if (fromCart) {
+          
+          if (fromCheckout) {
+            // If coming from checkout, return to checkout
+            router.push('/checkout');
+          } else if (fromCart) {
             localStorage.removeItem('fromCart');
             router.push('/cart');
           } else {
@@ -237,5 +245,17 @@ const LocationConfirmation = () => {
     </div>
   );
 };
+
+const LocationConfirmation = () => (
+  <Suspense fallback={
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="text-center">
+        <p className="text-gray-700">Cargando...</p>
+      </div>
+    </div>
+  }>
+    <LocationConfirmationContent />
+  </Suspense>
+);
 
 export default LocationConfirmation;
