@@ -50,6 +50,10 @@ const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
     setQuantity(Math.max(quantity - 1, 1));
   };
 
+  const handleQuantityChange = (value: number) => {
+    setQuantity(value);
+  };
+
   const addToCart = () => {
     if (quantity === 0) {
       toast.warn('La cantidad debe ser mayor a 0 para agregar al carrito.', {
@@ -136,6 +140,7 @@ const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
             onIncrease={handleIncrease}
             onDecrease={handleDecrease}
             addToCart={addToCart}
+            onQuantityChange={handleQuantityChange}
           />
         </div>
       </div>

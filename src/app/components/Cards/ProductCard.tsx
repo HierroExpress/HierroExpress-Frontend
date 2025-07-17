@@ -91,6 +91,46 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     setQuantity(quantity > 1 ? quantity - 1 : 0);
   };
 
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    // Allow empty input for better UX while typing
+    if (value === '') {
+      setQuantity(0);
+      return;
+    }
+    
+    const numValue = parseInt(value);
+    
+    // Only allow positive integers
+    if (!isNaN(numValue) && numValue >= 0) {
+      setQuantity(numValue);
+      
+      // Update localStorage
+      const storedCart = localStorage.getItem('cartItems');
+      let cartItems = storedCart ? JSON.parse(storedCart) : [];
+      
+      const existingItem = cartItems.find((item: any) => item.id === product.id);
+      
+      if (numValue === 0) {
+        // Remove item if quantity is 0
+        cartItems = cartItems.filter((item: any) => item.id !== product.id);
+      } else if (existingItem) {
+        // Update existing item quantity
+        cartItems = cartItems.map((item: any) =>
+          item.id === product.id
+            ? { ...item, quantity: numValue }
+            : item,
+        );
+      } else if (numValue > 0) {
+        // Add new item if quantity > 0
+        cartItems.push({ ...product, quantity: numValue });
+      }
+      
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
+  };
+
   return (
     <Link href={`/product/${product.id}`} passHref>
       <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 relative md:h-96 flex flex-col gap-4 ">
@@ -120,7 +160,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               >
                 <FaMinus />
               </button>
-              <span>{quantity}</span>
+              <input
+                type="number"
+                value={quantity}
+                onChange={handleQuantityChange}
+                onClick={(e) => e.preventDefault()}
+                className="w-12 h-8 text-center border-2 border-blue-300 rounded-md focus:border-blue-500 focus:outline-none bg-blue-50 font-semibold text-blue-800 hover:bg-blue-100 transition-colors cursor-pointer"
+                min="0"
+                placeholder="0"
+                title="Click to edit quantity"
+              />
               <button
                 className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 focus:outline-none"
                 onClick={(e) => {
