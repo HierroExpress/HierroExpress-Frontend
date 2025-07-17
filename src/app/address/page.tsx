@@ -19,6 +19,8 @@ const ConfirmLocationPageContent = () => {
   const router = useRouter();
   const token = accessToken;
   const searchParams = useSearchParams();
+  const orderId = searchParams.get('orderId');
+  const isUpdatingOrder = !!orderId;
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -69,16 +71,33 @@ const ConfirmLocationPageContent = () => {
       );
       if (selectedAddress) {
         try {
-          await setAddress(selectedAddress);
-
-          const fromCheckout = searchParams.get('from') === 'checkout';
-
-          if (fromCheckout) {
-            // Si viene de checkout, volver a checkout
-            router.push('/checkout');
+          // Check if we're updating an order address
+          const orderId = searchParams.get('orderId');
+          
+          if (orderId) {
+            // Update order address
+            const { handleUpdateOrderAddress } = await import('../components/OrderComponents/handlersOrders');
+            const result = await handleUpdateOrderAddress(parseInt(orderId), selectedAddressId);
+            
+            if (result.success) {
+              toast.success('Dirección del pedido actualizada exitosamente');
+              router.push('/orders');
+            } else {
+              toast.error(result.error || 'Error al actualizar la dirección del pedido');
+            }
           } else {
-            // En cualquier otro caso, ir a la página principal
-            router.push('/');
+            // Normal address selection flow
+            await setAddress(selectedAddress);
+
+            const fromCheckout = searchParams.get('from') === 'checkout';
+
+            if (fromCheckout) {
+              // Si viene de checkout, volver a checkout
+              router.push('/checkout');
+            } else {
+              // En cualquier otro caso, ir a la página principal
+              router.push('/');
+            }
           }
         } catch (error) {
           console.error('Error al establecer la dirección:', error);
@@ -111,10 +130,13 @@ const ConfirmLocationPageContent = () => {
                   </div>
                 </div>
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                  Selecciona una dirección
+                  {isUpdatingOrder ? `Cambiar dirección del pedido #${orderId}` : 'Selecciona una dirección'}
                 </h2>
                 <p className="text-gray-600">
-                  Elige entre tus direcciones guardadas o agrega una nueva
+                  {isUpdatingOrder 
+                    ? 'Selecciona una nueva dirección de entrega para tu pedido'
+                    : 'Elige entre tus direcciones guardadas o agrega una nueva'
+                  }
                 </p>
                 <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
               </div>
@@ -159,7 +181,7 @@ const ConfirmLocationPageContent = () => {
                     className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
                   >
                     <HiCheck className="inline mr-2" />
-                    Confirmar ubicación
+                    {isUpdatingOrder ? 'Actualizar dirección del pedido' : 'Confirmar ubicación'}
                   </button>
                 )}
                 

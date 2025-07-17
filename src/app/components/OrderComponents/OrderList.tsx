@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OrderDetails from './OrderItem';
 import { Address, ProductsInOrder } from '@/types';
-import { handleCancelOrder } from './handlersOrders';
+import { handleCancelOrder, handleUpdateOrderAddress } from './handlersOrders';
+import { toast } from 'react-toastify';
 
 interface Order {
   id: number;
@@ -24,10 +25,33 @@ interface Order {
 
 interface OrderListProps {
   orders: Order[];
+  onOrderUpdate?: () => void; // Callback to refresh orders after update
 }
 
-const OrderList: React.FC<OrderListProps> = ({ orders }) => {
+const OrderList: React.FC<OrderListProps> = ({ orders, onOrderUpdate }) => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleCancelOrderWithFeedback = async (orderId: number) => {
+    setIsLoading(true);
+    try {
+      const result = await handleCancelOrder(orderId);
+      
+      if (result.success) {
+        toast.success('Pedido cancelado exitosamente');
+        // Refresh orders if callback provided
+        if (onOrderUpdate) {
+          onOrderUpdate();
+        }
+      } else {
+        toast.error(result.error || 'Error al cancelar el pedido');
+      }
+    } catch (error) {
+      toast.error('Error inesperado al cancelar el pedido');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleChangeAddress = (orderId: number) => {
     router.push(`/confirm-location?orderId=${orderId}`);
@@ -52,8 +76,9 @@ const OrderList: React.FC<OrderListProps> = ({ orders }) => {
           <OrderDetails
             key={order.id}
             order={order}
-            onCancelOrder={handleCancelOrder}
+            onCancelOrder={handleCancelOrderWithFeedback}
             onChangeAddress={handleChangeAddress}
+            isLoading={isLoading}
           />
         ))
       )}
