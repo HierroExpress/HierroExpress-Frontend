@@ -19,7 +19,8 @@ interface Order {
     | 'Confirmada'
     | 'En camino'
     | 'Entregada'
-    | 'En preparación';
+    | 'En preparación'
+    | 'Cancelada';
   date: string;
 }
 
@@ -30,6 +31,18 @@ const UserOrders: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const ordersData = await getOrders(userId);
+      setOrders(ordersData);
+    } catch (error: any) {
+      setError(error.message || 'No se pudieron cargar los pedidos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (authLoading) return;
 
@@ -38,18 +51,6 @@ const UserOrders: React.FC = () => {
       setLoading(false);
       return;
     }
-
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        const ordersData = await getOrders(userId);
-        setOrders(ordersData);
-      } catch (error: any) {
-        setError(error.message || 'No se pudieron cargar los pedidos');
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchOrders();
   }, [userId, authLoading]);
@@ -77,7 +78,7 @@ const UserOrders: React.FC = () => {
           </Link>
         </div>
       ) : (
-        <OrderList orders={orders} />
+        <OrderList orders={orders} onOrderUpdate={fetchOrders} />
       )}
     </div>
   );

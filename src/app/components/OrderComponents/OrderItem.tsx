@@ -8,6 +8,7 @@ interface OrderProps {
   order: Order;
   onCancelOrder?: (orderId: number) => void;
   onChangeAddress?: (orderId: number) => void;
+  isLoading?: boolean;
 }
 
 interface Order {
@@ -22,17 +23,18 @@ interface Order {
     | 'Confirmada'
     | 'En camino'
     | 'En preparación'
-    | 'Entregada';
+    | 'Entregada'
+    | 'Cancelada';
   date: string;
 }
 
-const OrderDetails: React.FC<OrderProps> = ({ order, onCancelOrder, onChangeAddress }) => {
+const OrderDetails: React.FC<OrderProps> = ({ order, onCancelOrder, onChangeAddress, isLoading }) => {
   const canCancelOrder = (status: string) => {
-    return status === 'Pendiente' || status === 'Confirmada';
+    return status !== 'Entregada' && status !== 'Cancelada';
   };
 
   const canChangeAddress = (status: string) => {
-    return status === 'Pendiente' || status === 'Confirmada';
+    return status !== 'Entregada' && status !== 'Cancelada';
   };
 
   const handleCancelOrder = () => {
@@ -58,6 +60,8 @@ const OrderDetails: React.FC<OrderProps> = ({ order, onCancelOrder, onChangeAddr
         return 'bg-purple-500';
       case 'Entregada':
         return 'bg-green-500';
+      case 'Cancelada':
+        return 'bg-red-500';
       default:
         return 'bg-gray-500';
     }
@@ -176,10 +180,11 @@ const OrderDetails: React.FC<OrderProps> = ({ order, onCancelOrder, onChangeAddr
             {canCancelOrder(order.status || 'Pendiente') && onCancelOrder && (
               <button
                 onClick={handleCancelOrder}
-                className="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-semibold"
+                disabled={isLoading}
+                className="flex items-center justify-center bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors duration-200 font-semibold"
               >
                 <HiX className="mr-2" />
-                Cancelar pedido
+                {isLoading ? 'Cancelando...' : 'Cancelar pedido'}
               </button>
             )}
             
