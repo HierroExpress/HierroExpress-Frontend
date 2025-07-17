@@ -10,6 +10,7 @@ import ProductCard from '@/app/components/Cards/ProductCard';
 import { Category, Product } from '@/types';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import MenuFilters2 from '@/app/components/MenuComponents/MenuFilter2';
+import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 
 interface MenuProps {
   categoryId?: number ; // Recibimos la categoría como prop
@@ -33,6 +34,9 @@ export default function Menu2({ categoryId }: MenuProps) {
     { attributeId: number; value: string }[]
   >([]);
 
+  // Filter persistence hook
+  const { saveFilterState, loadFilterState } = useFilterPersistence();
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -53,6 +57,68 @@ export default function Menu2({ categoryId }: MenuProps) {
     }
   }, [categoryId, categories]);
 
+  // Load persisted filter state when categories are available
+  useEffect(() => {
+    if (categories.length > 0 && !categoryId) {
+      const persistedState = loadFilterState();
+      if (persistedState) {
+        const { selectedCategory: persistedCategory, selectedSubcategory: persistedSubcategory, selectedAttributes: persistedAttributes } = persistedState;
+        
+        if (persistedCategory) {
+          setSelectedCategory(persistedCategory);
+          setSelectedAttributes(persistedAttributes);
+          
+          // Set subcategories from the selected category
+          const category = categories.find((c) => c.id === persistedCategory);
+          if (category?.subcategories) {
+            setSubcategories(category.subcategories);
+          }
+          
+          if (persistedSubcategory) {
+            setSelectedSubcategory(persistedSubcategory);
+          }
+          
+          // Load data for the persisted category/subcategory with attributes
+          const targetCategoryId = persistedSubcategory || persistedCategory;
+          handleSelectCategoryWithoutSaving(targetCategoryId, persistedAttributes);
+        }
+      }
+    }
+  }, [categories, categoryId, loadFilterState]);
+
+  // Helper function to save current filter state
+  const saveCurrentFilterState = (category?: number, subcategory?: number, attributes?: { attributeId: number; value: string }[]) => {
+    saveFilterState({
+      selectedCategory: category ?? selectedCategory,
+      selectedSubcategory: subcategory ?? selectedSubcategory,
+      selectedAttributes: attributes ?? selectedAttributes,
+    });
+  };
+
+  // Handle category selection without saving state (used for restoration)
+  const handleSelectCategoryWithoutSaving = async (
+    categoryId: number,
+    attributesToUse?: { attributeId: number; value: string }[]
+  ) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const attributesResponse = await getAtrtributesByCategory({ categoryId });
+      setAttributes(attributesResponse);
+
+      const productsResponse = await filterProductsByCategoryAndAttributes({
+        categoryId,
+        attributes: attributesToUse || [],
+      });
+      setProducts(productsResponse);
+    } catch (err) {
+      setError('Error al cargar los datos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSelectCategory = async (
     categoryId: number,
     isSubcategory = false,
@@ -63,12 +129,18 @@ export default function Menu2({ categoryId }: MenuProps) {
     try {
       if (isSubcategory) {
         setSelectedSubcategory(categoryId);
+        // Save state with updated subcategory
+        saveCurrentFilterState(selectedCategory, categoryId, selectedAttributes);
       } else {
         setSelectedCategory(categoryId);
         setSelectedSubcategory(undefined);
+        setSelectedAttributes([]); // Reset attributes when changing main category
 
         const category = categories.find((c) => c.id === categoryId);
         setSubcategories(category?.subcategories || []);
+        
+        // Save state with new category and reset subcategory/attributes
+        saveCurrentFilterState(categoryId, undefined, []);
       }
 
       const attributesResponse = await getAtrtributesByCategory({ categoryId });
@@ -76,7 +148,7 @@ export default function Menu2({ categoryId }: MenuProps) {
 
       const productsResponse = await filterProductsByCategoryAndAttributes({
         categoryId,
-        attributes: [],
+        attributes: isSubcategory ? selectedAttributes : [],
       });
       setProducts(productsResponse);
     } catch (err) {
@@ -104,6 +176,9 @@ export default function Menu2({ categoryId }: MenuProps) {
         ];
 
     setSelectedAttributes(updatedAttributes);
+    
+    // Save state with updated attributes
+    saveCurrentFilterState(selectedCategory, selectedSubcategory, updatedAttributes);
 
     try {
       const categoryId = selectedSubcategory || selectedCategory;
