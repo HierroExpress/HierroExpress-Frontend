@@ -601,10 +601,10 @@ if (distance > 13) {
       <h2 className="text-lg font-semibold mb-4">Métodos de pago</h2>
       <div className="space-y-2 mb-4">
         <div
-          className={`flex items-center p-4 border rounded-lg cursor-pointer ${
-            selectedPaymentMethod === 'efectivo'
-              ? 'border-black'
-              : 'border-gray-300'
+          className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+    selectedPaymentMethod === 'efectivo'
+      ? 'border-black bg-gray-100 shadow-md'
+      : 'border-gray-300 bg-white'
           }`}
           onClick={() => handlePaymentMethodChange('efectivo')}
         >
@@ -612,7 +612,7 @@ if (distance > 13) {
             $
           </div>
           <div>
-            <h3 className="font-semibold">Efectivo</h3>
+            <h3 className="font-semibold">Efectivo 15% de Descuento</h3>
           </div>
           {selectedPaymentMethod === 'efectivo' && (
             <div className="ml-auto">
@@ -623,10 +623,10 @@ if (distance > 13) {
       </div>
       
       <div
-        className={`flex items-center p-4 border rounded-lg cursor-pointer ${
+        className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
           selectedPaymentMethod === 'tarjeta'
-            ? 'border-black'
-            : 'border-gray-300'
+        ? 'border-black bg-gray-100 shadow-md'
+        : 'border-gray-300 bg-white'
         }`}
         onClick={() => handlePaymentMethodChange('tarjeta')}
       >

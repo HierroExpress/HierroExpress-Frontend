@@ -192,7 +192,7 @@ export const Navbar: React.FC<SearchProps> = ({ onSelectProduct }) => {
 
   return (
     <>
-      <nav className="sticky top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg z-50">
+      <nav className="relative flex items-center justify-between sticky top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg z-50">
         <div className="container mx-auto px-4 py-3">
           <div className="flex justify-between items-center gap-4">
             {/* Logo */}
@@ -210,7 +210,7 @@ export const Navbar: React.FC<SearchProps> = ({ onSelectProduct }) => {
             </div>
 
             {/* Barra de búsqueda - Solo visible en desktop */}
-            <div className="hidden md:flex flex-1 max-w-xl mx-4" ref={searchRef}>
+              <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-full max-w-xl px-4" ref={searchRef}>
               <form onSubmit={handleSearchSubmit} className="relative w-full">
                 <div className="relative">
                   <input
@@ -219,12 +219,12 @@ export const Navbar: React.FC<SearchProps> = ({ onSelectProduct }) => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setSearchFocused(true)}
-                    className="w-full px-4 py-2 pl-10 pr-4 text-gray-900 bg-white rounded-full border-2 border-transparent focus:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                    className="w-full px-4 py-3 pl-12 pr-4 text-gray-900 bg-white rounded-full border-2 border-transparent focus:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                   />
-                  <AiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+                  <AiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl flex items-center justify-center" />
                   {searchLoading && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
+                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent"></div>
                     </div>
                   )}
                 </div>
@@ -272,7 +272,7 @@ export const Navbar: React.FC<SearchProps> = ({ onSelectProduct }) => {
             </div>
 
             {/* Navigation Links - Desktop */}
-            <div className="hidden xl:flex items-center space-x-1">
+            <div className="hidden xl:flex items-center space-x-2 flex-shrink-0">
               {isAuthenticated ? (
                 <>
                   <Link 
@@ -421,7 +421,7 @@ export const Navbar: React.FC<SearchProps> = ({ onSelectProduct }) => {
           </div>
 
           {/* Mobile Search Bar */}
-          <div className="md:hidden mt-3" ref={searchRef}>
+          <div className="md:hidden mt-3 flex justify-center px-4" ref={searchRef}>
               <div className="relative">
                 <input
                   type="text"
@@ -429,12 +429,12 @@ export const Navbar: React.FC<SearchProps> = ({ onSelectProduct }) => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setSearchFocused(true)}
-                  className="w-full px-4 py-2 pl-10 pr-4 text-gray-900 bg-white rounded-full border-2 border-transparent focus:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                  className="w-full max-w-md px-4 py-3 pl-12 pr-4 text-gray-900 bg-white rounded-full border-2 border-transparent focus:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                 />
-                <AiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+                <AiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl flex items-center justify-center" />
                 {searchLoading && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent"></div>
                   </div>
                 )}
               </div>

@@ -5,6 +5,7 @@ import { useAuth } from '@/app/contexts/AuthContext';
 import { toast } from 'react-toastify';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Address } from '@/types';
+import { HiLocationMarker, HiPlus, HiCheck } from 'react-icons/hi';
 
 const ConfirmLocationPageContent = () => {
   const { user, setAddress, accessToken } = useAuth();
@@ -97,67 +98,132 @@ const ConfirmLocationPageContent = () => {
   };
 
   return (
-    <div className="container mx-auto mt-8 min-h-screen flex flex-col">
-      {!isAddingNewAddress && addresses.length > 0 ? (
-        <div className="flex-grow">
-          <h2 className="text-2xl font-bold mb-4">
-            Selecciona una dirección guardada
-          </h2>
-          <div className="mb-4">
-            {addresses.map((address) => (
-              <div
-                key={address.id}
-                className={`p-4 border rounded mb-2 cursor-pointer ${selectedAddressId === address.id ? 'border-red-500' : ''}`}
-                onClick={() => handleAddressSelect(address.id)}
-              >
-                <p>
-                  <strong>Dirección:</strong> {address.address}
+    <div className="min-h-screen bg-gradient-to-b from-blue-500 to-blue-900 w-full h-full p-4">
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-3xl mx-auto">
+          {!isAddingNewAddress && addresses.length > 0 ? (
+            <div className="space-y-6">
+              {/* Header */}
+              <div className="text-center mb-8">
+                <div className="flex justify-center mb-4">
+                  <div className="bg-blue-100 p-3 rounded-full">
+                    <HiLocationMarker className="text-blue-600 text-3xl" />
+                  </div>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                  Selecciona una dirección
+                </h2>
+                <p className="text-gray-600">
+                  Elige entre tus direcciones guardadas o agrega una nueva
                 </p>
-                <p>
-                  <strong>Nota:</strong> {address.note}
-                </p>
+                <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
               </div>
-            ))}
-          </div>
-          {selectedAddressId && (
-            <div className="mb-4">
+
+              {/* Lista de direcciones */}
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {addresses.map((address) => (
+                  <div
+                    key={address.id}
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform ${
+                      selectedAddressId === address.id
+                        ? 'border-blue-500 bg-blue-50 shadow-lg'
+                        : 'border-gray-200 hover:border-blue-300 bg-white'
+                    }`}
+                    onClick={() => handleAddressSelect(address.id)}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800 mb-1">
+                          <HiLocationMarker className="inline text-blue-600 mr-2" />
+                          {address.address}
+                        </p>
+                        <p className="text-gray-600 text-sm">
+                          <strong>Nota:</strong> {address.note}
+                        </p>
+                      </div>
+                      {selectedAddressId === address.id && (
+                        <div className="bg-blue-600 text-white rounded-full p-1">
+                          <HiCheck className="text-sm" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Botones de acción */}
+              <div className="space-y-4">
+                {selectedAddressId && (
+                  <button
+                    onClick={handleConfirmLocation}
+                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  >
+                    <HiCheck className="inline mr-2" />
+                    Confirmar ubicación
+                  </button>
+                )}
+                
+                <div className="text-center">
+                  <span className="text-gray-500 text-sm">O agrega otra:</span>
+                </div>
+                
+                <button
+                  onClick={handleAddNewAddress}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  <HiPlus className="inline mr-2" />
+                  Agregar nueva dirección
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center space-y-6">
+              {/* Header para sin direcciones */}
+              <div className="mb-8">
+                <div className="flex justify-center mb-4">
+                  <div className="bg-orange-100 p-3 rounded-full">
+                    <HiLocationMarker className="text-orange-600 text-3xl" />
+                  </div>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                  No tienes direcciones guardadas
+                </h2>
+                <p className="text-gray-600">
+                  Agrega tu primera dirección para continuar
+                </p>
+                <div className="w-20 h-1 bg-orange-600 mx-auto rounded-full mt-4"></div>
+              </div>
+
               <button
-                onClick={handleConfirmLocation}
-                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-600 mb-2"
+                onClick={handleAddNewAddress}
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
-                Confirmar ubicación
+                <HiPlus className="inline mr-2" />
+                {isAddingNewAddress ? 'Cerrar' : 'Agregar dirección'}
               </button>
-              <p className="text-center text-sm">O agrega otra:</p>
             </div>
           )}
-          <button
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-600"
-            onClick={handleAddNewAddress}
-          >
-            {isAddingNewAddress ? 'Cerrar' : 'Agregar nueva dirección'}
-          </button>
-        </div>
-      ) : (
-        <div className="flex-grow">
-          <h2 className="text-2xl font-bold mb-4">
-            No tienes direcciones guardadas
-          </h2>
-          <button
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-600 mb-4"
-            onClick={handleAddNewAddress}
-          >
-            {isAddingNewAddress ? 'Cerrar' : 'Agregar dirección'}
-          </button>
-        </div>
-      )}
 
-      {isAddingNewAddress && <LocationConfirmation />}
+          {/* Componente de nueva dirección */}
+          {isAddingNewAddress && (
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <LocationConfirmation />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
 const ConfirmLocationPage = () => (
-  <Suspense fallback={<div>Cargando...</div>}>
+  <Suspense fallback={
+    <div className="min-h-screen bg-gradient-to-b from-blue-500 to-blue-900 flex justify-center items-center">
+      <div className="bg-white rounded-xl shadow-2xl p-8">
+        <p className="text-gray-700 text-xl">Cargando...</p>
+      </div>
+    </div>
+  }>
     <ConfirmLocationPageContent />
   </Suspense>
 );
