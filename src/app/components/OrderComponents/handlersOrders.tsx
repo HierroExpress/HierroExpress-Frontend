@@ -1,5 +1,3 @@
-import router from "next/router";
-
 export const handleCancelOrder = async (orderId: number) => {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/cancel`, {
