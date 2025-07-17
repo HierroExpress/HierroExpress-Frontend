@@ -1,9 +1,8 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Address, ProductsInOrder } from '@/types';
 import StatusTracker from './StatusTracker';
 import { HiTruck, HiCalendar, HiCreditCard, HiCash, HiShoppingBag, HiLocationMarker, HiX } from 'react-icons/hi';
-import { Button } from '../ui/button';
 
 interface OrderProps {
   order: Order;
@@ -28,32 +27,6 @@ interface Order {
 }
 
 const OrderDetails: React.FC<OrderProps> = ({ order, onCancelOrder, onChangeAddress }) => {
-  const [showStatusTracker, setShowStatusTracker] = useState(false);
-
-  useEffect(() => {
-    let hideTimer: NodeJS.Timeout | null = null;
-
-    // Mostrar StatusTracker para todos los estados excepto cuando es null/undefined
-    if (order.status) {
-      setShowStatusTracker(true);
-      
-      // Solo ocultar después de 20 segundos si está entregada
-      if (order.status === 'Entregada') {
-        hideTimer = setTimeout(() => {
-          setShowStatusTracker(false);
-        }, 20000);
-      }
-    } else {
-      // Incluso si no hay status, mostrar el tracker
-      setShowStatusTracker(true);
-    }
-
-    return () => {
-      if (hideTimer) {
-        clearTimeout(hideTimer);
-      }
-    };
-  }, [order.status]);
   const canCancelOrder = (status: string) => {
     return status === 'Pendiente' || status === 'Confirmada';
   };
