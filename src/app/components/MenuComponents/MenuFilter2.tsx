@@ -82,10 +82,10 @@ const MenuFilters2: React.FC<MenuFiltersProps> = ({
               .map((category) => (
                 <div
                   key={category.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-white/10 ${
-                    selectedCategory === category.id 
-                      ? 'bg-blue-500/30 border border-blue-400/50 shadow-md' 
-                      : 'bg-white/5 hover:bg-white/10'
+                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all bg-orange-500 duration-200 hover:bg-orange-400 ${
+                    selectedCategory === category.id
+                      ? 'bg-orange-500 border border-orange-400/50 shadow-md'
+                      : 'bg-orange-500 hover:bg-orange-400'
                   }`}
                   onClick={() => handleCategoryClick(category.id, false)}
                 >
@@ -103,7 +103,10 @@ const MenuFilters2: React.FC<MenuFiltersProps> = ({
         </div>
 
         {/* Subcategorías */}
-        <div ref={subcategoriesRef} className="lg:w-1/3 border-r border-white/20 p-4">
+        <div
+          ref={subcategoriesRef}
+          className="lg:w-1/3 border-r border-white/20 p-4"
+        >
           <h3 className="text-lg font-semibold mb-4 text-white flex items-center">
             <div className="w-1 h-6 bg-purple-400 rounded-full mr-3"></div>
             Subcategorías
@@ -112,10 +115,10 @@ const MenuFilters2: React.FC<MenuFiltersProps> = ({
             {subCategories.map((subcategory) => (
               <div
                 key={subcategory.id}
-                className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-white/10 ${
-                  selectedSubcategory === subcategory.id 
-                    ? 'bg-purple-500/30 border border-purple-400/50 shadow-md' 
-                    : 'bg-white/5 hover:bg-white/10'
+                className={`flex items-center gap-3 p-3 rounded-lg bg-blue-500 hover:bg-blue-400 cursor-pointer transition-all duration-200 ${
+                  selectedSubcategory === subcategory.id
+                    ? 'bg-blue-500 text-white border border-blue-400 shadow-md'
+                    : 'bg-blue-400 hover:bg-blue-500'
                 }`}
                 onClick={() => handleCategoryClick(subcategory.id, true)}
               >
