@@ -9,7 +9,7 @@ import ToastProvider from './contexts/ToastProvider';
 import ReactQueryProvider from './contexts/ReactQueryProvider';
 // import ChatBot from '@/components/ui/chatbot';
 
-const mochily = Mochiy_Pop_One({ weight: '400', subsets: ['latin'] });
+const primaryFont = Mochiy_Pop_One({ weight: '400', subsets: ['latin'] });
 const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
@@ -31,7 +31,7 @@ export default function RootLayout({
       className="h-full w-full"
     >
       <body
-        className={`${mochily.className} ${poppins.className} flex flex-col min-h-full w-full bg-gradient-to-br from-blue-900 via-[#023047] to-blue-800`}
+        className={`${primaryFont.className} ${poppins.className} flex flex-col min-h-full w-full bg-gradient-to-br from-blue-900 via-[#023047] to-blue-800`}
       >
         <AuthProvider>
           <CacheProvider>

@@ -7,8 +7,9 @@ const AboutUs = () => {
       <div className=" w-full mb-6">
         <div className="relative w-full h-60 lg:h-96">
           <Image
-            src="/chillyyyy.jpg"
-            alt="chily"
+            src="/HierroBanner.png"
+            alt="Hierro Express banner"
+            fill
             style={{ objectFit: 'cover' }}
             className="rounded-lg"
           />

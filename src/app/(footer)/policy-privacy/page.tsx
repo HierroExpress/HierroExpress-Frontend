@@ -7,7 +7,7 @@ const PrivacyPolicy = () => {
         Política de Privacidad
       </h1>
       <p className="mb-6">
-        En Donde Chily, valoramos y respetamos su privacidad. Esta política de
+        En Hierro Express, valoramos y respetamos su privacidad. Esta política de
         privacidad describe cómo recopilamos, usamos y protegemos su información
         personal cuando interactúa con nuestro sitio web. Nos comprometemos a
         garantizar que su información personal esté protegida y que se utilice
@@ -83,7 +83,7 @@ const PrivacyPolicy = () => {
         Usted tiene el derecho de acceder, corregir o eliminar su información
         personal. También tiene el derecho de retirar su consentimiento para el
         procesamiento de sus datos en cualquier momento. Para ejercer estos
-        derechos, puede contactarnos en privacidad@dondechily.com.
+        derechos, puede contactarnos en privacidad@hierroexpress.com.
       </p>
 
       <h2 className="text-3xl font-semibold mb-4">6. Uso de Cookies</h2>
@@ -124,7 +124,7 @@ const PrivacyPolicy = () => {
       <p className="mb-6">
         Si tiene alguna pregunta sobre nuestra política de privacidad o sobre
         cómo manejamos su información personal, puede contactarnos en
-        privacidad@dondechily.com.
+        privacidad@hierroexpress.com.
       </p>
 
       <p className="mb-6">
