@@ -111,7 +111,9 @@ export default function Menu2({ categoryId }: MenuProps) {
         categoryId,
         attributes: attributesToUse || [],
       });
-      setProducts(productsResponse);
+      // Sort products by price (lowest to highest)
+      const sortedProducts = productsResponse.sort((a: Product, b: Product) => a.price - b.price);
+      setProducts(sortedProducts);
     } catch (err) {
       setError('Error al cargar los datos');
     } finally {
@@ -150,7 +152,9 @@ export default function Menu2({ categoryId }: MenuProps) {
         categoryId,
         attributes: isSubcategory ? selectedAttributes : [],
       });
-      setProducts(productsResponse);
+      // Sort products by price (lowest to highest)
+      const sortedProducts = productsResponse.sort((a: Product, b: Product) => a.price - b.price);
+      setProducts(sortedProducts);
     } catch (err) {
       setError('Error al cargar los datos');
     } finally {
@@ -188,8 +192,9 @@ export default function Menu2({ categoryId }: MenuProps) {
         categoryId,
         attributes: updatedAttributes,
       });
-
-      setProducts(filteredProducts);
+      // Sort products by price (lowest to highest)
+      const sortedProducts = filteredProducts.sort((a: Product, b: Product) => a.price - b.price);
+      setProducts(sortedProducts);
     } catch (err) {
       setError('Error al filtrar productos');
     } finally {

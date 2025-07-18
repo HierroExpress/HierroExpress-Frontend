@@ -86,6 +86,43 @@ export const createAttribute = async (data: any, token: string) => {
   }
 };
 
+export const getAttributeById = async (id: string, token: string): Promise<Attribute> => {
+  try {
+    const response = await fetch(`${API_URL}/products/atributes/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error('Error al obtener el atributo');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error al obtener el atributo', error);
+    throw error;
+  }
+};
+
+export const updateAttribute = async (id: string, data: any, token: string) => {
+  try {
+    const response = await fetch(`${API_URL}/products/atributes/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    
+    return await handleResponse(response);
+  } catch (error) {
+    console.error('Error al actualizar el atributo', error);
+    throw error;
+  }
+};
+
 export const updateProduct = async (id: number, data: any, token: string) => {
   try {
     const response = await fetch(`${API_URL}/products/update/${id}`, {

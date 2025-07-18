@@ -119,6 +119,7 @@ const CartPage: React.FC = () => {
         ) : (
           <div className="max-w-md mx-auto p-4 sm:max-w-2xl md:max-w-4xl flex-grow">
             <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+              <h2 className="text-xl font-semibold mb-4">Revisa tu Pedido</h2>
               {items.map((item) => (
                 <div
                   key={item.id}
@@ -181,7 +182,7 @@ const CartPage: React.FC = () => {
                 onClick={proceedToCheckout}
                 className="block w-full bg-blue-600 text-white text-center font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
               >
-                Ir al checkout
+                Ir a Pagar
               </button>
             </div>
             <div className="mt-4 text-center">

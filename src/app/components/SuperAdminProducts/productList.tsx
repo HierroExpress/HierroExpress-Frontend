@@ -21,6 +21,10 @@ const ProductList: React.FC = () => {
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [sortField, setSortField] = useState<'name' | 'price' | 'category'>('name');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [priceFilter, setPriceFilter] = useState<string>('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
   const { accessToken, isSuperAdmin } = useAuth();
   const token = accessToken;
 
@@ -98,9 +102,47 @@ const ProductList: React.FC = () => {
     }
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()),
-  );
+  const handleColumnSort = (field: 'name' | 'price' | 'category') => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesPrice = priceFilter === '' || product.price.toString().includes(priceFilter);
+    const categoryName = Array.isArray(product.category)
+      ? product.category.map((cat: any) => cat.name).join(',')
+      : product.category;
+    const matchesCategory = categoryFilter === '' || categoryName.toLowerCase().includes(categoryFilter.toLowerCase());
+    
+    return matchesSearch && matchesPrice && matchesCategory;
+  }).sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+    
+    if (sortField === 'name') {
+      aValue = a.name.toLowerCase();
+      bValue = b.name.toLowerCase();
+    } else if (sortField === 'price') {
+      aValue = a.price;
+      bValue = b.price;
+    } else if (sortField === 'category') {
+      aValue = Array.isArray(a.category) ? a.category.map((cat: any) => cat.name).join(',') : a.category;
+      bValue = Array.isArray(b.category) ? b.category.map((cat: any) => cat.name).join(',') : b.category;
+      aValue = aValue.toLowerCase();
+      bValue = bValue.toLowerCase();
+    }
+    
+    if (sortDirection === 'asc') {
+      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+    } else {
+      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+    }
+  });
 
   if (loading) {
     return (
@@ -127,15 +169,35 @@ const ProductList: React.FC = () => {
             </Link>
           )}
         </div>
-        <div className="flex items-center mb-4 relative">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar productos..."
-            className="border-gray-300 rounded-full border p-2 pl-10 focus:border-red-500 w-full"
-          />
-          <AiOutlineSearch className="absolute left-3 top-3 text-gray-400" />
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
+          <div className="flex items-center relative flex-1">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar productos..."
+              className="border-gray-300 rounded-full border p-2 pl-10 focus:border-red-500 w-full"
+            />
+            <AiOutlineSearch className="absolute left-3 top-3 text-gray-400" />
+          </div>
+          <div className="flex items-center relative">
+            <input
+              type="text"
+              value={priceFilter}
+              onChange={(e) => setPriceFilter(e.target.value)}
+              placeholder="Filtrar por precio..."
+              className="border-gray-300 rounded-full border p-2 focus:border-red-500 w-full"
+            />
+          </div>
+          <div className="flex items-center relative">
+            <input
+              type="text"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              placeholder="Filtrar por categoría..."
+              className="border-gray-300 rounded-full border p-2 focus:border-red-500 w-full"
+            />
+          </div>
         </div>
         {filteredProducts.length === 0 && !loading && (
           <div className="text-center text-gray-500 my-4">
@@ -147,14 +209,23 @@ const ProductList: React.FC = () => {
           <table className="w-full table-auto">
             <thead>
               <tr>
-                <th className="px-6 py-3 text-gray-600 font-light text-md uppercase tracking-wider">
-                  Producto
+                <th 
+                  className="px-6 py-3 text-gray-600 font-light text-md uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleColumnSort('name')}
+                >
+                  Producto {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </th>
-                <th className="px-6 py-3 text-gray-600 font-light text-md uppercase tracking-wide">
-                  Categoría
+                <th 
+                  className="px-6 py-3 text-gray-600 font-light text-md uppercase tracking-wide cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleColumnSort('category')}
+                >
+                  Categoría {sortField === 'category' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </th>
-                <th className="px-6 py-3 text-gray-600 font-light text-md uppercase tracking-wide">
-                  Precio
+                <th 
+                  className="px-6 py-3 text-gray-600 font-light text-md uppercase tracking-wide cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleColumnSort('price')}
+                >
+                  Precio {sortField === 'price' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </th>
                 <th className="px-6 py-3 text-gray-600 font-light text-md uppercase tracking-wide">
                   Gestión
