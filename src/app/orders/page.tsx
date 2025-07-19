@@ -32,6 +32,8 @@ const UserOrders: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchOrders = async () => {
+    if (!userId) return;
+    
     try {
       setLoading(true);
       const ordersData = await getOrders(userId);

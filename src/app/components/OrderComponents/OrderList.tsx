@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OrderDetails from './OrderItem';
 import { Address, ProductsInOrder } from '@/types';
-import { handleCancelOrder, handleUpdateOrderAddress } from './handlersOrders';
+import { handleCancelOrder } from './handlersOrders';
 import { toast } from 'react-toastify';
 
 interface Order {
@@ -19,7 +19,8 @@ interface Order {
     | 'Confirmada'
     | 'En camino'
     | 'Entregada'
-    | 'En preparación';
+    | 'En preparación'
+    | 'Cancelada';
   date: string;
 }
 
