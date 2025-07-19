@@ -219,6 +219,52 @@ export async function updateProductStock(
   }
 }
 
+export async function updateProductPrice(
+  productId: string,
+  newPrice: number,
+  token: string,
+) {
+  try {
+    const response = await fetch(
+      `${API_URL}/products/price?id=${productId}&price=${newPrice}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Error al actualizar el precio del producto', error);
+    throw error;
+  }
+}
+
+export async function updateBulkProductPrice(
+  data: { productIds?: string[], categoryId?: number, price: number },
+  token: string,
+) {
+  try {
+    const response = await fetch(
+      `${API_URL}/products/bulk-price`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      },
+    );
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Error al actualizar precios en lote', error);
+    throw error;
+  }
+}
+
 export const createCategory = async (data: any, token: string) => {
   try {
     const response = await fetch(`${API_URL}/category/create`, {
