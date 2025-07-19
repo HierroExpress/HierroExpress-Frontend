@@ -12,9 +12,9 @@ const mockProduct: Product = {
   description: 'Barra de hierro de alta calidad de 12mm de diámetro',
   price: 150.00,
   img: 'https://via.placeholder.com/300x200.png?text=Barra+de+Hierro',
-  category: 'Barras y Perfiles',
+  category: [{ id: 1, name: 'Barras y Perfiles', icon: '', products: [], parentCategory: null, subcategories: [] }],
   stock: 100,
-  available: true
+  isPopular: false
 };
 
 export default function TestCartPage() {

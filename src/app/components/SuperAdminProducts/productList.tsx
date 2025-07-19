@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchProducts, deleteProduct, updateProductPrice, updateBulkProductPrice } from '@/helpers/peticionesSuperAdmin';
 import ConfirmModal from './confirmModal';
-import { Product } from '@/types';
+import { Product, Category } from '@/types';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/app/contexts/AuthContext';
@@ -277,8 +277,9 @@ const ProductList: React.FC = () => {
       products.flatMap(product => {
         if (Array.isArray(product.category)) {
           return product.category.map(cat => ({ id: cat.id, name: cat.name }));
-        } else if (product.category && typeof product.category === 'object' && 'id' in product.category) {
-          return [{ id: product.category.id, name: product.category.name }];
+        } else if (product.category && typeof product.category === 'object' && 'id' in product.category && 'name' in product.category) {
+          const cat = product.category as Category;
+          return [{ id: cat.id, name: cat.name }];
         }
         return [];
       }).map(cat => JSON.stringify(cat))
