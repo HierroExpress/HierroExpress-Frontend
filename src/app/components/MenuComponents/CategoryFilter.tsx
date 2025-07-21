@@ -31,7 +31,7 @@ export const CategoryFilter = () => {
     cosasChicas: filterByPrefix(cosasChicas),
   };
 
-  const renderCategoryBlock = (title: string, items: any[], gridCols = 'grid-cols-3') => (
+  const renderCategoryBlock = (title: string, items: any[], gridCols = 'grid-cols-3', colorGradient = 'from-orange-300 to-orange-500') => (
     <div className="flex flex-col h-full">
       <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-center text-gray-800 mt-2 mb-2">{title}</h2>
       <div className={`grid ${gridCols} gap-3 p-2 sm:p-3 md:p-4`}>
@@ -41,7 +41,7 @@ export const CategoryFilter = () => {
             onClick={() => handleCategoryClick(category.id)}
             className="flex flex-col items-center justify-center p-1 sm:p-2 focus:outline-none group hover:scale-105 active:scale-95 transition-all duration-300"
           >
-            <div className="flex items-center justify-center rounded-full bg-gradient-to-br from-orange-300 to-orange-500 p-2 sm:p-3 md:p-4 lg:p-5 shadow hover:shadow-lg transition">
+            <div className={`flex items-center justify-center rounded-full bg-gradient-to-br ${colorGradient} p-2 sm:p-3 md:p-4 lg:p-5 shadow hover:shadow-lg transition`}>
               <Image
                 src={category.icon}
                 alt={category.name}
@@ -70,15 +70,15 @@ export const CategoryFilter = () => {
         <div className="p-4 sm:p-6 md:p-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-4">
-              {renderCategoryBlock('BARRAS Y PERFILES', grouped.materiales)}
+              {renderCategoryBlock('BARRAS Y PERFILES', grouped.materiales, 'grid-cols-3', 'from-orange-300 to-orange-500')}
             </div>
             <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-4">
-              {renderCategoryBlock('CHAPAS Y MALLAS', grouped.chapasYMallas)}
+              {renderCategoryBlock('CHAPAS Y MALLAS', grouped.chapasYMallas, 'grid-cols-3', 'from-blue-300 to-blue-500')}
             </div>
           </div>
 
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-4">
-            {renderCategoryBlock('INSUMOS Y ACCESORIOS', grouped.cosasChicas, 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6')}
+            {renderCategoryBlock('INSUMOS Y ACCESORIOS', grouped.cosasChicas, 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6', 'from-yellow-200 to-yellow-400')}
           </div>
         </div>
       </div>
