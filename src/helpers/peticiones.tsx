@@ -4,6 +4,11 @@ import { Product, Category } from '../types';
 // const API_URL = 'https://chilyapi.onrender.com';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// Helper function to filter out products with price 0
+const filterProductsWithPrice = (products: Product[]): Product[] => {
+  return products.filter(product => product.price > 0);
+};
+
 
 export async function getProducts(
   page: number,
@@ -59,7 +64,7 @@ export async function getProducts(
     }
 
     const products: any[] = await response.json();
-    return products;
+    return filterProductsWithPrice(products);
   } catch (error) {
     console.error('Error en getProducts:', error);
     throw error;
@@ -111,7 +116,7 @@ export async function getProductsByCategoryId(
 
     const products: Product[] = categoryData.products;
     
-    return products;
+    return filterProductsWithPrice(products);
   } catch (error) {
     console.error(`Error en getProductsByCategoryId para id ${id}:`, error);
     throw error;
@@ -163,7 +168,7 @@ export const filterProductsByCategoryAndAttributes = async ({
     }
 
     const data = await response.json();
-    return data;
+    return filterProductsWithPrice(data);
   } catch (error) {
     console.error('Error al obtener productos:', error);
     throw error;
