@@ -243,7 +243,7 @@ export async function updateProductPrice(
 }
 
 export async function updateBulkProductPrice(
-  data: { productIds?: string[], categoryId?: number, price: number },
+  data: { productIds?: string[], categoryId?: number, price?: number, percentage?: number },
   token: string,
 ) {
   try {

@@ -32,6 +32,8 @@ const ProductList: React.FC = () => {
   const [bulkPrice, setBulkPrice] = useState<string>('');
   const [bulkPriceMode, setBulkPriceMode] = useState<'selected' | 'category'>('selected');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [priceUpdateType, setPriceUpdateType] = useState<'fixed' | 'percentage'>('fixed');
+  const [percentage, setPercentage] = useState<string>('');
   const { accessToken, isSuperAdmin } = useAuth();
   const token = accessToken;
 
@@ -217,6 +219,8 @@ const ProductList: React.FC = () => {
     setBulkPrice('');
     setBulkPriceMode('selected');
     setSelectedCategory('');
+    setPriceUpdateType('fixed');
+    setPercentage('');
   };
 
   const handleBulkPriceUpdate = async () => {
@@ -225,36 +229,60 @@ const ProductList: React.FC = () => {
       return;
     }
 
-    const price = parseFloat(bulkPrice);
-    if (isNaN(price) || price <= 0) {
-      toast.error('El precio debe ser un número válido mayor a 0');
-      return;
+    if (priceUpdateType === 'fixed') {
+      const price = parseFloat(bulkPrice);
+      if (isNaN(price) || price <= 0) {
+        toast.error('El precio debe ser un número válido mayor a 0');
+        return;
+      }
+    } else {
+      const percentageValue = parseFloat(percentage);
+      if (isNaN(percentageValue) || percentageValue <= 0) {
+        toast.error('El porcentaje debe ser un número válido mayor a 0');
+        return;
+      }
     }
 
     try {
-      let updateData: { productIds?: string[], categoryId?: number, price: number };
+      let updateData: { productIds?: string[], categoryId?: number, price?: number, percentage?: number };
       
       if (bulkPriceMode === 'selected') {
         if (selectedProducts.length === 0) {
           toast.error('Selecciona al menos un producto');
           return;
         }
-        updateData = { productIds: selectedProducts, price };
+        if (priceUpdateType === 'fixed') {
+          updateData = { productIds: selectedProducts, price: parseFloat(bulkPrice) };
+        } else {
+          updateData = { productIds: selectedProducts, percentage: parseFloat(percentage) };
+        }
       } else {
         if (!selectedCategory) {
           toast.error('Selecciona una categoría');
           return;
         }
-        updateData = { categoryId: parseInt(selectedCategory), price };
+        if (priceUpdateType === 'fixed') {
+          updateData = { categoryId: parseInt(selectedCategory), price: parseFloat(bulkPrice) };
+        } else {
+          updateData = { categoryId: parseInt(selectedCategory), percentage: parseFloat(percentage) };
+        }
       }
 
       await updateBulkProductPrice(updateData, token);
 
       // Update local state
-      if (bulkPriceMode === 'selected') {
+      if (bulkPriceMode === 'selected' && priceUpdateType === 'fixed') {
         setProducts(products.map(product => 
           selectedProducts.includes(product.id)
-            ? { ...product, price }
+            ? { ...product, price: parseFloat(bulkPrice) }
+            : product
+        ));
+        setSelectedProducts([]);
+      } else if (bulkPriceMode === 'selected' && priceUpdateType === 'percentage') {
+        const percentageValue = parseFloat(percentage);
+        setProducts(products.map(product => 
+          selectedProducts.includes(product.id)
+            ? { ...product, price: Math.round((product.price * (1 + percentageValue / 100)) * 100) / 100 }
             : product
         ));
         setSelectedProducts([]);
@@ -264,7 +292,11 @@ const ProductList: React.FC = () => {
       }
 
       closeBulkPriceModal();
-      toast.success('Precios actualizados correctamente');
+      toast.success(
+        priceUpdateType === 'fixed' 
+          ? 'Precios actualizados correctamente' 
+          : `Precios aumentados ${percentage}% correctamente`
+      );
     } catch (error) {
       console.error('Error al actualizar precios', error);
       toast.error('Error al actualizar precios');
@@ -348,11 +380,12 @@ const ProductList: React.FC = () => {
             <button 
               onClick={() => {
                 setBulkPriceMode('category');
+                setPriceUpdateType('percentage');
                 openBulkPriceModal();
               }}
               className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
             >
-              Precios por Familia
+              Aumentar Precios por Familia
             </button>
             {isSuperAdmin() && (
               <Link href="/superadmin/products/create">
@@ -595,17 +628,70 @@ const ProductList: React.FC = () => {
             
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nuevo Precio:
+                Tipo de Actualización:
               </label>
-              <input
-                type="number"
-                value={bulkPrice}
-                onChange={(e) => setBulkPrice(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2"
-                placeholder="0.00"
-                step="0.01"
-                min="0"
-              />
+              <div className="flex gap-4 mb-3">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="fixed"
+                    checked={priceUpdateType === 'fixed'}
+                    onChange={(e) => setPriceUpdateType(e.target.value as 'fixed' | 'percentage')}
+                    className="mr-2"
+                  />
+                  Establecer Precio Fijo
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="percentage"
+                    checked={priceUpdateType === 'percentage'}
+                    onChange={(e) => setPriceUpdateType(e.target.value as 'fixed' | 'percentage')}
+                    className="mr-2"
+                  />
+                  Aumentar por Porcentaje
+                </label>
+              </div>
+            </div>
+            
+            <div className="mb-4">
+              {priceUpdateType === 'fixed' ? (
+                <>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nuevo Precio:
+                  </label>
+                  <input
+                    type="number"
+                    value={bulkPrice}
+                    onChange={(e) => setBulkPrice(e.target.value)}
+                    className="w-full border border-gray-300 rounded px-3 py-2"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                  />
+                </>
+              ) : (
+                <>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Porcentaje de Aumento:
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={percentage}
+                      onChange={(e) => setPercentage(e.target.value)}
+                      className="w-full border border-gray-300 rounded px-3 py-2 pr-8"
+                      placeholder="10"
+                      step="0.1"
+                      min="0"
+                    />
+                    <span className="absolute right-3 top-2 text-gray-500">%</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Ejemplo: 10% aumentará un producto de $100 a $110
+                  </p>
+                </>
+              )}
             </div>
             
             <div className="flex gap-2 justify-end">
