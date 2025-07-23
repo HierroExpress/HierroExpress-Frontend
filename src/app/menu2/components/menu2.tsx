@@ -13,6 +13,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import MenuFilters2 from '@/app/components/MenuComponents/MenuFilter2';
 import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 import StructuredData from '@/app/components/SEO/StructuredData';
+import BreadcrumbStructuredData from '@/app/components/SEO/BreadcrumbStructuredData';
 import { 
   findCategoryById, 
   getCategoryUrlPath, 
@@ -274,10 +275,16 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
     <div className="p-4 md:p-6">
       {/* Structured Data for SEO */}
       {currentCategory && (
-        <StructuredData 
-          category={currentCategory} 
-          subcategory={currentSubcategory}
-        />
+        <>
+          <StructuredData 
+            category={currentCategory} 
+            subcategory={currentSubcategory}
+          />
+          <BreadcrumbStructuredData 
+            category={currentCategory} 
+            subcategory={currentSubcategory}
+          />
+        </>
       )}
       
       <div className="md:flex w-full h-full">

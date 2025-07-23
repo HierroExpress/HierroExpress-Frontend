@@ -74,7 +74,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           },
           alternates: {
             canonical: `https://hierroexpress.com.uy/menu2/${slug[0]}`,
-          }
+          },
+          robots: {
+            index: true,
+            follow: true,
+            googleBot: {
+              index: true,
+              follow: true,
+              'max-video-preview': -1,
+              'max-image-preview': 'large',
+              'max-snippet': -1,
+            },
+          },
         };
       }
     } else if (slug.length === 2 && slug[1]) {
@@ -100,7 +111,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           },
           alternates: {
             canonical: `https://hierroexpress.com.uy/menu2/${slug[0]}/${slug[1]}`,
-          }
+          },
+          robots: {
+            index: true,
+            follow: true,
+            googleBot: {
+              index: true,
+              follow: true,
+              'max-video-preview': -1,
+              'max-image-preview': 'large',
+              'max-snippet': -1,
+            },
+          },
         };
       }
     }

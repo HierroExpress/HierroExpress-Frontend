@@ -1,0 +1,17 @@
+// Add to public folder for better SEO
+User-agent: *
+Allow: /
+
+# Optimized for search engines
+Allow: /menu2/
+Allow: /product/
+Allow: /
+
+# Block admin and test pages
+Disallow: /admin*
+Disallow: /superadmin*
+Disallow: /auth*
+Disallow: /test*
+
+# Sitemap location
+Sitemap: https://hierroexpress.com.uy/sitemap.xml
