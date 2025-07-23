@@ -14,6 +14,8 @@ export default async function LegacySelect({
   const categoryId = parseInt(id, 10);
   
   if (isNaN(categoryId)) {
+    // If it's not a number, this is likely a slug, not a legacy ID
+    // Show not found since this route should only handle numeric IDs
     notFound();
   }
   
