@@ -3,13 +3,15 @@ import React from 'react';
 import Image from 'next/image';
 import { useCache } from '@/app/contexts/CacheContext';
 import { useRouter } from 'next/navigation';
+import { getCategoryUrlPath } from '@/lib/urlUtils';
 
 export const CategoryFilter = () => {
   const { categories } = useCache();
   const router = useRouter();
 
-  const handleCategoryClick = (id: number) => {
-    router.push(`/menu2/${id}`);
+  const handleCategoryClick = (category: any) => {
+    const url = getCategoryUrlPath(category);
+    router.push(url);
   };
 
   const materiales = ['CAÑOS', 'VIGAS', 'ANGULOS', 'TEE', 'PLANCHUELAS', 'VARILLAS'];
@@ -38,7 +40,7 @@ export const CategoryFilter = () => {
         {items.map((category) => (
           <button
             key={category.id}
-            onClick={() => handleCategoryClick(category.id)}
+            onClick={() => handleCategoryClick(category)}
             className="flex flex-col items-center justify-center p-1 sm:p-2 focus:outline-none group hover:scale-105 active:scale-95 transition-all duration-300"
           >
             <div className={`flex items-center justify-center rounded-full bg-gradient-to-br ${colorGradient} p-2 sm:p-3 md:p-4 lg:p-5 shadow hover:shadow-lg transition`}>

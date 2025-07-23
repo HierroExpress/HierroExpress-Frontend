@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   filterProductsByCategoryAndAttributes,
   getAllCategories,
@@ -11,12 +12,21 @@ import { Category, Product } from '@/types';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import MenuFilters2 from '@/app/components/MenuComponents/MenuFilter2';
 import { useFilterPersistence } from '@/hooks/useFilterPersistence';
+import StructuredData from '@/app/components/SEO/StructuredData';
+import BreadcrumbStructuredData from '@/app/components/SEO/BreadcrumbStructuredData';
+import { 
+  findCategoryById, 
+  getCategoryUrlPath, 
+  getCategoryWithSubcategoryUrlPath 
+} from '@/lib/urlUtils';
 
 interface MenuProps {
-  categoryId?: number ; // Recibimos la categoría como prop
+  categoryId?: number; // Recibimos la categoría como prop
+  subcategoryId?: number; // Subcategoría seleccionada
 }
 
-export default function Menu2({ categoryId }: MenuProps) {
+export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -29,7 +39,7 @@ export default function Menu2({ categoryId }: MenuProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState<
     number | undefined
-  >(undefined);
+  >(subcategoryId);
   const [selectedAttributes, setSelectedAttributes] = useState<
     { attributeId: number; value: string }[]
   >([]);
@@ -52,10 +62,22 @@ export default function Menu2({ categoryId }: MenuProps) {
   useEffect(() => {
     if (categoryId && categories.length > 0) {
       setSelectedCategory(categoryId);
-      handleSelectCategory(categoryId, false);
       
+      // Set subcategories if this is a main category
+      const category = categories.find((c) => c.id === categoryId);
+      if (category?.subcategories) {
+        setSubcategories(category.subcategories);
+      }
+      
+      // If there's a subcategory from URL, set it
+      if (subcategoryId) {
+        setSelectedSubcategory(subcategoryId);
+        handleSelectCategoryWithoutNavigation(subcategoryId);
+      } else {
+        handleSelectCategoryWithoutNavigation(categoryId);
+      }
     }
-  }, [categoryId, categories]);
+  }, [categoryId, subcategoryId, categories]);
 
   // Load persisted filter state when categories are available
   useEffect(() => {
@@ -121,6 +143,31 @@ export default function Menu2({ categoryId }: MenuProps) {
     }
   };
 
+  // Handle category selection without triggering navigation (used for initial load)
+  const handleSelectCategoryWithoutNavigation = async (
+    categoryId: number,
+  ) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const attributesResponse = await getAtrtributesByCategory({ categoryId });
+      setAttributes(attributesResponse);
+
+      const productsResponse = await filterProductsByCategoryAndAttributes({
+        categoryId,
+        attributes: [],
+      });
+      // Sort products by price (lowest to highest)
+      const sortedProducts = productsResponse.sort((a: Product, b: Product) => a.price - b.price);
+      setProducts(sortedProducts);
+    } catch (err) {
+      setError('Error al cargar los datos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSelectCategory = async (
     categoryId: number,
     isSubcategory = false,
@@ -133,6 +180,14 @@ export default function Menu2({ categoryId }: MenuProps) {
         setSelectedSubcategory(categoryId);
         // Save state with updated subcategory
         saveCurrentFilterState(selectedCategory, categoryId, selectedAttributes);
+        
+        // Navigate to category/subcategory URL
+        const category = findCategoryById(categories, selectedCategory!);
+        const subcategory = findCategoryById(categories, categoryId);
+        if (category && subcategory) {
+          const newUrl = getCategoryWithSubcategoryUrlPath(category, subcategory);
+          router.push(newUrl);
+        }
       } else {
         setSelectedCategory(categoryId);
         setSelectedSubcategory(undefined);
@@ -143,6 +198,12 @@ export default function Menu2({ categoryId }: MenuProps) {
         
         // Save state with new category and reset subcategory/attributes
         saveCurrentFilterState(categoryId, undefined, []);
+        
+        // Navigate to category URL
+        if (category) {
+          const newUrl = getCategoryUrlPath(category);
+          router.push(newUrl);
+        }
       }
 
       const attributesResponse = await getAtrtributesByCategory({ categoryId });
@@ -206,8 +267,27 @@ export default function Menu2({ categoryId }: MenuProps) {
     console.log('Añadir al carrito:', product);
   };
 
+  // Get current category and subcategory for structured data
+  const currentCategory = findCategoryById(categories, selectedCategory!);
+  const currentSubcategory = selectedSubcategory ? findCategoryById(categories, selectedSubcategory) : undefined;
+
   return (
     <div className="p-4 md:p-6">
+      {/* Structured Data for SEO */}
+      {currentCategory && (
+        <>
+          <StructuredData 
+            category={currentCategory} 
+            subcategory={currentSubcategory}
+          />
+          <BreadcrumbStructuredData 
+            category={currentCategory} 
+            subcategory={currentSubcategory}
+          />
+        </>
+      )}
+      
+      <div className="md:flex w-full h-full">
       <div className="md:flex w-full h-full">
         <button
           className="md:hidden w-full py-2 px-4 bg-gray-200 text-left flex justify-between items-center mb-4"
@@ -254,6 +334,7 @@ export default function Menu2({ categoryId }: MenuProps) {
               ))}
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
