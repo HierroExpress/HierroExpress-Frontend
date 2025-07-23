@@ -11,32 +11,11 @@ interface PageProps {
   params: { slug: string[] };
 }
 
-// Generate static params for better SEO and performance
-export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
-  try {
-    const categories = await getAllCategories();
-    const params: { slug: string[] }[] = [];
-    
-    // Generate params for main categories
-    for (const category of categories.filter(c => c.parentCategory === null)) {
-      params.push({ slug: [nameToSlug(category.name)] });
-      
-      // Generate params for subcategories
-      if (category.subcategories) {
-        for (const subcategory of category.subcategories) {
-          params.push({ 
-            slug: [nameToSlug(category.name), nameToSlug(subcategory.name)] 
-          });
-        }
-      }
-    }
-    
-    return params;
-  } catch (error) {
-    console.error('Error generating static params:', error);
-    return [];
-  }
-}
+// Allow dynamic params that weren't generated at build time
+export const dynamicParams = true;
+
+// Disable static generation to allow fully dynamic routing
+export const dynamic = 'force-dynamic';
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -128,12 +107,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   } catch (error) {
     console.error('Error generating metadata:', error);
+    // Fallback metadata when API fails - create a reasonable title from the slug
+    const categoryName = slug[0].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return {
+      title: `${categoryName} - Hierro Express`,
+      description: `Explora nuestra selección de productos en ${categoryName}. Hierro Express tiene todo lo que necesitas.`,
+    };
   }
 
-  // Default metadata
+  // Default metadata - create a reasonable title from the slug
+  const categoryName = slug[0].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   return {
-    title: 'Catálogo de Productos - Hierro Express',
-    description: 'Explora nuestro catálogo completo de productos. Hierro Express tiene todo lo que necesitas.',
+    title: `${categoryName} - Hierro Express`,
+    description: `Explora nuestra selección de productos en ${categoryName}. Hierro Express tiene todo lo que necesitas.`,
   };
 }
 
@@ -145,42 +131,51 @@ export default async function CategoryPage({ params }: PageProps) {
     notFound();
   }
   
+  let categories: any[] = [];
+  
   try {
-    const categories = await getAllCategories();
-    
+    categories = await getAllCategories();
+  } catch (error) {
+    console.error('Error loading categories from API:', error);
+    // When API fails, pass undefined categoryId to let Menu2 handle the error gracefully
+    // This prevents showing "Category not found" when it's actually a connectivity issue
     if (slug.length === 1) {
-      // Single category by name
-      const category = findCategoryBySlug(categories, slug[0]);
-      
-      if (!category) {
-        notFound();
-      }
-      
-      return <Menu2 categoryId={category.id} />;
-      
+      return <Menu2 categoryId={undefined} />;
     } else if (slug.length === 2 && slug[1]) {
-      // Category + Subcategory
-      const category = findCategoryBySlug(categories, slug[0]);
-      const subcategory = category?.subcategories?.find(sub => nameToSlug(sub.name) === slug[1]);
-      
-      if (!category || !subcategory) {
-        notFound();
-      }
-      
-      return (
-        <Menu2 
-          categoryId={category.id} 
-          subcategoryId={subcategory.id}
-        />
-      );
-      
+      return <Menu2 categoryId={undefined} subcategoryId={undefined} />;
     } else {
-      // Invalid URL format
+      notFound();
+    }
+  }
+  
+  if (slug.length === 1) {
+    // Single category by name
+    const category = findCategoryBySlug(categories, slug[0]);
+    
+    if (!category) {
       notFound();
     }
     
-  } catch (error) {
-    console.error('Error loading category page:', error);
+    return <Menu2 categoryId={category.id} />;
+    
+  } else if (slug.length === 2 && slug[1]) {
+    // Category + Subcategory
+    const category = findCategoryBySlug(categories, slug[0]);
+    const subcategory = category?.subcategories?.find(sub => nameToSlug(sub.name) === slug[1]);
+    
+    if (!category || !subcategory) {
+      notFound();
+    }
+    
+    return (
+      <Menu2 
+        categoryId={category.id} 
+        subcategoryId={subcategory.id}
+      />
+    );
+    
+  } else {
+    // Invalid URL format
     notFound();
   }
 }
