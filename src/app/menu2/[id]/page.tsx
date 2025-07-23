@@ -1,12 +1,36 @@
 
-import Menu2 from "../components/menu2";
+import { getAllCategories } from '@/helpers/peticiones';
+import { findCategoryById, getCategoryUrlPath } from '@/lib/urlUtils';
+import { redirect, notFound } from 'next/navigation';
 
-export default function Select({
+export default async function LegacySelect({
   params,
 }: {
-  params: { id: string }; // Permitir un string genérico para `hubCategory`
+  params: { id: string };
 }) {
   const { id } = params;
-
-  return <Menu2 categoryId={+id} />;
+  
+  // Check if id is a number (legacy format)
+  const categoryId = parseInt(id, 10);
+  
+  if (isNaN(categoryId)) {
+    notFound();
+  }
+  
+  try {
+    const categories = await getAllCategories();
+    const category = findCategoryById(categories, categoryId);
+    
+    if (!category) {
+      notFound();
+    }
+    
+    // Redirect to new URL format
+    const newUrl = getCategoryUrlPath(category);
+    redirect(newUrl);
+    
+  } catch (error) {
+    console.error('Error redirecting legacy URL:', error);
+    notFound();
+  }
 }
