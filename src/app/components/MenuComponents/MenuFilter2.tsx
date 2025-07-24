@@ -91,7 +91,7 @@ const MenuFilters2: React.FC<MenuFiltersProps> = ({
                 >
                   <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
                     <img
-                      src={category.icon}
+                      src={category.icon ?? 'https://res.cloudinary.com/dqsxlntau/image/upload/v1742489934/kxko43rpoe8hiuc9malu.svg'}
                       alt={category.name}
                       className="h-5 w-5 object-contain"
                     />
@@ -123,11 +123,15 @@ const MenuFilters2: React.FC<MenuFiltersProps> = ({
                 onClick={() => handleCategoryClick(subcategory.id, true)}
               >
                 <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                  <img
-                    src={subcategory.icon}
-                    alt={subcategory.name}
-                    className="h-5 w-5 object-contain"
-                  />
+<img
+  src={
+    typeof subcategory.icon === 'string' && subcategory.icon.includes('.png')
+      ? 'https://res.cloudinary.com/dqsxlntau/image/upload/v1742489934/kxko43rpoe8hiuc9malu.svg'
+      : subcategory.icon ?? 'https://res.cloudinary.com/dqsxlntau/image/upload/v1742489934/kxko43rpoe8hiuc9malu.svg'
+  }
+  alt={subcategory.name}
+  className="h-5 w-5 object-contain"
+/>
                 </div>
                 <span className="text-white font-medium">{subcategory.name}</span>
               </div>

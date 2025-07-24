@@ -8,7 +8,7 @@ import { getCategoryUrlPath } from '@/lib/urlUtils';
 export const CategoryFilter = () => {
   const { categories } = useCache();
   const router = useRouter();
-
+  console.log(categories)
   const handleCategoryClick = (category: any) => {
     const url = getCategoryUrlPath(category);
     router.push(url);
@@ -45,7 +45,7 @@ export const CategoryFilter = () => {
           >
             <div className={`flex items-center justify-center rounded-full bg-gradient-to-br ${colorGradient} p-2 sm:p-3 md:p-4 lg:p-5 shadow hover:shadow-lg transition`}>
               <Image
-                src={category.icon}
+                src={category.icon ?? 'https://res.cloudinary.com/dqsxlntau/image/upload/v1742489934/kxko43rpoe8hiuc9malu.svg'}
                 alt={category.name}
                 width={48}
                 height={48}

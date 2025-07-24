@@ -172,7 +172,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 relative md:h-96 flex flex-col gap-4 ">
         <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-56 mb-4">
           <Image
-            src={product.img}
+  src={
+    typeof product.img === 'string' && product.img.includes('.png')
+      ? 'https://res.cloudinary.com/dqsxlntau/image/upload/v1742489934/kxko43rpoe8hiuc9malu.svg'
+      : product.img ?? 'https://res.cloudinary.com/dqsxlntau/image/upload/v1742489934/kxko43rpoe8hiuc9malu.svg'
+  }
             alt={product.name}
             fill
             style={{ objectFit: 'cover' }}
