@@ -14,11 +14,20 @@ interface ProductCardProps {
 }
 
 const getInitialQuantity = (productId: string): number => {
-  const storedCart = localStorage.getItem('cartItems');
-  if (storedCart) {
-    const cartItems = JSON.parse(storedCart);
-    const existingItem = cartItems.find((item: any) => item.id === productId);
-    return existingItem ? existingItem.quantity : 0;
+  // Check if we're in the browser environment
+  if (typeof window === 'undefined') {
+    return 0;
+  }
+  
+  try {
+    const storedCart = localStorage.getItem('cartItems');
+    if (storedCart) {
+      const cartItems = JSON.parse(storedCart);
+      const existingItem = cartItems.find((item: any) => item.id === productId);
+      return existingItem ? existingItem.quantity : 0;
+    }
+  } catch (error) {
+    console.warn('Failed to get initial quantity from localStorage:', error);
   }
   return 0;
 };
@@ -43,52 +52,70 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       return;
     }
 
-    const storedCart = localStorage.getItem('cartItems');
-    let cartItems = storedCart ? JSON.parse(storedCart) : [];
-
-    const existingItem = cartItems.find((item: any) => item.id === product.id);
-
-    if (existingItem) {
-      cartItems = cartItems.map((item: any) =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item,
-      );
-    } else {
-      cartItems.push({ ...product, quantity: 1 });
+    // Check if we're in the browser environment
+    if (typeof window === 'undefined') {
+      return;
     }
 
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    setQuantity(quantity + 1);
-    toast.success('Producto agregado al carrito.', {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    try {
+      const storedCart = localStorage.getItem('cartItems');
+      let cartItems = storedCart ? JSON.parse(storedCart) : [];
+
+      const existingItem = cartItems.find((item: any) => item.id === product.id);
+
+      if (existingItem) {
+        cartItems = cartItems.map((item: any) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        );
+      } else {
+        cartItems.push({ ...product, quantity: 1 });
+      }
+
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      setQuantity(quantity + 1);
+      toast.success('Producto agregado al carrito.', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (error) {
+      console.warn('Failed to add to cart:', error);
+    }
   };
 
   const handleRemoveFromCart = () => {
-    const storedCart = localStorage.getItem('cartItems');
-    let cartItems = storedCart ? JSON.parse(storedCart) : [];
-
-    const existingItem = cartItems.find((item: any) => item.id === product.id);
-
-    if (existingItem && existingItem.quantity > 1) {
-      cartItems = cartItems.map((item: any) =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity - 1 }
-          : item,
-      );
-    } else {
-      cartItems = cartItems.filter((item: any) => item.id !== product.id);
+    // Check if we're in the browser environment
+    if (typeof window === 'undefined') {
+      return;
     }
 
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    setQuantity(quantity > 1 ? quantity - 1 : 0);
+    try {
+      const storedCart = localStorage.getItem('cartItems');
+      let cartItems = storedCart ? JSON.parse(storedCart) : [];
+
+      const existingItem = cartItems.find((item: any) => item.id === product.id);
+
+      if (existingItem && existingItem.quantity > 1) {
+        cartItems = cartItems.map((item: any) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity - 1 }
+            : item,
+        );
+      } else {
+        cartItems = cartItems.filter((item: any) => item.id !== product.id);
+      }
+
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      setQuantity(quantity > 1 ? quantity - 1 : 0);
+    } catch (error) {
+      console.warn('Failed to remove from cart:', error);
+    }
   };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,28 +133,37 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     if (!isNaN(numValue) && numValue >= 0) {
       setQuantity(numValue);
       
-      // Update localStorage
-      const storedCart = localStorage.getItem('cartItems');
-      let cartItems = storedCart ? JSON.parse(storedCart) : [];
-      
-      const existingItem = cartItems.find((item: any) => item.id === product.id);
-      
-      if (numValue === 0) {
-        // Remove item if quantity is 0
-        cartItems = cartItems.filter((item: any) => item.id !== product.id);
-      } else if (existingItem) {
-        // Update existing item quantity
-        cartItems = cartItems.map((item: any) =>
-          item.id === product.id
-            ? { ...item, quantity: numValue }
-            : item,
-        );
-      } else if (numValue > 0) {
-        // Add new item if quantity > 0
-        cartItems.push({ ...product, quantity: numValue });
+      // Check if we're in the browser environment before updating localStorage
+      if (typeof window === 'undefined') {
+        return;
       }
-      
-      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+      try {
+        // Update localStorage
+        const storedCart = localStorage.getItem('cartItems');
+        let cartItems = storedCart ? JSON.parse(storedCart) : [];
+        
+        const existingItem = cartItems.find((item: any) => item.id === product.id);
+        
+        if (numValue === 0) {
+          // Remove item if quantity is 0
+          cartItems = cartItems.filter((item: any) => item.id !== product.id);
+        } else if (existingItem) {
+          // Update existing item quantity
+          cartItems = cartItems.map((item: any) =>
+            item.id === product.id
+              ? { ...item, quantity: numValue }
+              : item,
+          );
+        } else if (numValue > 0) {
+          // Add new item if quantity > 0
+          cartItems.push({ ...product, quantity: numValue });
+        }
+        
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      } catch (error) {
+        console.warn('Failed to update cart in localStorage:', error);
+      }
     }
   };
 

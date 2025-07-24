@@ -13,6 +13,11 @@ const FILTER_STORAGE_KEY = 'menu2_filter_state';
 export const useFilterPersistence = () => {
   
   const saveFilterState = useCallback((filterState: FilterState) => {
+    // Check if we're in the browser environment
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
     try {
       localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filterState));
     } catch (error) {
@@ -21,6 +26,11 @@ export const useFilterPersistence = () => {
   }, []);
 
   const loadFilterState = useCallback((): FilterState | null => {
+    // Check if we're in the browser environment
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    
     try {
       const stored = localStorage.getItem(FILTER_STORAGE_KEY);
       if (stored) {
@@ -33,6 +43,11 @@ export const useFilterPersistence = () => {
   }, []);
 
   const clearFilterState = useCallback(() => {
+    // Check if we're in the browser environment
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
     try {
       localStorage.removeItem(FILTER_STORAGE_KEY);
     } catch (error) {
