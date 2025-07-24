@@ -163,14 +163,16 @@ export default async function CategoryPage({ params }: PageProps) {
     const category = findCategoryBySlug(categories, slug[0]);
     const subcategory = category?.subcategories?.find(sub => nameToSlug(sub.name) === slug[1]);
     
-    if (!category || !subcategory) {
+    if (!category) {
       notFound();
     }
     
+    // If subcategory doesn't exist, show the main category instead of redirecting to not-found
+    // This allows graceful handling of missing subcategories - the Menu2 component will show "no products"
     return (
       <Menu2 
         categoryId={category.id} 
-        subcategoryId={subcategory.id}
+        subcategoryId={subcategory?.id}
       />
     );
     
