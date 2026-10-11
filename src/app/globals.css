@@ -1753,6 +1753,7 @@
 }
 .he-payment-paid { color: #246b3b; background: #e6f4ea; }
 .he-payment-pending { color: #8b5600; background: #fff3e2; }
+.he-import-success { margin-top: 18px; padding: 15px; color: #246b3b !important; background: #e6f4ea; border: 1px solid #8dc99d; }
 .he-floating-cart {
   position: fixed;
   right: 30px;
