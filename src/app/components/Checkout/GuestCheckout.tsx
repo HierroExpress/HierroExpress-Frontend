@@ -19,6 +19,15 @@ interface Quote {
 interface Receipt {
   id: string;
   subtotal: number;
+  shippingCost: number;
+  totalUyu: number | null;
+}
+interface ShippingQuote {
+  shippingCost: number;
+  canDeliver: boolean;
+  shippingMessage: string;
+  distance: number;
+  totalUyu: number;
 }
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 export default function GuestCheckout() {
@@ -27,6 +36,9 @@ export default function GuestCheckout() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [receipt, setReceipt] = useState<Receipt | null>(null);
+  const [shippingQuote, setShippingQuote] = useState<ShippingQuote | null>(null);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [shippingError, setShippingError] = useState('');
   const submitting = useRef(false);
   const requestId = useRef('');
   const [contact, setContact] = useState({
@@ -89,6 +101,44 @@ export default function GuestCheckout() {
       controller.abort();
     };
   }, []);
+  useEffect(() => {
+    if (deliveryMethod !== 'delivery' || !quote || contact.address.trim().length < 5 || contact.city.trim().length < 2) {
+      setShippingQuote(null);
+      setShippingError('');
+      setShippingLoading(false);
+      return;
+    }
+    let active = true;
+    const timeout = window.setTimeout(async () => {
+      setShippingLoading(true);
+      setShippingError('');
+      try {
+        const response = await fetch(`${API_URL}/orders/guest/shipping-quote`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            address: contact.address,
+            city: contact.city,
+            items: quote.items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(Array.isArray(data.message) ? data.message.join('. ') : data.message || 'No pudimos calcular el envío.');
+        if (active) setShippingQuote(data);
+      } catch (e) {
+        if (active) {
+          setShippingQuote(null);
+          setShippingError(e instanceof Error ? e.message : 'No pudimos calcular el envío.');
+        }
+      } finally {
+        if (active) setShippingLoading(false);
+      }
+    }, 550);
+    return () => {
+      active = false;
+      window.clearTimeout(timeout);
+    };
+  }, [deliveryMethod, quote, contact.address, contact.city]);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!quote || submitting.current) return;
@@ -153,9 +203,9 @@ export default function GuestCheckout() {
         <section className="he-cart-box" role="status">
           <h1>Recibimos tu pedido Nº {receipt.id}</h1>
           <p>Subtotal de productos: U$S {receipt.subtotal.toFixed(2)}.</p>
+          {receipt.shippingCost > 0 && <p>Costo de envío: $U {receipt.shippingCost.toFixed(2)}.</p>}
           <p>
-            El pedido está pendiente de coordinar el costo de envío, la fecha de
-            entrega y el pago. No se realizó ningún cobro.
+            La fecha de entrega y el pago se coordinan con el local. No se realizó ningún cobro.
           </p>
           <p>
             Guardá el número de pedido. Te contactaremos al teléfono que nos
@@ -237,7 +287,7 @@ export default function GuestCheckout() {
               <legend>¿Cómo querés recibir tu pedido?</legend>
               <label className="he-choice">
                 <input type="radio" name="delivery" checked={deliveryMethod === 'delivery'} onChange={() => setDeliveryMethod('delivery')} />
-                <span><strong>Envío a domicilio</strong><small>Indicá la dirección. El costo y la fecha se coordinan antes de la entrega.</small></span>
+                <span><strong>Envío a domicilio</strong><small>Indicá la dirección para calcular el costo antes de confirmar.</small></span>
               </label>
               <label className="he-choice">
                 <input type="radio" name="delivery" checked={deliveryMethod === 'coordinate'} onChange={() => setDeliveryMethod('coordinate')} />
@@ -282,13 +332,14 @@ export default function GuestCheckout() {
             </label>
             <p>
               {deliveryMethod === 'delivery'
-                ? 'El costo y la fecha de envío se confirman antes de la entrega.'
+                ? shippingLoading ? 'Calculando costo de envío…' : shippingQuote?.shippingMessage || 'Completá la dirección para calcular el envío.'
                 : 'Coordinaremos contigo el retiro o el flete.'}
             </p>
+            {shippingError && <p className="he-form-error">{shippingError}</p>}
             <button
               className="he-button he-button-orange"
               type="submit"
-              disabled={busy || (paymentMethod === 'mercadopago' && !quote.mercadoPago)}
+              disabled={busy || (paymentMethod === 'mercadopago' && !quote.mercadoPago) || (deliveryMethod === 'delivery' && (!shippingQuote || !shippingQuote.canDeliver || shippingLoading))}
             >
               {busy
                 ? 'Guardando pedido…'
@@ -315,9 +366,17 @@ export default function GuestCheckout() {
               </div>
             ))}
             <h3>Subtotal: U$S {quote.subtotal.toFixed(2)}</h3>
+            {deliveryMethod === 'delivery' && (
+              <div className="he-shipping-summary" aria-live="polite">
+                <strong>Envío a domicilio</strong>
+                {shippingLoading && <span>Calculando distancia y costo…</span>}
+                {!shippingLoading && shippingQuote && <><span>{shippingQuote.distance.toFixed(1)} km desde el local</span><strong>{shippingQuote.canDeliver ? `Envío: $U ${shippingQuote.shippingCost.toFixed(2)}` : shippingQuote.shippingMessage}</strong></>}
+                {!shippingLoading && !shippingQuote && <span>Completá calle y ciudad para ver el costo.</span>}
+              </div>
+            )}
             {paymentMethod === 'mercadopago' && quote.mercadoPago && (
               <div className="he-payment-conversion" aria-live="polite">
-                <strong>Total para pagar: $U {quote.mercadoPago.total.toFixed(2)}</strong>
+                <strong>Total para pagar: $U {(deliveryMethod === 'delivery' && shippingQuote ? shippingQuote.totalUyu : quote.mercadoPago.total).toFixed(2)}</strong>
                 <span>Tipo de cambio aplicado: 1 U$S = $U {quote.mercadoPago.exchangeRate.toFixed(2)}</span>
               </div>
             )}
@@ -326,7 +385,7 @@ export default function GuestCheckout() {
             )}
             <p>
               <strong>Entrega:</strong>{' '}
-              {deliveryMethod === 'delivery' ? 'a domicilio, costo a coordinar.' : 'a coordinar con el local.'}
+              {deliveryMethod === 'delivery' ? 'a domicilio.' : 'a coordinar con el local.'}
             </p>
             <p>
               <strong>Pago:</strong>{' '}

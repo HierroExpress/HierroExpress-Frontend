@@ -1727,6 +1727,16 @@
 }
 .he-payment-conversion strong { font-size: 20px; }
 .he-payment-conversion span { font-size: 15px; }
+.he-shipping-summary {
+  display: grid;
+  gap: 6px;
+  margin: 18px 0;
+  padding: 16px;
+  color: #102f46;
+  background: #eaf3f9;
+  border-left: 5px solid #488aca;
+}
+.he-shipping-summary span { font-size: 15px; }
 .he-form-error {
   border: 1px solid #973327;
   background: #fff1ed;
