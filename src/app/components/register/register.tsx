@@ -136,14 +136,15 @@ export function RegisterForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-[310px]">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="he-auth-form">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
+              <label htmlFor="register-name">Nombre y apellido</label>
               <FormControl>
-                <Input placeholder="Nombre completo" {...field} />
+                <Input id="register-name" autoComplete="name" placeholder="Tu nombre completo" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -154,8 +155,9 @@ export function RegisterForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
+              <label htmlFor="register-email">Correo electrónico</label>
               <FormControl>
-                <Input placeholder="Correo electronico" {...field} />
+                <Input id="register-email" type="email" autoComplete="email" placeholder="nombre@correo.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -166,9 +168,11 @@ export function RegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
+              <label htmlFor="register-password">Contraseña</label>
               <div className="text-red-600 relative">
                 <FormControl>
                   <Input
+                    id="register-password"
                     placeholder="Contraseña"
                     {...field}
                     type={showPassword ? 'text' : 'password'}
@@ -190,9 +194,11 @@ export function RegisterForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
+              <label htmlFor="register-confirm-password">Repetí la contraseña</label>
               <div className="text-red-600 relative">
                 <FormControl>
                   <Input
+                    id="register-confirm-password"
                     placeholder="Repetir contraseña"
                     {...field}
                     type={showPassword ? 'text' : 'password'}
@@ -208,30 +214,25 @@ export function RegisterForm() {
           name="phone"
           render={({ field }) => (
             <FormItem>
+              <label htmlFor="register-phone">Teléfono o WhatsApp</label>
               <FormControl>
-                <Input placeholder="+598 XXXX XXXX." {...field} />
+                <Input id="register-phone" type="tel" autoComplete="tel" placeholder="Ej.: 099 123 456" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" variant="submit" size="submit">
+        <Button type="submit" variant="submit" size="submit" className="he-auth-submit">
           Registrarme
         </Button>
       </form>
-      <h2 className="text-sm font-regular mt-[15px]">
-        ¿ya estas{' '}
-        <Link href="/login" className="underline font-semibold">
-          logueado
-        </Link>
-        ?
-      </h2>
+      <div className="he-auth-links"><p>¿Ya tenés cuenta? <Link href="/login">Ingresá</Link></p></div>
       <Button
         onClick={handleGoogleLogin}
         type="submit"
         variant="submit"
         size="submit"
-        className="w-[320px] bg-white h-[40px] text-black mb-[15px] flex items-center justify-center gap-2 hover:bg-gray-50"
+        className="he-auth-google"
       >
         <FcGoogle className="text-xl" />
         Ingresar con Google

@@ -2,14 +2,13 @@ import { RegisterForm } from '@/app/components/register/register';
 
 export default function LoginPage() {
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-      <div className="bg-white text-blue-900 p-8 rounded-lg shadow-md w-[380px] mx-4 my-8">
-        <div className="flex flex-col items-center">
-          <h1 className="text-2xl font-bold text-center">Hierro Express</h1>
-          <h2 className="text-lg text-center mt-2 mb-6">Registrate</h2>
-          <RegisterForm />
-        </div>
-      </div>
-    </div>
+    <main className="he-auth-page">
+      <section className="he-auth-card">
+        <p className="he-eyebrow">CREAR CUENTA</p>
+        <h1>Registrate</h1>
+        <p>Es opcional para comprar, pero te permite consultar tus pedidos después.</p>
+        <RegisterForm />
+      </section>
+    </main>
   );
 }

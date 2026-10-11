@@ -90,14 +90,15 @@ export function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-[310px]">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="he-auth-form">
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
+              <label htmlFor="login-email">Correo electrónico</label>
               <FormControl>
-                <Input placeholder="correo electronico" {...field} />
+                <Input id="login-email" type="email" autoComplete="email" placeholder="nombre@correo.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -108,9 +109,11 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
+              <label htmlFor="login-password">Contraseña</label>
               <div className="text-red-600 relative">
                 <FormControl>
                   <Input
+                    id="login-password"
                     placeholder="Contraseña"
                     {...field}
                     type={showPassword ? 'text' : 'password'}
@@ -127,30 +130,20 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" variant="submit" size="submit">
+        <Button type="submit" variant="submit" size="submit" className="he-auth-submit">
           Iniciar sesión
         </Button>
       </form>
-      <h2 className="text-sm font-regular mt-[15px]">
-        {
-          <Link href="/req-reset" className="underline font-semibold">
-            Has olvidado tu contraseña?
-          </Link>
-        }
-      </h2>
-      <h2 className="text-sm font-regular mt-[15px]">
-        {
-          <Link href="/register" className="underline font-semibold">
-            Crea una cuenta nueva
-          </Link>
-        }
-      </h2>
+      <div className="he-auth-links">
+        <Link href="/req-reset">¿Olvidaste tu contraseña?</Link>
+        <p>¿Todavía no tenés cuenta? <Link href="/register">Registrate</Link></p>
+      </div>
       <Button
         onClick={handleGoogleLogin}
         type="submit"
         variant="submit"
         size="submit"
-        className="w-[320px] bg-white h-[40px] text-black mb-[15px] flex items-center justify-center gap-2 hover:bg-gray-50"
+        className="he-auth-google"
       >
         <FcGoogle className="text-xl" />
         Ingresar con Google

@@ -1,12 +1,12 @@
 'use client';
 import Image from 'next/image';
+import { productImageSource } from '@/lib/productImage';
 import PriceTag from './PriceTag';
 import CartButtons from './CartButtons';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { getProductById } from '@/helpers/peticiones';
 import { Product } from '@/types';
-import { useAuth } from '@/app/contexts/AuthContext';
 
 interface ProductIDCardProps {
   params: {
@@ -15,9 +15,8 @@ interface ProductIDCardProps {
 }
 
 const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
-  const [quantity, setQuantity] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(1);
   const [product, setProduct] = useState<Product | null>(null);
-  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,18 +66,6 @@ const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
       });
       return;
     }
-    if (!isAuthenticated) {
-      toast.warn('Debes iniciar sesión para agregar productos al carrito.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      return;
-    }
 
     if (!product) return;
 
@@ -98,6 +85,7 @@ const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
     }
 
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    window.dispatchEvent(new Event('cart:updated'));
     toast.success('Producto añadido al carrito.', {
       position: 'top-center',
       autoClose: 3000,
@@ -116,7 +104,7 @@ const ProductIDCard: React.FC<ProductIDCardProps> = ({ params }) => {
     <div className="flex flex-col lg:flex-row lg:space-x-8 bg-white rounded-lg shadow-md p-12 lg:max-w-6xl mx-auto h-auto lg:h-full">
       <div className="flex-shrink-0 mb-4 lg:mb-0 lg:max-w-md h-auto lg:h-full">
         <Image
-          src={product.img}
+          src={productImageSource(product.img)}
           alt={product.name}
           width={1200}
           height={1000}

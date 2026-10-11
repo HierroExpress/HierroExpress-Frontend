@@ -115,7 +115,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     setAccessToken(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('cartItems');
   };
 
   const isUser = () => user?.role === 'user';

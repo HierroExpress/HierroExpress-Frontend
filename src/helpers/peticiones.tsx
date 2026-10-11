@@ -2,7 +2,11 @@ import { Product, Category } from '../types';
 
 
 // const API_URL = 'https://chilyapi.onrender.com';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const absoluteApiUrl = (path: string) =>
+  API_URL.startsWith('http')
+    ? `${API_URL}${path}`
+    : `${typeof window === 'undefined' ? 'http://localhost:3001' : window.location.origin}${API_URL}${path}`;
 
 // Helper function to filter out products with price 0
 const filterProductsWithPrice = (products: Product[]): Product[] => {
@@ -23,7 +27,7 @@ export async function getProducts(
   } = {},
 ): Promise<any[]> {
   try {
-    let url = new URL(`${API_URL}/products/filter`);
+    let url = new URL(absoluteApiUrl('/products/filter'));
 
     url.searchParams.append('page', page.toString());
     url.searchParams.append('limit', limit.toString());
@@ -148,7 +152,7 @@ export const filterProductsByCategoryAndAttributes = async ({
   attributes: { attributeId: number; value: string }[];
 }) => {
   try {
-    const url = new URL(`${API_URL}/products/filterByCategoryIdAndAtributes`);
+    const url = new URL(absoluteApiUrl('/products/filterByCategoryIdAndAtributes'));
     url.searchParams.append('categoryId', categoryId.toString());
 
     if (attributes.length > 0) {

@@ -1,67 +1,10 @@
 'use client';
-import React from 'react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getCookie } from 'cookies-next';
+import { ArrowRight, Boxes, ClipboardList, FolderTree, Ticket, Users } from 'lucide-react';
 import RouteGuard from '@/helpers/routeGuard';
-
-const DashboardPage: React.FC = () => {
-  return (
-    <RouteGuard allowedRoles={['superadmin']}>
-      <div className="min-h-screen flex flex-col items-center bg-white w-full h-full mt-16">
-        <h1 className="text-5xl font-bold text-red-500">¡Bienvenido!</h1>
-        <div className="flex flex-col items-center mt-10 w-full self-start">
-          <div className="w-full max-w-md">
-            <Link href="/superadmin/products">
-              <div className="bg-blue-600 text-white px-4 py-2 mb-4 hover:bg-blue-100 rounded mr-2 flex justify-between items-center">
-                Gestionar Productos
-              </div>
-            </Link>
-          </div>
-          <div className="w-full max-w-md">
-            <Link href="/superadmin/categories">
-              <div className=" bg-blue-600 text-white px-4 py-2 mb-4 hover:bg-blue-100 rounded mr-2 flex justify-between items-center">
-                Gestionar Categorías de producto
-              </div>
-            </Link>
-          </div>
-          <div className="w-full max-w-md">
-            <Link href="/superadmin/attributes">
-              <div className="bg-blue-600 text-white px-4 py-2 mb-4 hover:bg-blue-100 rounded mr-2 flex justify-between items-center">
-                Gestionar Atributos
-              </div>
-            </Link>
-          </div>
-          <div className="w-full max-w-md">
-            <Link href="/admin-history">
-              <div className="bg-blue-600 text-white px-4 py-2 mb-4 hover:bg-blue-100 rounded mr-2 flex justify-between items-center">
-                Gestionar Órdenes
-              </div>
-            </Link>
-          </div>
-          <div className="w-full max-w-md">
-            <Link href="/superadmin/transactions">
-              <div className="bg-blue-600 text-white px-4 py-2 mb-4 hover:bg-blue-100 rounded mr-2 flex justify-between items-center">
-                Gestionar Transacciones
-              </div>
-            </Link>
-          </div>
-          <div className="w-full max-w-md">
-            <Link href="/superadmin/users">
-              <div className=" bg-blue-600 text-white px-4 py-2 mb-4 hover:bg-blue-100 rounded mr-2 flex justify-between items-center">
-                Gestionar Cuentas
-              </div>
-            </Link>
-          </div>
-          <div className="w-full max-w-md">
-            <Link href="/cupons">
-              <div className="bg-blue-600 text-white px-4 py-2 mb-4 hover:bg-blue-100 rounded mr-2 flex justify-between items-center">
-                Gestionar Cupones de descuento
-              </div>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </RouteGuard>
-  );
-};
-
-export default DashboardPage;
+type Order = { id:string; status:string; email:string; price:string };
+const modules=[['/admin-history','Pedidos','Recibí, revisá y actualizá las órdenes.',ClipboardList],['/superadmin/products','Productos','Precios, existencias e información del catálogo.',Boxes],['/superadmin/categories','Categorías','Organizá las familias de materiales.',FolderTree],['/superadmin/users','Clientes y cuentas','Consultá usuarios y permisos.',Users],['/cupons','Cupones','Creá y administrá descuentos.',Ticket]] as const;
+function Dashboard(){const [orders,setOrders]=useState<Order[]>([]);const [loading,setLoading]=useState(true);useEffect(()=>{fetch('/api/orders/all-orders?page=1&limit=8',{headers:{Authorization:`Bearer ${getCookie('accessToken')||''}`}}).then(r=>r.ok?r.json():{orders:[]}).then(d=>setOrders(d.orders||[])).catch(()=>setOrders([])).finally(()=>setLoading(false))},[]);const pending=orders.filter(o=>o.status==='Pendiente').length;return <main className="he-admin-shell"><aside className="he-admin-sidebar"><p className="he-admin-brand">HIERRO <strong>EXPRESS</strong></p><span>Administración</span><nav>{modules.map(([href,title,,Icon])=><Link key={href} href={href}><Icon size={20}/>{title}</Link>)}<Link href="/superadmin/attributes"><FolderTree size={20}/>Atributos</Link><Link href="/superadmin/transactions"><ClipboardList size={20}/>Transacciones</Link></nav></aside><section className="he-admin-content"><header className="he-admin-top"><div><p className="he-eyebrow">CENTRO DE OPERACIONES</p><h1>Administración</h1><p>Empezá por los pedidos que necesitan atención.</p></div><Link href="/admin-history" className="he-button he-button-orange">Ver pedidos <ArrowRight size={20}/></Link></header><div className="he-admin-kpis"><div><span>Pedidos recientes</span><strong>{loading?'—':orders.length}</strong></div><div><span>Pendientes de revisar</span><strong>{loading?'—':pending}</strong></div><div><span>Catálogo</span><strong>Productos y precios</strong></div></div><section className="he-admin-recent"><div className="he-admin-section-title"><h2>Pedidos recientes</h2><Link href="/admin-history">Abrir gestión <ArrowRight size={17}/></Link></div>{loading?<p>Cargando pedidos…</p>:orders.length?<div className="he-admin-orders">{orders.map(o=><Link key={o.id} href="/admin-history"><span><strong>Pedido #{o.id}</strong><small>{o.email}</small></span><span className={`he-order-status ${o.status==='Pendiente'?'is-pending':''}`}>{o.status}</span><strong>{o.price}</strong><ArrowRight size={18}/></Link>)}</div>:<p>No hay pedidos recientes para mostrar.</p>}</section><section className="he-admin-modules"><h2>Gestión del negocio</h2><div>{modules.map(([href,title,description,Icon])=><Link key={href} href={href}><Icon size={27}/><span><strong>{title}</strong><small>{description}</small></span><ArrowRight size={19}/></Link>)}</div></section></section></main>}
+export default function DashboardPage(){return <RouteGuard allowedRoles={['superadmin']}><Dashboard/></RouteGuard>}

@@ -1,54 +1,50 @@
-'use client';
-import React, { useState } from 'react';
-
-const WhatsAppForm = () => {
-  const [message, setMessage] = useState('');
-
-  const handleSendMessage = () => {
-    const phoneNumber = '527751412206'; // Reemplaza con el número de WhatsApp al que deseas enviar el mensaje
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-  };
-
+export default function Contact() {
   return (
-    <div className="bg-gray-100 text-black flex flex-col items-center justify-center min-h-screen p-6">
-      <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center">
-        Contáctanos por WhatsApp
+    <main className="he-container he-content-page">
+      <p className="he-eyebrow">ATENCIÓN PERSONALIZADA</p>
+      <h1>
+        Consultas sobre productos
+        <br />
+        y entregas.
       </h1>
-      <p className="text-lg md:text-xl mb-6 text-center max-w-2xl">
-        Si tienes alguna pregunta, comentario o necesitas asistencia, no dudes
-        en enviarnos un mensaje a través de WhatsApp. Estamos aquí para ayudarte
-        y responder a todas tus inquietudes.
+      <p className="he-intro">
+        Contanos qué material necesitás, las medidas y la cantidad. Nuestro
+        equipo te ayuda a encontrar la mejor opción y coordinar la entrega o el
+        retiro.
       </p>
-      <form className="bg-white p-6 md:p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <label
-          htmlFor="message"
-          className="block text-black mb-4 text-lg md:text-xl font-semibold"
-        >
-          Escribe tu mensaje:
-        </label>
-        <textarea
-          id="message"
-          className="w-full p-4 border border-gray-300 rounded-lg mb-4 resize-none"
-          rows={6}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Escribe tu mensaje aquí..."
-        />
-        <button
-          type="button"
-          className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 font-semibold text-lg md:text-xl"
-          onClick={handleSendMessage}
-        >
-          Enviar por WhatsApp
-        </button>
-      </form>
-      <p className="text-center mt-6 text-base md:text-lg">
-        Nos comprometemos a responder lo antes posible. ¡Gracias por
-        contactarnos!
-      </p>
-    </div>
+      <div className="he-content-grid">
+        <section className="he-content-box">
+          <h2>Hablemos por WhatsApp.</h2>
+          <p>
+            Consultá por productos, cortes y entregas. Si tenés una lista de
+            materiales, compartila con nuestro equipo.
+          </p>
+          <a
+            className="he-button he-button-orange"
+            href="https://wa.me/59898151680?text=Hola%20Hierro%20Express,%20necesito%20asesoramiento%20para%20mi%20proyecto."
+            target="_blank"
+            rel="noreferrer"
+          >
+            Abrir WhatsApp
+          </a>
+        </section>
+        <section className="he-content-box">
+          <h2>Acercate a nuestro local.</h2>
+          <p>
+            Setembrino Pereda 3233
+            <br />
+            Montevideo, Uruguay
+          </p>
+          <a
+            className="he-button he-button-orange"
+            href="https://www.google.com/maps/search/?api=1&query=Setembrino+Pereda+3233+Montevideo"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Cómo llegar
+          </a>
+        </section>
+      </div>
+    </main>
   );
-};
-
-export default WhatsAppForm;
+}

@@ -3,6 +3,7 @@ FROM node:20-alpine AS builder
 
 # Evita preguntas de telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_API_URL=/api
 
 WORKDIR /app
 

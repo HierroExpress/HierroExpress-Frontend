@@ -1,106 +1,96 @@
-'use client';
-import { CategoryFilter } from '../app/components/MenuComponents/CategoryFilter';
-import { useEffect, useState } from 'react';
-import { IoIosArrowUp } from 'react-icons/io';
-import AlmacenLocation from './components/LocationHierro/LocationConfirmation';
-import { FaWhatsapp } from "react-icons/fa"; 
-import { FiFilter } from "react-icons/fi"; 
 import Link from 'next/link';
-import PopUpProvisional from '@/components/ui/popUpProvisional';
+import { CategoryFilter } from './components/MenuComponents/CategoryFilter';
 
 export default function Home() {
-  const [showScrollTopButton, setShowScrollTopButton] = useState(false);
-  const [showPopup, setShowPopup] = useState(true);
-
-   const closePopup = () => {
-     setShowPopup(false);
-   };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollTopButton(true);
-      } else {
-        setShowScrollTopButton(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
   return (
-    <>
-      <link rel="icon" href="/HierroLogo.png" />
-      <link rel="manifest" href="/manifest.json" />
-      
-      {/* Contenedor principal - ahora sin fondo porque lo hereda del layout */}
-      <div className="min-h-screen w-full">
-        <main className="w-full px-4 py-4 lg:px-8 xl:px-12 2xl:px-16">
-          <CategoryFilter />
-          
-          {/* Contenedor de botones con mejor distribución */}
-          <div className="mt-6 flex flex-col md:flex-row justify-center gap-6 max-w-4xl mx-auto">
-            {/* Filter Menu Button */}
-            <Link
-              href="/menu2"
-              className="bg-blue-500 text-white p-6 rounded-lg shadow-lg hover:bg-blue-700 transition-colors text-3xl 
-                         w-full md:flex-1 md:max-w-xs flex items-center justify-center"
-            >
-              <FiFilter />
+    <main className="he-home">
+      <section className="he-hero he-container">
+        <div className="he-hero-copy">
+          <p className="he-eyebrow">HIERRO EXPRESS · MONTEVIDEO</p>
+          <h1>
+            Comprá hierros e insumos
+            <br />
+            para tu obra o taller.
+          </h1>
+          <p className="he-hero-description">
+            Elegí el producto y la cantidad. Agregalos al carrito y completá tus datos para coordinar el envío.
+          </p>
+          <div className="he-actions">
+            <Link className="he-button he-button-orange" href="/menu2">
+              Ver productos y comprar
             </Link>
-            
-            {/* WhatsApp Button */}
-            <a
-              href="https://wa.me/+59898654665"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-green-500 text-white p-6 rounded-lg shadow-lg hover:bg-green-700 transition-colors text-3xl 
-                         w-full md:flex-1 md:max-w-xs flex items-center justify-center"
-            >
-              <FaWhatsapp />
-            </a>
-          </div>
-
-          {/* Componente de ubicación con ancho completo */}
-          <div className="w-full max-w-6xl mx-auto">
-            <AlmacenLocation />
-          </div>
-          
-          {/* Botón de scroll to top */}
-          {showScrollTopButton && (
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="fixed bottom-8 right-8 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50"
-            >
-              <IoIosArrowUp className="text-2xl" />
-            </button>
-          )}
-
-          {/* WhatsApp Button fijo */}
-          <a
-            href="https://wa.me/+59898151680?text=Hola%20Hierro%20express,%20quiero%20más%20información%20de%20sus%20productos"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="fixed bottom-8 left-8 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-700 transition-colors z-50"
-          >
-            <FaWhatsapp className="text-2xl" />
-          </a>
-          
-          {/* Filter Menu Button fijo */}
-          <button
-            className="fixed bottom-20 left-8 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50"
-          >
-            <Link href="/menu2">
-              <FiFilter className="text-2xl" />
+            <Link className="he-text-link" href="/contact">
+              Consultar antes de comprar
             </Link>
-          </button>
-        </main>
-      </div>
-
-      {showPopup && <PopUpProvisional closePopup={closePopup} />}
-    </>
+          </div>
+          <p className="he-hero-proof">
+            Barraca de hierros en Montevideo desde 2006.
+          </p>
+        </div>
+        <div className="he-hero-art">
+          <img
+            src="/materiales/canos.jpeg"
+            alt="Caño rectangular de acero"
+            className="he-hero-material"
+          />
+          <p className="he-photo-label">Caños, barras y perfiles de acero</p>
+        </div>
+      </section>
+      <section className="he-container he-catalog-section" id="catalogo">
+        <div className="he-section-heading">
+          <div>
+            <h2>¿Qué necesitás comprar?</h2>
+            <p className="he-section-description">
+              Elegí un tipo de producto para ver sus medidas y precios.
+            </p>
+          </div>
+          <Link className="he-text-link" href="/menu2">
+            Ver todos los productos
+          </Link>
+        </div>
+        <CategoryFilter />
+      </section>
+      <section className="he-container he-buy-help">
+        <h2>Cómo comprar con envío</h2>
+        <ol>
+          <li>
+            <strong>1. Elegí tus productos</strong>
+            <p>
+              Buscá el material, revisá la medida y agregá la cantidad al
+              carrito.
+            </p>
+          </li>
+          <li>
+            <strong>2. Completá tus datos</strong>
+            <p>
+              Escribí tu nombre, teléfono y dirección de entrega. No necesitás una cuenta.
+            </p>
+          </li>
+          <li>
+            <strong>3. Confirmá tu pedido</strong>
+            <p>
+              Revisá los productos. Coordinaremos con vos el costo del envío y el pago.
+            </p>
+          </li>
+        </ol>
+        <Link className="he-button he-button-orange" href="/menu2">
+          Empezar mi compra
+        </Link>
+        <p>
+          Si necesitás cortes o consultar una entrega,{' '}
+          <Link href="/contact">contactanos antes de comprar</Link>.
+        </p>
+      </section>
+      <section className="he-container he-location">
+        <div>
+          <h2>Retiro en nuestro local</h2>
+          <p>Setembrino Pereda 3233, Montevideo.</p>
+        </div>
+        <div className="he-location-links">
+          <a className="he-text-link" href="https://www.google.com/maps/search/?api=1&query=Setembrino+Pereda+3233+Montevideo" target="_blank" rel="noreferrer">Ver ubicación del local</a>
+          <a className="he-text-link" href="https://www.google.com/maps/d/viewer?mid=1ZxdcJnurObNLbegwaRS8tOupeMsEcCU" target="_blank" rel="noreferrer">Ver zonas de entrega en el mapa</a>
+        </div>
+      </section>
+    </main>
   );
 }

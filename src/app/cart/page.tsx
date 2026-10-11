@@ -1,200 +1,115 @@
 'use client';
-import { useAuth } from '../contexts/AuthContext';
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { CartItemType, ProductsInOrder } from '@/types';
-import { toast } from 'react-toastify';
-import Image from 'next/image';
-import { FiMinus, FiPlus, FiTrash } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
-import RouteGuard from '@/helpers/routeGuard';
-
-const CartPage: React.FC = () => {
-  const { isAuthenticated, address, user } = useAuth();
-  const [items, setItems] = useState<CartItemType[]>([]);
-  const [orderInstructions, setOrderInstructions] = useState('');
+import { productImageSource } from '@/lib/productImage';
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  stock: number;
+  img: string;
+}
+export default function CartPage() {
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [ready, setReady] = useState(false);
   const router = useRouter();
-
   useEffect(() => {
-    if (isAuthenticated) {
-      const storedItems = localStorage.getItem('cartItems');
-      if (storedItems) {
-        setItems(JSON.parse(storedItems));
-      }
+    try {
+      setItems(JSON.parse(localStorage.getItem('cartItems') || '[]'));
+    } catch {
+      setItems([]);
     }
-  }, [isAuthenticated]);
-
-  const updateQuantity = (id: number, increment: number) => {
-    if (!isAuthenticated) {
-      toast.warn('Debes iniciar sesión para actualizar el carrito.');
-      return;
-    }
-
-    const updatedItems = items.map((item) => {
-      if (item.id === id) {
-        const newQuantity = item.quantity + increment;
-        if(item.stock == 0) {
-                  return { ...item, quantity: Math.max(1, newQuantity) };
-        }
-        if (newQuantity > item.stock) {
-          toast.warn('No hay suficiente stock disponible.', {
-            position: 'top-center',
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-          return item;
-        }
-      }
-      return item;
-    });
-
-    setItems(updatedItems);
-    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    setReady(true);
+  }, []);
+  const save = (next: CartItem[]) => {
+    setItems(next);
+    localStorage.setItem('cartItems', JSON.stringify(next));
+    window.dispatchEvent(new Event('cart:updated'));
   };
-
-  const removeItem = (id: number) => {
-    if (!isAuthenticated) {
-      toast.warn('Debes iniciar sesión para actualizar el carrito.');
-      return;
-    }
-
-    const updatedItems = items.filter((item) => item.id !== id);
-    setItems(updatedItems);
-    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-  };
-
-  const calculateTotal = () => {
-    return items.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  const proceedToCheckout = () => {
-    if (!address) {
-      toast.warn(
-        'Por favor, proporciona tu dirección antes de proceder al checkout.',
-      );
-      localStorage.setItem('fromCart', 'true');
-      router.push('/address');
-      return;
-    }
-
-    const productsInOrder: ProductsInOrder[] = items.map((item) => ({
-      productId: item.id,
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity,
-    }));
-
-    const order = {
-      userId: Number(user?.id),
-      productsInOrder,
-      orderInstructions,
-      address: Number(address.id),
-      total: calculateTotal(),
-    };
-
-    localStorage.setItem('order', JSON.stringify(order));
-    console.log('Order saved to localStorage:', order);
-    router.push('/checkout');
-  };
-
+  const change = (id: number, quantity: number) =>
+    save(
+      items.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              quantity: Math.min(
+                item.stock > 0 ? item.stock : 10000,
+                Math.max(1, quantity),
+              ),
+            }
+          : item,
+      ),
+    );
+  if (!ready)
+    return <main className="he-container he-cart-page">Cargando carrito…</main>;
   return (
-    <RouteGuard allowedRoles={['user']}>
-      <div className="min-h-screen flex flex-col">
-        {items.length === 0 ? (
-          <div className="max-w-md mx-auto text-center py-12 px-4 flex-grow">
-            <h2 className="text-2xl font-semibold mb-4">
-              Tu carrito está vacío
+    <main className="he-container he-cart-page">
+      <h1>Tu carrito</h1>
+      <p>Podés comprar sin crear una cuenta.</p>
+      {items.length === 0 ? (
+        <div className="he-cart-box">
+          <h2>Tu carrito está vacío</h2>
+          <Link className="he-button he-button-orange" href="/menu2">
+            Elegir productos
+          </Link>
+        </div>
+      ) : (
+        <>
+          <div className="he-cart-box">
+            {items.map((item) => (
+              <article className="he-cart-row" key={item.id}>
+                <img src={productImageSource(item.img)} alt={item.name} />
+                <div>
+                  <Link href={`/product/${item.id}`}>
+                    <h2>{item.name}</h2>
+                  </Link>
+                  <p>Precio por unidad: U$S {item.price.toFixed(2)}</p>
+                </div>
+                <label>
+                  Cantidad
+                  <input
+                    type="number"
+                    min="1"
+                    max={item.stock > 0 ? item.stock : 10000}
+                    value={item.quantity}
+                    onChange={(e) => change(item.id, Number(e.target.value))}
+                  />
+                </label>
+                <strong>U$S {(item.price * item.quantity).toFixed(2)}</strong>
+                <button
+                  className="he-remove-item"
+                  onClick={() => save(items.filter((p) => p.id !== item.id))}
+                >
+                  Quitar
+                </button>
+              </article>
+            ))}
+          </div>
+          <div className="he-cart-summary">
+            <h2>
+              Subtotal: U$S{' '}
+              {items
+                .reduce((sum, item) => sum + item.price * item.quantity, 0)
+                .toFixed(2)}
             </h2>
-            <p className="mb-4">
-              Agrega algunos productos para comenzar a comprar.
+            <p>
+              El envío se coordina según tu dirección. Revisaremos los precios
+              antes de confirmar.
             </p>
-            <Link href="/menu2" className="text-blue-500 hover:underline">
-              Volver al menú
+            <button
+              className="he-button he-button-orange"
+              onClick={() => router.push('/checkout')}
+            >
+              Continuar con mis datos y envío
+            </button>
+            <Link href="/menu2" className="he-text-link">
+              Agregar más productos
             </Link>
           </div>
-        ) : (
-          <div className="max-w-md mx-auto p-4 sm:max-w-2xl md:max-w-4xl flex-grow">
-            <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-              <h2 className="text-xl font-semibold mb-4">Revisa tu Pedido</h2>
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between py-4 border-b"
-                >
-                  <div className="flex items-center space-x-4">
-                    <Image
-                      src={item.img}
-                      alt={item.name}
-                      width={60}
-                      height={60}
-                      className="rounded-md"
-                    />
-                    <div>
-                      <h3 className="font-semibold">{item.name}</h3>
-                      <p className="text-gray-600">${item.price}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => updateQuantity(item.id, -1)}
-                      className="text-gray-500 hover:text-gray-700 p-2 rounded-full bg-gray-200 hover:bg-gray-300"
-                    >
-                      <FiMinus size={24} />
-                    </button>
-                    <span>{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, 1)}
-                      className="text-gray-500 hover:text-gray-700 p-2 rounded-full bg-gray-200 hover:bg-gray-300"
-                    >
-                      <FiPlus size={24} />
-                    </button>
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="ml-2 text-red-500 hover:text-red-700 p-2 rounded-full bg-blue-100 hover:bg-blue-200"
-                    >
-                      <FiTrash size={24} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-              <div className="mt-4">
-                <h3 className="font-semibold mb-2">
-                  Instrucciones del Pedido:
-                </h3>
-                <textarea
-                  value={orderInstructions}
-                  onChange={(e) => setOrderInstructions(e.target.value)}
-                  className="w-full p-2 border rounded-md"
-                  rows={3}
-                />
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex justify-between mb-2">
-                <span>Subtotal:</span>
-                <span>${calculateTotal().toFixed(2)}</span>
-              </div>
-              <button
-                onClick={proceedToCheckout}
-                className="block w-full bg-blue-600 text-white text-center font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
-              >
-                Ir a Pagar
-              </button>
-            </div>
-            <div className="mt-4 text-center">
-              <Link href="/" className="text-blue-500 hover:underline">
-                ← Volver al Menu
-              </Link>
-            </div>
-          </div>
-        )}
-      </div>
-    </RouteGuard>
+        </>
+      )}
+    </main>
   );
-};
-
-export default CartPage;
+}

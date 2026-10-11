@@ -12,6 +12,7 @@ interface OrderDetailModalProps {
     date: string;
     price: string;
     formBuy: string;
+    paymentStatus?: 'Pagado' | 'Pendiente de pago';
     email: string;
     orderInstructions: string;
     products: Product[];
@@ -37,6 +38,9 @@ export function OrderDetailModal({ order, onClose }: OrderDetailModalProps) {
         </p>
         <p className="mb-2">
           <strong>Forma de pago:</strong> {order.formBuy}
+        </p>
+        <p className="mb-2">
+          <strong>Estado de pago:</strong> {order.paymentStatus || 'Pendiente de pago'}
         </p>
         <p className="mb-4">
           <strong>Correo:</strong> {order.email}

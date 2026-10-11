@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   filterProductsByCategoryAndAttributes,
   getAllCategories,
+  getProducts,
   getAtrtributesByCategory,
 } from '@/helpers/peticiones';
 import ProductCard from '@/app/components/Cards/ProductCard';
@@ -14,10 +15,10 @@ import MenuFilters2 from '@/app/components/MenuComponents/MenuFilter2';
 import { useFilterPersistence } from '@/hooks/useFilterPersistence';
 import StructuredData from '@/app/components/SEO/StructuredData';
 import BreadcrumbStructuredData from '@/app/components/SEO/BreadcrumbStructuredData';
-import { 
-  findCategoryById, 
-  getCategoryUrlPath, 
-  getCategoryWithSubcategoryUrlPath 
+import {
+  findCategoryById,
+  getCategoryUrlPath,
+  getCategoryWithSubcategoryUrlPath,
 } from '@/lib/urlUtils';
 
 interface MenuProps {
@@ -62,13 +63,13 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
   useEffect(() => {
     if (categoryId && categories.length > 0) {
       setSelectedCategory(categoryId);
-      
+
       // Set subcategories if this is a main category
       const category = categories.find((c) => c.id === categoryId);
       if (category?.subcategories) {
         setSubcategories(category.subcategories);
       }
-      
+
       // If there's a subcategory from URL, set it
       if (subcategoryId) {
         setSelectedSubcategory(subcategoryId);
@@ -84,32 +85,63 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
     if (categories.length > 0 && !categoryId) {
       const persistedState = loadFilterState();
       if (persistedState) {
-        const { selectedCategory: persistedCategory, selectedSubcategory: persistedSubcategory, selectedAttributes: persistedAttributes } = persistedState;
-        
+        const {
+          selectedCategory: persistedCategory,
+          selectedSubcategory: persistedSubcategory,
+          selectedAttributes: persistedAttributes,
+        } = persistedState;
+
         if (persistedCategory) {
           setSelectedCategory(persistedCategory);
           setSelectedAttributes(persistedAttributes);
-          
+
           // Set subcategories from the selected category
           const category = categories.find((c) => c.id === persistedCategory);
           if (category?.subcategories) {
             setSubcategories(category.subcategories);
           }
-          
+
           if (persistedSubcategory) {
             setSelectedSubcategory(persistedSubcategory);
           }
-          
+
           // Load data for the persisted category/subcategory with attributes
           const targetCategoryId = persistedSubcategory || persistedCategory;
-          handleSelectCategoryWithoutSaving(targetCategoryId, persistedAttributes);
+          handleSelectCategoryWithoutSaving(
+            targetCategoryId,
+            persistedAttributes,
+          );
         }
       }
     }
   }, [categories, categoryId, loadFilterState]);
 
+  useEffect(() => {
+    if (selectedCategory !== undefined) return;
+    let active = true;
+    setLoading(true);
+    getProducts(1, 60)
+      .then((data) => {
+        if (active) setProducts(data);
+      })
+      .catch(() => {
+        if (active)
+          setError('No pudimos cargar el catálogo. Intentá nuevamente.');
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [selectedCategory]);
+
   // Helper function to save current filter state
-  const saveCurrentFilterState = (category?: number, subcategory?: number, attributes?: { attributeId: number; value: string }[]) => {
+  const saveCurrentFilterState = (
+    category?: number,
+    subcategory?: number,
+    attributes?: { attributeId: number; value: string }[],
+  ) => {
     saveFilterState({
       selectedCategory: category ?? selectedCategory,
       selectedSubcategory: subcategory ?? selectedSubcategory,
@@ -120,7 +152,7 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
   // Handle category selection without saving state (used for restoration)
   const handleSelectCategoryWithoutSaving = async (
     categoryId: number,
-    attributesToUse?: { attributeId: number; value: string }[]
+    attributesToUse?: { attributeId: number; value: string }[],
   ) => {
     setLoading(true);
     setError('');
@@ -134,7 +166,9 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
         attributes: attributesToUse || [],
       });
       // Sort products by price (lowest to highest)
-      const sortedProducts = productsResponse.sort((a: Product, b: Product) => a.price - b.price);
+      const sortedProducts = productsResponse.sort(
+        (a: Product, b: Product) => a.price - b.price,
+      );
       setProducts(sortedProducts);
     } catch (err) {
       setError('Error al cargar los datos');
@@ -144,9 +178,7 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
   };
 
   // Handle category selection without triggering navigation (used for initial load)
-  const handleSelectCategoryWithoutNavigation = async (
-    categoryId: number,
-  ) => {
+  const handleSelectCategoryWithoutNavigation = async (categoryId: number) => {
     setLoading(true);
     setError('');
 
@@ -159,7 +191,9 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
         attributes: [],
       });
       // Sort products by price (lowest to highest)
-      const sortedProducts = productsResponse.sort((a: Product, b: Product) => a.price - b.price);
+      const sortedProducts = productsResponse.sort(
+        (a: Product, b: Product) => a.price - b.price,
+      );
       setProducts(sortedProducts);
     } catch (err) {
       setError('Error al cargar los datos');
@@ -179,13 +213,20 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
       if (isSubcategory) {
         setSelectedSubcategory(categoryId);
         // Save state with updated subcategory
-        saveCurrentFilterState(selectedCategory, categoryId, selectedAttributes);
-        
+        saveCurrentFilterState(
+          selectedCategory,
+          categoryId,
+          selectedAttributes,
+        );
+
         // Navigate to category/subcategory URL
         const category = findCategoryById(categories, selectedCategory!);
         const subcategory = findCategoryById(categories, categoryId);
         if (category && subcategory) {
-          const newUrl = getCategoryWithSubcategoryUrlPath(category, subcategory);
+          const newUrl = getCategoryWithSubcategoryUrlPath(
+            category,
+            subcategory,
+          );
           router.push(newUrl);
         }
       } else {
@@ -195,10 +236,10 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
 
         const category = categories.find((c) => c.id === categoryId);
         setSubcategories(category?.subcategories || []);
-        
+
         // Save state with new category and reset subcategory/attributes
         saveCurrentFilterState(categoryId, undefined, []);
-        
+
         // Navigate to category URL
         if (category) {
           const newUrl = getCategoryUrlPath(category);
@@ -214,7 +255,9 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
         attributes: isSubcategory ? selectedAttributes : [],
       });
       // Sort products by price (lowest to highest)
-      const sortedProducts = productsResponse.sort((a: Product, b: Product) => a.price - b.price);
+      const sortedProducts = productsResponse.sort(
+        (a: Product, b: Product) => a.price - b.price,
+      );
       setProducts(sortedProducts);
     } catch (err) {
       setError('Error al cargar los datos');
@@ -241,9 +284,13 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
         ];
 
     setSelectedAttributes(updatedAttributes);
-    
+
     // Save state with updated attributes
-    saveCurrentFilterState(selectedCategory, selectedSubcategory, updatedAttributes);
+    saveCurrentFilterState(
+      selectedCategory,
+      selectedSubcategory,
+      updatedAttributes,
+    );
 
     try {
       const categoryId = selectedSubcategory || selectedCategory;
@@ -254,7 +301,9 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
         attributes: updatedAttributes,
       });
       // Sort products by price (lowest to highest)
-      const sortedProducts = filteredProducts.sort((a: Product, b: Product) => a.price - b.price);
+      const sortedProducts = filteredProducts.sort(
+        (a: Product, b: Product) => a.price - b.price,
+      );
       setProducts(sortedProducts);
     } catch (err) {
       setError('Error al filtrar productos');
@@ -269,74 +318,88 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
 
   // Get current category and subcategory for structured data
   const currentCategory = findCategoryById(categories, selectedCategory!);
-  const currentSubcategory = selectedSubcategory ? findCategoryById(categories, selectedSubcategory) : undefined;
+  const currentSubcategory = selectedSubcategory
+    ? findCategoryById(categories, selectedSubcategory)
+    : undefined;
 
   return (
-    <div className="p-4 md:p-6">
+    <main className="he-container he-catalog-page">
+      <div className="he-catalog-title">
+        <p className="he-eyebrow">EL MATERIAL PARA TU PRÓXIMO PROYECTO</p>
+        <h1>
+          {currentSubcategory?.name ||
+            currentCategory?.name ||
+            'Catálogo de productos'}
+        </h1>
+        <p>
+          Elegí una categoría y encontrá el material y las medidas que
+          necesitás.
+        </p>
+      </div>
       {/* Structured Data for SEO */}
       {currentCategory && (
         <>
-          <StructuredData 
-            category={currentCategory} 
+          <StructuredData
+            category={currentCategory}
             subcategory={currentSubcategory}
           />
-          <BreadcrumbStructuredData 
-            category={currentCategory} 
+          <BreadcrumbStructuredData
+            category={currentCategory}
             subcategory={currentSubcategory}
           />
         </>
       )}
-      
-      <div className="md:flex w-full h-full">
-      <div className="md:flex w-full h-full">
-        <button
-          className="md:hidden w-full py-2 px-4 bg-gray-200 text-left flex justify-between items-center mb-4"
-          onClick={() => setIsFilterOpen(!isFilterOpen)}
-        >
-          Filtros
-          {isFilterOpen ? (
-            <ChevronUpIcon className="h-5 w-5" />
-          ) : (
-            <ChevronDownIcon className="h-5 w-5" />
-          )}
-        </button>
 
-        <div
-          className={`${isFilterOpen ? 'block' : 'hidden'} md:block md:w-1/2 md:p-4 border-b md:border-r border-gray-200 mb-4 md:mb-0`}
-        >
-          <MenuFilters2
-            handleSelectCategory={handleSelectCategory}
-            subCategories={subcategories}
-            categories={categories}
-            selectedCategory={selectedCategory}
-            selectedSubcategory={selectedSubcategory}
-            attributes={attributes}
-            selectedAttributes={selectedAttributes}
-            handleToggleAttribute={handleToggleAttribute}
-          />
-        </div>
+      <div className="he-catalog-layout">
+        <div className="he-catalog-inner">
+          <button
+            className="md:hidden w-full py-2 px-4 bg-gray-200 text-left flex justify-between items-center mb-4"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
+            Filtros
+            {isFilterOpen ? (
+              <ChevronUpIcon className="h-5 w-5" />
+            ) : (
+              <ChevronDownIcon className="h-5 w-5" />
+            )}
+          </button>
 
-        <div className="md:flex-grow md:w-1/2 md:p-4">
-          {loading && <div>Cargando...</div>}
-          {error && <div className="text-red-500">{error}</div>}
-          {products.length === 0 ? (
-            <div className="text-center text-gray-500 min-h-screen">
-              <p>No tenemos productos en esta categoría.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 md:mt-0">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={handleAddToCart}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+          <div
+            className={`${isFilterOpen ? 'block' : 'hidden'} md:block he-catalog-sidebar`}
+          >
+            <MenuFilters2
+              handleSelectCategory={handleSelectCategory}
+              subCategories={subcategories}
+              categories={categories}
+              selectedCategory={selectedCategory}
+              selectedSubcategory={selectedSubcategory}
+              attributes={attributes}
+              selectedAttributes={selectedAttributes}
+              handleToggleAttribute={handleToggleAttribute}
+            />
+          </div>
+
+          <div className="he-catalog-results">
+            {loading && <div>Cargando...</div>}
+            {error && <div className="text-red-500">{error}</div>}
+            {!loading && !error && products.length === 0 ? (
+              <div className="he-empty-catalog">
+                <p>Seleccioná un tipo de material para ver sus productos.</p>
+              </div>
+            ) : (
+              <div className="he-products-grid">
+                {products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

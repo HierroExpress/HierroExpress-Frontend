@@ -3,10 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/types';
-import { FaPlus, FaMinus } from 'react-icons/fa';
-import { useAuth } from '@/app/contexts/AuthContext';
 import { toast } from 'react-toastify';
 import { useState } from 'react';
+import { productImageSource } from '@/lib/productImage';
 
 interface ProductCardProps {
   product: Product;
@@ -18,7 +17,7 @@ const getInitialQuantity = (productId: string): number => {
   if (typeof window === 'undefined') {
     return 0;
   }
-  
+
   try {
     const storedCart = localStorage.getItem('cartItems');
     if (storedCart) {
@@ -33,25 +32,11 @@ const getInitialQuantity = (productId: string): number => {
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { isAuthenticated } = useAuth();
   const [quantity, setQuantity] = useState<number>(() =>
     getInitialQuantity(product.id),
   );
 
   const handleAddToCart = () => {
-    if (!isAuthenticated) {
-      toast.warn('Debes iniciar sesión para agregar productos al carrito.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      return;
-    }
-
     // Check if we're in the browser environment
     if (typeof window === 'undefined') {
       return;
@@ -61,7 +46,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       const storedCart = localStorage.getItem('cartItems');
       let cartItems = storedCart ? JSON.parse(storedCart) : [];
 
-      const existingItem = cartItems.find((item: any) => item.id === product.id);
+      const existingItem = cartItems.find(
+        (item: any) => item.id === product.id,
+      );
 
       if (existingItem) {
         cartItems = cartItems.map((item: any) =>
@@ -74,6 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       }
 
       localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      window.dispatchEvent(new Event('cart:updated'));
       setQuantity(quantity + 1);
       toast.success('Producto agregado al carrito.', {
         position: 'top-center',
@@ -99,7 +87,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       const storedCart = localStorage.getItem('cartItems');
       let cartItems = storedCart ? JSON.parse(storedCart) : [];
 
-      const existingItem = cartItems.find((item: any) => item.id === product.id);
+      const existingItem = cartItems.find(
+        (item: any) => item.id === product.id,
+      );
 
       if (existingItem && existingItem.quantity > 1) {
         cartItems = cartItems.map((item: any) =>
@@ -112,6 +102,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       }
 
       localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      window.dispatchEvent(new Event('cart:updated'));
       setQuantity(quantity > 1 ? quantity - 1 : 0);
     } catch (error) {
       console.warn('Failed to remove from cart:', error);
@@ -120,19 +111,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    
+
     // Allow empty input for better UX while typing
     if (value === '') {
       setQuantity(0);
       return;
     }
-    
+
     const numValue = parseInt(value);
-    
+
     // Only allow positive integers
     if (!isNaN(numValue) && numValue >= 0) {
       setQuantity(numValue);
-      
+
       // Check if we're in the browser environment before updating localStorage
       if (typeof window === 'undefined') {
         return;
@@ -142,25 +133,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         // Update localStorage
         const storedCart = localStorage.getItem('cartItems');
         let cartItems = storedCart ? JSON.parse(storedCart) : [];
-        
-        const existingItem = cartItems.find((item: any) => item.id === product.id);
-        
+
+        const existingItem = cartItems.find(
+          (item: any) => item.id === product.id,
+        );
+
         if (numValue === 0) {
           // Remove item if quantity is 0
           cartItems = cartItems.filter((item: any) => item.id !== product.id);
         } else if (existingItem) {
           // Update existing item quantity
           cartItems = cartItems.map((item: any) =>
-            item.id === product.id
-              ? { ...item, quantity: numValue }
-              : item,
+            item.id === product.id ? { ...item, quantity: numValue } : item,
           );
         } else if (numValue > 0) {
           // Add new item if quantity > 0
           cartItems.push({ ...product, quantity: numValue });
         }
-        
+
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        window.dispatchEvent(new Event('cart:updated'));
       } catch (error) {
         console.warn('Failed to update cart in localStorage:', error);
       }
@@ -168,73 +160,57 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <Link href={`/product/${product.id}`} passHref>
-      <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 relative md:h-96 flex flex-col gap-4 ">
-        <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-56 mb-4">
-          <Image
-  src={
-    typeof product.img === 'string' && product.img.includes('.png')
-      ? 'https://res.cloudinary.com/dqsxlntau/image/upload/v1742489934/kxko43rpoe8hiuc9malu.svg'
-      : product.img ?? 'https://res.cloudinary.com/dqsxlntau/image/upload/v1742489934/kxko43rpoe8hiuc9malu.svg'
-  }
-            alt={product.name}
-            fill
-            style={{ objectFit: 'cover' }}
-            className="rounded-lg "
-          />
-        </div>
-        <div>
-          <h3 className="font-bold text-base ">{product.name}</h3>
-          <p className="text-xs">{product.description?.slice(0, 30)}...</p>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl">
-            ${product.price.toFixed(2)}
-          </p>
+    <article className="he-product-card">
+      <Link href={`/product/${product.id}`} className="he-product-visual">
+        <Image
+          src={productImageSource(product.img)}
+          alt={product.name}
+          fill
+          sizes="(max-width: 700px) 45vw, 300px"
+          style={{ objectFit: 'contain' }}
+        />
+      </Link>
+      <div className="he-product-info">
+        <Link href={`/product/${product.id}`}>
+          <h3>{product.name}</h3>
+        </Link>
+        {product.description && <p>{product.description.slice(0, 65)}</p>}
+        <Link className="he-product-detail" href={`/product/${product.id}`}>
+          Ver medidas y detalles
+        </Link>
+        <div className="he-product-bottom">
+          <strong>${product.price.toFixed(2)}</strong>
           {quantity > 0 ? (
-            <div className="absolute bottom-2 right-2 flex items-center space-x-2">
+            <div className="he-quantity">
               <button
-                className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleRemoveFromCart();
-                }}
+                aria-label="Quitar una unidad"
+                onClick={handleRemoveFromCart}
               >
-                <FaMinus />
+                −
               </button>
               <input
+                aria-label="Cantidad"
                 type="number"
                 value={quantity}
                 onChange={handleQuantityChange}
-                onClick={(e) => e.preventDefault()}
-                className="w-12 h-8 text-center border-2 border-blue-300 rounded-md focus:border-blue-500 focus:outline-none bg-blue-50 font-semibold text-blue-800 hover:bg-blue-100 transition-colors cursor-pointer"
                 min="0"
-                placeholder="0"
-                title="Click to edit quantity"
               />
-              <button
-                className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 focus:outline-none"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleAddToCart();
-                }}
-              >
-                <FaPlus />
+              <button aria-label="Agregar una unidad" onClick={handleAddToCart}>
+                +
               </button>
             </div>
           ) : (
             <button
-              className="absolute bottom-2 right-2 bg-blue-400 text-white p-2 rounded-full hover:bg-yellow-500 focus:outline-none"
-              onClick={(e) => {
-                e.preventDefault();
-                handleAddToCart();
-              }}
+              className="he-add-product"
+              aria-label={`Agregar ${product.name} al carrito`}
+              onClick={handleAddToCart}
             >
-              <FaPlus />
+              Agregar al carrito
             </button>
           )}
         </div>
       </div>
-    </Link>
+    </article>
   );
 };
-
 export default ProductCard;

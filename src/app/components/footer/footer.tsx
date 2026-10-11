@@ -1,63 +1,63 @@
-import React from 'react';
-import {
-  SlSocialTwitter,
-  SlSocialInstagram,
-  SlSocialFacebook,
-} from 'react-icons/sl';
-
-const Footer = () => {
+import Link from 'next/link';
+export default function Footer() {
   return (
-    <footer className="bg-blue-600">
-      <div className="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
-        <div className="flex flex-wrap justify-center -mx-4">
-          <div className="px-4 py-2">
-            <a href="/aboutUs" className="text-white hover:text-gray-300">
-              Sobre Nosotros
-            </a>
-          </div>
-          <div className="px-4 py-2">
-            <a href="/contact" className="text-white hover:text-gray-300">
-              Contáctanos
-            </a>
-          </div>
-          <div className="px-4 py-2">
-            <a
-              href="/policy-privacy"
-              className="text-white hover:text-gray-300"
-            >
-              Política de Privacidad
-            </a>
-          </div>
-        </div>
-        <div className="text-center text-white mt-8">
-          <div className="flex justify-center space-x-4">
-            <a
-              href="/policy-privacy"
-              className="text-white hover:text-gray-300"
-            >
-              <SlSocialInstagram className="w-6 h-6" />
-            </a>
-            <a
-              href="/policy-privacy"
-              className="text-white hover:text-gray-300"
-            >
-              <SlSocialTwitter className="w-6 h-6" />
-            </a>
-            <a
-              href="/policy-privacy"
-              className="text-white hover:text-gray-300"
-            >
-              <SlSocialFacebook className="w-6 h-6" />
-            </a>
-          </div>
-          <p className="mt-4">
-            Todos los derechos reservados &copy; {new Date().getFullYear()}{' '}
-            Hierro Express.
+    <footer className="he-footer">
+      <div className="he-container he-footer-main">
+        <div>
+          <Link href="/" className="he-brand">
+            <img src="/HierroLogo.png" alt="" />
+            <span>
+              HIERRO
+              <strong>
+                EXPRESS<span>.</span>
+              </strong>
+            </span>
+          </Link>
+          <p>
+            Venta de hierros e insumos para herrería.
+            <br />
+            Setembrino Pereda 3233, Montevideo.
           </p>
         </div>
+        <div>
+          <h3>Encontrá lo que necesitás</h3>
+          <Link href="/menu2">Catálogo de productos</Link>
+          <Link href="/aboutUs">Quiénes somos</Link>
+          <Link href="/contact">Contactanos</Link>
+        </div>
+        <div>
+          <h3>Seguimos en contacto</h3>
+          <a
+            href="https://www.instagram.com/hierroexpressuy/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Instagram
+          </a>
+          <a
+            href="https://www.facebook.com/HierroExpressSA/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Facebook
+          </a>
+          <a
+            href="https://eshops.mercadolibre.com.uy/HIERROEXPRESS?skipInApp=true"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Nuestra tienda en Mercado Libre
+          </a>
+        </div>
+      </div>
+      <div className="he-container he-footer-bottom">
+        <span>
+          © {new Date().getFullYear()} Hierro Express. Todos los derechos
+          reservados.
+        </span>
+        <Link href="/policy-privacy">Política de privacidad</Link>
+        <span></span>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

@@ -7,6 +7,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { CacheProvider } from './contexts/CacheContext';
 import ToastProvider from './contexts/ToastProvider';
 import ReactQueryProvider from './contexts/ReactQueryProvider';
+import FloatingCart from './components/Cart/FloatingCart';
 // import ChatBot from '@/components/ui/chatbot';
 
 // const mochily = Mochiy_Pop_One({ weight: '400', subsets: ['latin'] });
@@ -17,7 +18,8 @@ import ReactQueryProvider from './contexts/ReactQueryProvider';
 
 export const metadata: Metadata = {
   title: 'Hierro Express',
-  description: 'Hierro Express',
+  description:
+    'Hierros, perfiles e insumos para herrería y construcción en Montevideo. Materiales y atención personalizada desde 2006.',
 };
 
 export default function RootLayout({
@@ -26,20 +28,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className="h-full w-full"
-    >
-      <body
-        className="flex flex-col min-h-full w-full bg-gradient-to-br from-blue-900 via-[#023047] to-blue-800"
-      >
+    <html lang="es-UY" className="h-full w-full">
+      <body className="flex flex-col min-h-screen w-full he-site">
         <AuthProvider>
           <CacheProvider>
-              <Navbar />
-              <ReactQueryProvider>
-                <ToastProvider>{children}</ToastProvider>
-              </ReactQueryProvider>
-              <Footer />
+            <Navbar />
+            <ReactQueryProvider>
+              <ToastProvider>
+                {children}
+                <FloatingCart />
+              </ToastProvider>
+            </ReactQueryProvider>
+            <Footer />
           </CacheProvider>
         </AuthProvider>
         {/* <ChatBot /> */}

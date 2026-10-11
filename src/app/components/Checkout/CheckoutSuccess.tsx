@@ -79,6 +79,7 @@ const handlePayment = useCallback(async (success: boolean) => {
 
     localStorage.removeItem('couponDiscount');
     localStorage.removeItem('cartItems');
+    window.dispatchEvent(new Event('cart:updated'));
     localStorage.removeItem('order');
 
     setModalType('success');
