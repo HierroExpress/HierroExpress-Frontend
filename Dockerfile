@@ -13,7 +13,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN npm run build && rm -rf .next/cache
 
 FROM node:20-alpine AS runner
 

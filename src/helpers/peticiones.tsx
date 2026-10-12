@@ -3,10 +3,12 @@ import { Product, Category } from '../types';
 
 // const API_URL = 'https://chilyapi.onrender.com';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const serverApiOrigin = process.env.API_INTERNAL_URL ||
+  (process.env.NODE_ENV === 'production' ? 'http://api:3002' : 'http://127.0.0.1:3002');
 const absoluteApiUrl = (path: string) =>
   API_URL.startsWith('http')
     ? `${API_URL}${path}`
-    : `${typeof window === 'undefined' ? 'http://localhost:3001' : window.location.origin}${API_URL}${path}`;
+    : `${typeof window === 'undefined' ? serverApiOrigin : `${window.location.origin}${API_URL}`}${path}`;
 
 // Helper function to filter out products with price 0
 const filterProductsWithPrice = (products: Product[]): Product[] => {
@@ -128,7 +130,7 @@ export async function getProductsByCategoryId(
 }
 export async function getAllCategories(): Promise<Category[]> {
   try {
-    const res = await fetch(`${API_URL}/category`, {
+    const res = await fetch(absoluteApiUrl('/category'), {
       method: 'GET',
       next: { revalidate: 3600 },
     })

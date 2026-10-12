@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { usePathname } from 'next/navigation';
+import { Menu, Search, ShoppingCart, UserRound, X } from 'lucide-react';
 
 interface SearchResult {
   id: string;
@@ -71,7 +72,7 @@ export function Navbar({ onSelectProduct }: SearchProps) {
     <header className="he-header">
       <div className="he-topbar">
         <div className="he-container">
-          <span>Venta de hierros e insumos para herrería</span>
+          <span>Materiales para herrería y construcción</span>
           <span>
             Montevideo, Uruguay <i /> Desde 2006
           </span>
@@ -101,7 +102,7 @@ export function Navbar({ onSelectProduct }: SearchProps) {
         >
           <input
             aria-label="Buscar en el catálogo"
-            placeholder="Buscar un producto, por ejemplo: caño"
+            placeholder="Busca por nombre, medida o tipo de material"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -112,7 +113,7 @@ export function Navbar({ onSelectProduct }: SearchProps) {
               if (e.key === 'Escape') setSearchOpen(false);
             }}
           />
-          <button type="submit">Buscar</button>
+          <button type="submit" aria-label="Buscar en el catálogo"><Search size={20} aria-hidden="true" /><span>Buscar</span></button>
           {searchOpen && query.trim().length >= 3 && (
             <div className="he-search-results">
               {loading ? (
@@ -147,30 +148,20 @@ export function Navbar({ onSelectProduct }: SearchProps) {
               <div>
                 <Link href="/profile">Mi perfil</Link>
                 {admin && (
-                  <>
-                    <Link href="/admin-history">Pedidos</Link>
-                    <Link href="/superadmin/products">Productos</Link>
-                  </>
-                )}
-                {user?.role === 'superadmin' && (
-                  <>
-                    <Link href="/superadmin/dashboard">Resumen</Link>
-                    <Link href="/superadmin/categories">Categorías</Link>
-                    <Link href="/superadmin/users">Usuarios</Link>
-                    <Link href="/cupons">Cupones</Link>
-                    <Link href="/adminaccounts">Cuentas administradoras</Link>
-                  </>
+                  <Link href="/superadmin/dashboard">Panel de control</Link>
                 )}
                 <button onClick={logout}>Cerrar sesión</button>
               </div>
             </details>
           ) : (
-            <Link href="/login">
+            <Link href="/login" className="he-account-link">
+              <UserRound size={20} aria-hidden="true" />
               <span>Mi cuenta</span>
             </Link>
           )}
           <Link href="/cart" className="he-cart">
-            <span>Carrito</span>
+            <ShoppingCart size={21} aria-hidden="true" />
+            <span>Ver carrito</span>
           </Link>
           <button
             className="he-menu-toggle"
@@ -178,7 +169,8 @@ export function Navbar({ onSelectProduct }: SearchProps) {
             aria-expanded={open}
             onClick={() => setOpen(!open)}
           >
-            {open ? 'Cerrar menú' : 'Menú'}
+            {open ? <X size={23} aria-hidden="true" /> : <Menu size={23} aria-hidden="true" />}
+            <span>{open ? 'Cerrar' : 'Menú'}</span>
           </button>
         </div>
       </div>

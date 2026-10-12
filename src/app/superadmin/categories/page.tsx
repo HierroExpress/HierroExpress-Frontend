@@ -2,15 +2,12 @@
 import React from 'react';
 import CategoryList from '@/app/components/SuperAdminCategory/categoryList';
 import RouteGuard from '@/helpers/routeGuard';
+import { AdminShell } from '@/app/components/SuperAdmin/AdminShell';
 
 const categoryListPage: React.FC = () => {
   return(
       <RouteGuard allowedRoles={['superadmin']}>
-      <div className="w-full flex flex-col items-center justify-start min-h-screen bg-white p-8">
-      <div className="mt-4 w-full">
-      <CategoryList />
-    </div>
-    </div>
+      <AdminShell><CategoryList /></AdminShell>
       </RouteGuard>
   );
 };

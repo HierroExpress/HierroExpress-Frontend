@@ -14,19 +14,19 @@ export default function Footer() {
             </span>
           </Link>
           <p>
-            Venta de hierros e insumos para herrería.
+            Hierros, perfiles, chapas e insumos para construcción.
             <br />
             Setembrino Pereda 3233, Montevideo.
           </p>
         </div>
         <div>
-          <h3>Encontrá lo que necesitás</h3>
+          <h3>Catálogo</h3>
           <Link href="/menu2">Catálogo de productos</Link>
           <Link href="/aboutUs">Quiénes somos</Link>
-          <Link href="/contact">Contactanos</Link>
+          <Link href="/contact">Contacto</Link>
         </div>
         <div>
-          <h3>Seguimos en contacto</h3>
+          <h3>Canales de atención</h3>
           <a
             href="https://www.instagram.com/hierroexpressuy/"
             target="_blank"

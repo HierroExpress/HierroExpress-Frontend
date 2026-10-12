@@ -332,8 +332,8 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
             'Catálogo de productos'}
         </h1>
         <p>
-          Elegí una categoría y encontrá el material y las medidas que
-          necesitás.
+          Selecciona una categoría y revisa el material y las medidas
+          disponibles.
         </p>
       </div>
       {/* Structured Data for SEO */}
@@ -353,10 +353,10 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
       <div className="he-catalog-layout">
         <div className="he-catalog-inner">
           <button
-            className="md:hidden w-full py-2 px-4 bg-gray-200 text-left flex justify-between items-center mb-4"
+            className="md:hidden he-filter-toggle"
             onClick={() => setIsFilterOpen(!isFilterOpen)}
           >
-            Filtros
+            {isFilterOpen ? 'Ocultar filtros' : 'Ver filtros'}
             {isFilterOpen ? (
               <ChevronUpIcon className="h-5 w-5" />
             ) : (

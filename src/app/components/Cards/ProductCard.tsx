@@ -190,7 +190,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </button>
               <input
                 aria-label="Cantidad"
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                autoComplete="off"
                 value={quantity}
                 onChange={handleQuantityChange}
                 min="0"
