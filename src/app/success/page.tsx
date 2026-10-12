@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function PaymentResultPage() {
+function PaymentResult() {
   const searchParams = useSearchParams();
   const status = searchParams.get('status') || searchParams.get('result');
   const isApproved = status === 'approved';
@@ -33,5 +34,13 @@ export default function PaymentResultPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function PaymentResultPage() {
+  return (
+    <Suspense fallback={<main className="he-container he-checkout-page"><p>Preparando el resultado del pago…</p></main>}>
+      <PaymentResult />
+    </Suspense>
   );
 }
