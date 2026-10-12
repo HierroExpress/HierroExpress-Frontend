@@ -52,6 +52,7 @@ export default function GuestCheckout() {
   const shownShippingWarnings = useRef(new Set<string>());
   const [contact, setContact] = useState({
     name: '',
+    taxId: '',
     email: '',
     phone: '',
     address: '',
@@ -302,11 +303,11 @@ export default function GuestCheckout() {
       {quote && (
         <div className="he-checkout-layout">
           <form className="he-cart-box he-guest-form" onSubmit={submit}>
-            <h2>¿A quién entregamos el pedido?</h2>
+            <h2>Datos de entrega</h2>
             {[
               {
                 key: 'name',
-                label: 'Nombre y apellido',
+                label: 'Nombre o razón social',
                 auto: 'name',
                 max: 50,
               },
@@ -348,6 +349,18 @@ export default function GuestCheckout() {
                 />
               </label>
             ))}
+            <label htmlFor="guest-tax-id">
+              RUT (opcional)
+              <input
+                id="guest-tax-id"
+                name="taxId"
+                type="text"
+                maxLength={20}
+                autoComplete="off"
+                value={contact.taxId}
+                onChange={(e) => setContact({ ...contact, taxId: e.target.value })}
+              />
+            </label>
             <fieldset className="he-choice-group">
               <legend>¿Cómo querés recibir tu pedido?</legend>
               <label className="he-choice">
