@@ -104,6 +104,9 @@ export default function CartPage() {
             >
               Continuar con mis datos y envío
             </button>
+            <Link href="/presupuesto" className="he-button he-button-outline">
+              Ver e imprimir presupuesto
+            </Link>
             <Link href="/menu2" className="he-text-link">
               Agregar más productos
             </Link>

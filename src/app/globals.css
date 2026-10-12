@@ -2227,8 +2227,27 @@
 .he-checkout-dialog-actions { display: flex; gap: 12px; margin-top: 25px; }
 .he-checkout-dialog-actions .he-button { min-height: 48px; justify-content: center; }
 .he-checkout-hint { margin: -4px 0 0; color: #567184; font-size: 14px; line-height: 1.4; }
+.he-quote-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-bottom: 22px; border-bottom: 2px solid #f6a328; }
+.he-quote-heading h1 { margin: 7px 0; }
+.he-quote-heading > p { margin: 0; color: #496879; }
+.he-quote-table { width: 100%; margin: 28px 0 18px; border-collapse: collapse; }
+.he-quote-table th, .he-quote-table td { padding: 13px 10px; border-bottom: 1px solid #d7e4eb; text-align: left; }
+.he-quote-table th { color: #315870; font-size: 13px; }
+.he-quote-table td:nth-child(n+2), .he-quote-table th:nth-child(n+2) { text-align: right; }
+.he-quote-table tfoot td { color: #123951; border-top: 2px solid #123951; border-bottom: 0; font-size: 17px; font-weight: 800; }
+.he-quote-note { color: #496879; line-height: 1.5; }
+.he-quote-actions { margin-top: 28px; }
 @media (max-width: 700px) {
   .he-checkout-dialog { padding: 27px 22px; }
   .he-checkout-dialog-actions { display: grid; grid-template-columns: 1fr; }
   .he-checkout-dialog-actions .he-button { width: 100%; }
+  .he-quote-heading { display: block; }
+  .he-quote-table { font-size: 13px; }
+  .he-quote-table th, .he-quote-table td { padding: 10px 6px; }
+}
+@media print {
+  body * { visibility: hidden; }
+  .he-quote-document, .he-quote-document * { visibility: visible; }
+  .he-quote-document { position: absolute; top: 0; left: 0; width: 100%; box-shadow: none; }
+  .he-quote-actions { display: none; }
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, MapPin, Ruler, ShieldCheck, Truck } from 'lucide-react';
+import { ArrowRight, MapPin, Ruler, Truck } from 'lucide-react';
 import { CategoryFilter } from './components/MenuComponents/CategoryFilter';
 
 export default function Home() {
@@ -13,16 +13,13 @@ export default function Home() {
           <p className="he-hero-description">Consulta medidas, agrega productos y conoce el costo de envío antes de confirmar tu pedido.</p>
           <div className="he-actions">
             <Link className="he-button he-button-orange" href="/menu2">
-              Explorar catálogo <ArrowRight size={21} aria-hidden="true" />
+              Hacer un pedido <ArrowRight size={21} aria-hidden="true" />
             </Link>
-            <Link className="he-button he-button-outline" href="#como-comprar">Ver cómo comprar</Link>
+            <Link className="he-button he-button-outline" href="/menu2?objetivo=presupuesto">Pedir presupuesto</Link>
           </div>
-          <p className="he-hero-proof">
-            <ShieldCheck size={19} aria-hidden="true" /> Puedes comprar sin crear una cuenta.
-          </p>
         </div>
         <div className="he-hero-art">
-          <div className="he-hero-art-label"><span>CATÁLOGO PARA TU PROYECTO</span><strong>Caños, perfiles y chapas</strong></div>
+          <div className="he-hero-art-label"><span>TODO PARA TU PROYECTO</span><strong>Caños, perfiles y chapas</strong></div>
           <img src="/materiales/canos.jpeg" alt="Caño rectangular de acero" className="he-hero-material" />
         </div>
       </div></section>
