@@ -2218,3 +2218,17 @@
   .he-admin-module-content table { min-width: 720px; }
   .he-admin-module-content > div { overflow-x: auto; }
 }
+
+/* Aviso de checkout: información clara y acciones para resolver el pedido. */
+.he-checkout-dialog-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(9, 34, 49, .62); }
+.he-checkout-dialog { width: min(100%, 470px); padding: 32px; color: #173449; background: #fff; border-top: 6px solid #f6a328; box-shadow: 0 18px 56px rgba(0,0,0,.26); }
+.he-checkout-dialog h2 { margin: 8px 0 12px; color: #123951; font-size: 28px; font-weight: 800; }
+.he-checkout-dialog p:not(.he-eyebrow) { color: #496879; font-size: 17px; line-height: 1.55; }
+.he-checkout-dialog-actions { display: flex; gap: 12px; margin-top: 25px; }
+.he-checkout-dialog-actions .he-button { min-height: 48px; justify-content: center; }
+.he-checkout-hint { margin: -4px 0 0; color: #567184; font-size: 14px; line-height: 1.4; }
+@media (max-width: 700px) {
+  .he-checkout-dialog { padding: 27px 22px; }
+  .he-checkout-dialog-actions { display: grid; grid-template-columns: 1fr; }
+  .he-checkout-dialog-actions .he-button { width: 100%; }
+}

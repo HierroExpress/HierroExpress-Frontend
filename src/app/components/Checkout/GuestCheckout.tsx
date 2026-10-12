@@ -29,6 +29,11 @@ interface ShippingQuote {
   distance: number;
   totalUyu: number;
 }
+interface CheckoutAlert {
+  title: string;
+  message: string;
+  needsMoreProducts?: boolean;
+}
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 export default function GuestCheckout() {
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -39,6 +44,8 @@ export default function GuestCheckout() {
   const [shippingQuote, setShippingQuote] = useState<ShippingQuote | null>(null);
   const [shippingLoading, setShippingLoading] = useState(false);
   const [shippingError, setShippingError] = useState('');
+  const [checkoutAlert, setCheckoutAlert] = useState<CheckoutAlert | null>(null);
+  const [shippingRetry, setShippingRetry] = useState(0);
   const submitting = useRef(false);
   const requestId = useRef('');
   const [contact, setContact] = useState({
@@ -51,6 +58,12 @@ export default function GuestCheckout() {
   });
   const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'coordinate'>('delivery');
   const [paymentMethod, setPaymentMethod] = useState<'mercadopago' | 'coordinate'>('mercadopago');
+  const showCheckoutAlert = (message: string) => {
+    const needsMoreProducts = message.includes('Compra mínima de $U 10.000 para envíos a más de 13 km.');
+    setCheckoutAlert(needsMoreProducts
+      ? { title: 'Falta monto para el envío', message: 'Compra mínima de $U 10.000 para envíos a más de 13 km.', needsMoreProducts: true }
+      : { title: 'No fue posible continuar', message: 'Revisa los datos de entrega e inténtalo nuevamente. Si el problema continúa, elige pago a coordinar o comunícate con el local.' });
+  };
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
@@ -124,11 +137,16 @@ export default function GuestCheckout() {
         });
         const data = await response.json();
         if (!response.ok) throw new Error(Array.isArray(data.message) ? data.message.join('. ') : data.message || 'No pudimos calcular el envío.');
-        if (active) setShippingQuote(data);
+        if (active) {
+          setShippingQuote(data);
+          if (!data.canDeliver) showCheckoutAlert(data.shippingMessage);
+        }
       } catch (e) {
         if (active) {
           setShippingQuote(null);
-          setShippingError(e instanceof Error ? e.message : 'No pudimos calcular el envío.');
+          const message = e instanceof Error ? e.message : 'No pudimos calcular el envío.';
+          setShippingError('No fue posible calcular el envío con esos datos.');
+          showCheckoutAlert(message);
         }
       } finally {
         if (active) setShippingLoading(false);
@@ -138,7 +156,7 @@ export default function GuestCheckout() {
       active = false;
       window.clearTimeout(timeout);
     };
-  }, [deliveryMethod, quote, contact.address, contact.city]);
+  }, [deliveryMethod, quote, contact.address, contact.city, shippingRetry]);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!quote || submitting.current) return;
@@ -189,14 +207,22 @@ export default function GuestCheckout() {
       localStorage.removeItem('cartItems');
       window.dispatchEvent(new Event('cart:updated'));
     } catch (e) {
-      setError(
-        e instanceof Error ? e.message : 'No pudimos guardar tu pedido.',
-      );
+      const message = e instanceof Error ? e.message : 'No pudimos guardar tu pedido.';
+      console.error('Error al confirmar la compra:', message);
+      setError('');
+      showCheckoutAlert(message);
     } finally {
       submitting.current = false;
       setBusy(false);
     }
   };
+  const contactComplete = contact.name.trim().length >= 2
+    && contact.email.trim().length >= 3
+    && contact.phone.trim().length >= 7;
+  const deliveryReady = deliveryMethod === 'coordinate'
+    || Boolean(shippingQuote?.canDeliver && !shippingLoading);
+  const canContinue = Boolean(quote && contactComplete && deliveryReady
+    && !(paymentMethod === 'mercadopago' && !quote.mercadoPago));
   if (receipt)
     return (
       <main className="he-container he-checkout-page">
@@ -233,6 +259,19 @@ export default function GuestCheckout() {
         <p role="alert" className="he-form-error">
           {error}
         </p>
+      )}
+      {checkoutAlert && (
+        <div className="he-checkout-dialog-backdrop" role="presentation">
+          <section className="he-checkout-dialog" role="alertdialog" aria-modal="true" aria-labelledby="checkout-alert-title">
+            <p className="he-eyebrow">REVISÁ EL PEDIDO</p>
+            <h2 id="checkout-alert-title">{checkoutAlert.title}</h2>
+            <p>{checkoutAlert.message}</p>
+            <div className="he-checkout-dialog-actions">
+              {checkoutAlert.needsMoreProducts && <Link className="he-button he-button-orange" href="/menu2">Agregar productos</Link>}
+              <button className="he-button he-button-outline" type="button" onClick={() => { setCheckoutAlert(null); setShippingRetry((value) => value + 1); }}>Reintentar</button>
+            </div>
+          </section>
+        </div>
       )}
       {quote && (
         <div className="he-checkout-layout">
@@ -339,7 +378,7 @@ export default function GuestCheckout() {
             <button
               className="he-button he-button-orange"
               type="submit"
-              disabled={busy || (paymentMethod === 'mercadopago' && !quote.mercadoPago) || (deliveryMethod === 'delivery' && (!shippingQuote || !shippingQuote.canDeliver || shippingLoading))}
+              disabled={busy || !canContinue}
             >
               {busy
                 ? 'Guardando pedido…'
@@ -347,6 +386,7 @@ export default function GuestCheckout() {
                   ? 'Continuar a Mercado Pago'
                   : 'Confirmar pedido'}
             </button>
+            {!busy && !canContinue && <p className="he-checkout-hint">Completá tus datos y la información de entrega para continuar.</p>}
             <p>
               Crear una cuenta es opcional.{' '}
               <Link href="/register" className="he-text-link">
