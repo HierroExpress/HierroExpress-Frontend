@@ -204,13 +204,25 @@ export default function GuestCheckout() {
             : data.message || 'No pudimos guardar tu pedido.',
         );
       if (paymentMethod === 'mercadopago') {
-        const paymentResponse = await fetch(
-          `${API_URL}/orders/guest/${requestId.current}/mercadopago`,
-          { method: 'POST' },
-        );
-        const payment = await paymentResponse.json();
-        if (!paymentResponse.ok || !payment.initPoint)
-          throw new Error(payment.message || 'No pudimos abrir Mercado Pago.');
+        let payment: { initPoint?: string; message?: string } | null = null;
+        let paymentError = 'No pudimos abrir Mercado Pago.';
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          try {
+            const paymentResponse = await fetch(
+              `${API_URL}/orders/guest/${requestId.current}/mercadopago`,
+              { method: 'POST' },
+            );
+            const candidate = await paymentResponse.json() as { initPoint?: string; message?: string };
+            payment = candidate;
+            if (paymentResponse.ok && candidate.initPoint) break;
+            paymentError = candidate.message || paymentError;
+            if (paymentResponse.status < 500) break;
+          } catch {
+            // A short retry handles a transient API or connection failure.
+          }
+          if (attempt === 0) await new Promise((resolve) => window.setTimeout(resolve, 500));
+        }
+        if (!payment?.initPoint) throw new Error(paymentError);
         localStorage.removeItem('cartItems');
         window.dispatchEvent(new Event('cart:updated'));
         window.location.assign(payment.initPoint);
