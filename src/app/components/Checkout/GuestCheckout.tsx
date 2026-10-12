@@ -46,8 +46,10 @@ export default function GuestCheckout() {
   const [shippingError, setShippingError] = useState('');
   const [checkoutAlert, setCheckoutAlert] = useState<CheckoutAlert | null>(null);
   const [shippingRetry, setShippingRetry] = useState(0);
+  const [quotedShippingKey, setQuotedShippingKey] = useState('');
   const submitting = useRef(false);
   const requestId = useRef('');
+  const shownShippingWarnings = useRef(new Set<string>());
   const [contact, setContact] = useState({
     name: '',
     email: '',
@@ -58,6 +60,7 @@ export default function GuestCheckout() {
   });
   const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'coordinate'>('delivery');
   const [paymentMethod, setPaymentMethod] = useState<'mercadopago' | 'coordinate'>('mercadopago');
+  const shippingAddressKey = `${contact.address.trim().toLowerCase()}|${contact.city.trim().toLowerCase()}`;
   const showCheckoutAlert = (message: string) => {
     const needsMoreProducts = message.includes('Compra mínima de $U 10.000 para envíos a más de 13 km.');
     setCheckoutAlert(needsMoreProducts
@@ -117,13 +120,16 @@ export default function GuestCheckout() {
   useEffect(() => {
     if (deliveryMethod !== 'delivery' || !quote || contact.address.trim().length < 5 || contact.city.trim().length < 2) {
       setShippingQuote(null);
+      setQuotedShippingKey('');
       setShippingError('');
       setShippingLoading(false);
       return;
     }
     let active = true;
+    const requestedAddressKey = shippingAddressKey;
+    setShippingLoading(true);
+    setShippingQuote(null);
     const timeout = window.setTimeout(async () => {
-      setShippingLoading(true);
       setShippingError('');
       try {
         const response = await fetch(`${API_URL}/orders/guest/shipping-quote`, {
@@ -139,14 +145,21 @@ export default function GuestCheckout() {
         if (!response.ok) throw new Error(Array.isArray(data.message) ? data.message.join('. ') : data.message || 'No pudimos calcular el envío.');
         if (active) {
           setShippingQuote(data);
-          if (!data.canDeliver) showCheckoutAlert(data.shippingMessage);
+          setQuotedShippingKey(requestedAddressKey);
+          if (!data.canDeliver && !shownShippingWarnings.current.has(requestedAddressKey)) {
+            shownShippingWarnings.current.add(requestedAddressKey);
+            showCheckoutAlert(data.shippingMessage);
+          }
         }
       } catch (e) {
         if (active) {
           setShippingQuote(null);
           const message = e instanceof Error ? e.message : 'No pudimos calcular el envío.';
           setShippingError('No fue posible calcular el envío con esos datos.');
-          showCheckoutAlert(message);
+          if (!shownShippingWarnings.current.has(requestedAddressKey)) {
+            shownShippingWarnings.current.add(requestedAddressKey);
+            showCheckoutAlert(message);
+          }
         }
       } finally {
         if (active) setShippingLoading(false);
@@ -156,7 +169,7 @@ export default function GuestCheckout() {
       active = false;
       window.clearTimeout(timeout);
     };
-  }, [deliveryMethod, quote, contact.address, contact.city, shippingRetry]);
+  }, [deliveryMethod, quote, contact.address, contact.city, shippingRetry, shippingAddressKey]);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!quote || submitting.current) return;
@@ -219,8 +232,9 @@ export default function GuestCheckout() {
   const contactComplete = contact.name.trim().length >= 2
     && contact.email.trim().length >= 3
     && contact.phone.trim().length >= 7;
+  const shippingIsCurrent = quotedShippingKey === shippingAddressKey;
   const deliveryReady = deliveryMethod === 'coordinate'
-    || Boolean(shippingQuote?.canDeliver && !shippingLoading);
+    || Boolean(shippingQuote?.canDeliver && shippingIsCurrent && !shippingLoading);
   const canContinue = Boolean(quote && contactComplete && deliveryReady
     && !(paymentMethod === 'mercadopago' && !quote.mercadoPago));
   if (receipt)
@@ -268,7 +282,7 @@ export default function GuestCheckout() {
             <p>{checkoutAlert.message}</p>
             <div className="he-checkout-dialog-actions">
               {checkoutAlert.needsMoreProducts && <Link className="he-button he-button-orange" href="/menu2">Agregar productos</Link>}
-              <button className="he-button he-button-outline" type="button" onClick={() => { setCheckoutAlert(null); setShippingRetry((value) => value + 1); }}>Reintentar</button>
+              <button className="he-button he-button-outline" type="button" onClick={() => { setCheckoutAlert(null); if (checkoutAlert.needsMoreProducts) setShippingRetry((value) => value + 1); }}>Reintentar</button>
             </div>
           </section>
         </div>
@@ -410,13 +424,13 @@ export default function GuestCheckout() {
               <div className="he-shipping-summary" aria-live="polite">
                 <strong>Envío a domicilio</strong>
                 {shippingLoading && <span>Calculando distancia y costo…</span>}
-                {!shippingLoading && shippingQuote && <><span>{shippingQuote.distance.toFixed(1)} km desde el local</span><strong>{shippingQuote.canDeliver ? `Envío: $U ${shippingQuote.shippingCost.toFixed(2)}` : shippingQuote.shippingMessage}</strong></>}
-                {!shippingLoading && !shippingQuote && <span>Completá calle y ciudad para ver el costo.</span>}
+                {!shippingLoading && shippingQuote && shippingIsCurrent && <><span>{shippingQuote.distance.toFixed(1)} km desde el local</span><strong>{shippingQuote.canDeliver ? `Envío: $U ${shippingQuote.shippingCost.toFixed(2)}` : shippingQuote.shippingMessage}</strong></>}
+                {!shippingLoading && (!shippingQuote || !shippingIsCurrent) && <span>Completá calle y ciudad para ver el costo.</span>}
               </div>
             )}
             {paymentMethod === 'mercadopago' && quote.mercadoPago && (
               <div className="he-payment-conversion" aria-live="polite">
-                <strong>Total para pagar: $U {(deliveryMethod === 'delivery' && shippingQuote ? shippingQuote.totalUyu : quote.mercadoPago.total).toFixed(2)}</strong>
+                <strong>Total para pagar: $U {(deliveryMethod === 'delivery' && shippingQuote && shippingIsCurrent ? shippingQuote.totalUyu : quote.mercadoPago.total).toFixed(2)}</strong>
                 <span>Tipo de cambio aplicado: 1 U$S = $U {quote.mercadoPago.exchangeRate.toFixed(2)}</span>
               </div>
             )}
