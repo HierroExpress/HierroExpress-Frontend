@@ -47,14 +47,14 @@ function CatalogImport() {
         <div>
           <p className="he-eyebrow">CATÁLOGO</p>
           <h1>Carga masiva de productos</h1>
-          <p>Importa categorías, atributos y productos desde un único archivo Excel.</p>
+          <p>Importa el catálogo con nombres claros: no necesitas IDs ni códigos internos.</p>
         </div>
         <Link className="he-text-link" href="/superadmin/products">Volver a productos</Link>
       </header>
 
       <section className="he-cart-box">
         <h2>1. Descarga la plantilla</h2>
-        <p>Incluye las hojas y columnas que reconoce el sistema, con ejemplos para completar o reemplazar.</p>
+        <p>Escribe nombres de categorías, subcategorías y atributos. El sistema crea las relaciones automáticamente.</p>
         <a className="he-button he-button-outline" href="/plantilla-catalogo-hierroexpress.xlsx" download>
           Descargar plantilla Excel
         </a>
@@ -62,7 +62,7 @@ function CatalogImport() {
 
       <section className="he-cart-box">
         <h2>2. Importa el archivo completo</h2>
-        <p>Las hojas <strong>CATEGORIAS</strong> y <strong>PRODUCTOS</strong> son obligatorias. <strong>ATRIBUTOS</strong> y <strong>Subcategorias</strong> son opcionales.</p>
+        <p>Las hojas <strong>CATEGORIAS</strong> y <strong>PRODUCTOS</strong> son obligatorias. Escribe los nombres tal como quieres verlos en la tienda.</p>
         <p>Los productos ya existentes no se duplican.</p>
         <form className="he-guest-form" onSubmit={submit}>
           <label htmlFor="catalog-file">
