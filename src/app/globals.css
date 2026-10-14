@@ -2326,3 +2326,13 @@
   .he-nav-links a { white-space: nowrap; }
   .he-nav-cart span { display: inline; }
 }
+
+/* La fotografía del almacén es el fondo visible del encabezado. */
+.he-hero-wrap.he-hero-photo {
+  background: linear-gradient(90deg, rgba(7, 28, 43, .91) 0%, rgba(10, 39, 57, .76) 43%, rgba(8, 29, 41, .18) 76%), url('/materiales/hero-acero-almacen-v2.png') center / cover no-repeat !important;
+}
+@media (max-width: 760px) {
+  .he-hero-wrap.he-hero-photo {
+    background-position: 62% center !important;
+  }
+}
