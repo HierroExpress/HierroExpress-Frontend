@@ -2347,3 +2347,23 @@
   .he-hero-background-photo { object-position: 62% center; }
   .he-hero-wrap.he-hero-photo::before { background: rgba(7, 28, 43, .55); }
 }
+
+/* Catálogo: controles fáciles de identificar y resultado visible al cambiar. */
+.he-catalog-page { scroll-margin-top: 22px; }
+.he-catalog-sidebar { align-self: start; position: sticky; top: 18px; }
+.he-filters { padding: 12px; border: 1px solid #d7e5ed; border-radius: 16px; box-shadow: 0 8px 22px rgba(20, 59, 81, .06); }
+.he-filters section + section { margin-top: 14px; padding-top: 16px; }
+.he-filters h3 { margin: 0 8px 9px; color: #244c63; font-size: 14px; letter-spacing: .02em; }
+.he-filters section > button { min-height: 48px; margin: 3px 0; padding: 11px 13px; border: 1px solid transparent; border-radius: 10px; color: #244c63; font-size: 15px; font-weight: 700; transition: background .16s ease, border-color .16s ease, color .16s ease; }
+.he-filters section > button span { color: #e88b13; font-size: 23px; line-height: 1; }
+.he-filters section > button:hover { background: #eef6fa; border-color: #c5dbe7; }
+.he-filters section > button.is-selected { color: #fff; background: #123951; border-color: #123951; box-shadow: 0 3px 9px rgba(18, 57, 81, .18); }
+.he-filters section > button.is-selected span { color: #f8ad37; }
+.he-catalog-results { min-height: 290px; }
+.he-catalog-loading { display: grid; min-height: 240px; place-items: center; padding: 24px; color: #244c63; background: #fff; border: 1px dashed #b7cfde; border-radius: 16px; font-size: 17px; font-weight: 750; }
+@media (max-width: 760px) {
+  .he-catalog-sidebar { position: static; }
+  .he-filters { padding: 10px; }
+  .he-filters section > button { min-height: 50px; font-size: 16px; }
+  .he-catalog-loading { min-height: 180px; font-size: 16px; }
+}

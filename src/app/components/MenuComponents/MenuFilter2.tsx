@@ -31,7 +31,7 @@ export default function MenuFilters2({
   return (
     <div className="he-filters">
       <section>
-        <h3>Categorías</h3>
+        <h3>Elija una familia</h3>
         {categories
           .filter((category) => !category.parentCategory)
           .map((category) => (
@@ -48,7 +48,7 @@ export default function MenuFilters2({
       </section>
       {subCategories.length > 0 && (
         <section>
-          <h3>Tipo de material</h3>
+          <h3>Elija el tipo de material</h3>
           {subCategories.map((category) => (
             <button
               key={category.id}

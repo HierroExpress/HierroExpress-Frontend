@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   filterProductsByCategoryAndAttributes,
@@ -28,6 +28,7 @@ interface MenuProps {
 
 export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
   const router = useRouter();
+  const catalogStartRef = useRef<HTMLElement>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -202,10 +203,18 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
     }
   };
 
+  const scrollToCatalogStart = () => {
+    catalogStartRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
+
   const handleSelectCategory = async (
     categoryId: number,
     isSubcategory = false,
   ) => {
+    scrollToCatalogStart();
     setLoading(true);
     setError('');
 
@@ -323,7 +332,7 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
     : undefined;
 
   return (
-    <main className="he-container he-catalog-page">
+    <main ref={catalogStartRef} className="he-container he-catalog-page">
       <div className="he-catalog-title">
         <p className="he-eyebrow">EL MATERIAL PARA TU PRÓXIMO PROYECTO</p>
         <h1>
@@ -380,7 +389,11 @@ export default function Menu2({ categoryId, subcategoryId }: MenuProps) {
           </div>
 
           <div className="he-catalog-results">
-            {loading && <div>Cargando...</div>}
+            {loading && (
+              <div className="he-catalog-loading" role="status">
+                Cargando materiales y medidas...
+              </div>
+            )}
             {error && <div className="text-red-500">{error}</div>}
             {!loading && !error && products.length === 0 ? (
               <div className="he-empty-catalog">
