@@ -79,18 +79,8 @@ export function Navbar({ onSelectProduct }: SearchProps) {
         </div>
       </div>
       <div className="he-container he-nav-main">
-        <Link
-          href="/"
-          className="he-brand"
-          aria-label="Hierro Express — Inicio"
-        >
-          <img src="/HierroLogo.png" alt="" />
-          <span>
-            HIERRO
-            <strong>
-              EXPRESS<span>.</span>
-            </strong>
-          </span>
+        <Link href="/" className="he-brand" aria-label="Hierro Express — Inicio">
+          <img src="/HierroLogo.png" alt="Hierro Express" />
         </Link>
         <form
           className="he-search"
@@ -159,10 +149,6 @@ export function Navbar({ onSelectProduct }: SearchProps) {
               <span>Mi cuenta</span>
             </Link>
           )}
-          <Link href="/cart" className="he-cart">
-            <ShoppingCart size={21} aria-hidden="true" />
-            <span>Ver carrito</span>
-          </Link>
           <button
             className="he-menu-toggle"
             aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
@@ -179,6 +165,7 @@ export function Navbar({ onSelectProduct }: SearchProps) {
         aria-label="Navegación principal"
       >
         <div className="he-container">
+          <Link href="/" className={pathname === '/' ? 'active' : ''}>Inicio</Link>
           <Link
             href="/menu2"
             className={pathname.startsWith('/menu2') ? 'active' : ''}
@@ -189,8 +176,10 @@ export function Navbar({ onSelectProduct }: SearchProps) {
           <Link href="/menu2/chapas">Chapas y mallas</Link>
           <Link href="/menu2/accesorios">Insumos y accesorios</Link>
           <Link href="/aboutUs">Quiénes somos</Link>
-          <Link href="/contact" className="he-nav-contact">
-            Contacto y consultas
+          <Link href="/contact" className="he-nav-contact">Contacto y consultas</Link>
+          <Link href="/cart" className="he-cart he-nav-cart">
+            <ShoppingCart size={21} aria-hidden="true" />
+            <span>Ver mi carrito</span>
           </Link>
         </div>
       </nav>

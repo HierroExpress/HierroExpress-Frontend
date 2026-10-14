@@ -2251,3 +2251,78 @@
   .he-quote-document { position: absolute; top: 0; left: 0; width: 100%; box-shadow: none; }
   .he-quote-actions { display: none; }
 }
+
+/* Portada visual: prioriza materiales, acciones de compra y lectura cómoda. */
+.he-site { background: #f5f7f8; }
+.he-header { box-shadow: 0 1px 0 rgba(11, 42, 63, .08); }
+.he-nav-main { gap: 34px; padding-block: 18px; }
+.he-brand img { width: 184px; height: auto; border-radius: 0; object-fit: contain; }
+.he-nav-actions { gap: 12px; }
+.he-account-link, .he-account summary { min-height: 48px; padding: 0 15px; border: 1px solid #d4e0e7; border-radius: 999px; color: #123951; font-size: 15px; font-weight: 750; }
+.he-search input { min-height: 56px; border-radius: 14px; background: #f5f8fa; border-color: #d6e1e7; }
+.he-search > button { min-height: 56px; padding: 0 20px; border-radius: 12px; font-size: 15px; }
+.he-nav-links { background: #fff; border-top: 1px solid #e6edf1; }
+.he-nav-links > .he-container { gap: 28px; padding-block: 12px; font-size: 14px; }
+.he-nav-links a { min-height: 40px; display: inline-flex; align-items: center; }
+.he-nav-contact { margin-left: auto; }
+.he-nav-cart { margin-left: 8px; padding: 10px 16px; color: #fff; background: #f49b22; border: 0; border-radius: 999px; font-weight: 850; gap: 9px; box-shadow: 0 3px 0 #b86609; }
+.he-nav-cart:hover { color: #fff; background: #e98b12; }
+.he-hero-photo { position: relative; overflow: hidden; min-height: 530px; background: linear-gradient(90deg, rgba(7, 28, 43, .96) 0%, rgba(10, 39, 57, .9) 40%, rgba(8, 29, 41, .25) 74%), url('/materiales/hero-acero-almacen-v2.png') center / cover no-repeat; border-bottom: 0; }
+.he-hero-photo::after { content: ''; position: absolute; inset: auto 0 0; height: 7px; background: linear-gradient(90deg, #f49b22, #ffc05b 50%, #f49b22); }
+.he-hero-photo-content { position: relative; z-index: 1; min-height: 530px; display: flex; align-items: center; padding-block: 76px; }
+.he-hero-copy { max-width: 610px; }
+.he-hero-copy .he-eyebrow { color: #f8b450; font-size: 13px; letter-spacing: .14em; }
+.he-hero h1 { max-width: 610px; margin: 16px 0; font-size: clamp(43px, 5.2vw, 70px); text-wrap: balance; }
+.he-hero-description { max-width: 510px; font-size: 19px; }
+.he-hero .he-actions { gap: 16px; }
+.he-hero .he-button { min-height: 58px; padding-inline: 27px; border-radius: 999px; }
+.he-hero .he-button-orange { color: #fff; background: #ef9318; box-shadow: none; }
+.he-hero .he-button-orange:hover { background: #db7d07; box-shadow: none; }
+.he-hero .he-button-outline { color: #f49b22; background: #fff; border: 2px solid #fff; }
+.he-hero .he-button-outline:hover { color: #fff; background: transparent; }
+.he-service-strip { position: relative; z-index: 3; width: min(1160px, calc(100% - 80px)); margin-top: -38px; border: 0; border-radius: 18px; overflow: hidden; box-shadow: 0 14px 36px rgba(8, 38, 57, .14); }
+.he-service-strip > div { min-height: 98px; }
+.he-service-strip svg { width: 28px; height: 28px; }
+.he-catalog-section { margin-top: 82px; }
+.he-section-heading { margin-bottom: 34px; }
+.he-section-heading h2 { font-size: clamp(34px, 4vw, 48px); }
+.he-section-description { font-size: 18px; color: #5c7180; }
+.he-category-grid { gap: 26px; }
+.he-category-card { display: flex; flex-direction: column; min-height: 100%; border: 1px solid #dce7ed; border-top: 0; border-radius: 20px; box-shadow: 0 10px 30px rgba(15, 55, 78, .08); }
+.he-category-photo { min-height: 240px; padding: 8px; background: linear-gradient(145deg, #e9f2f6, #d7e8ef); }
+.he-category-photo img { width: 100%; max-height: 220px; padding: 14px; object-fit: contain; }
+.he-category-photo > span { top: 17px; left: 17px; width: 36px; height: 36px; display: grid; place-items: center; color: #fff; background: #123951; border-radius: 50%; font-size: 12px; }
+.he-category-body { display: flex; flex: 1; flex-direction: column; padding: 27px; }
+.he-category-body h3 { font-size: 26px; }
+.he-category-body > p { min-height: 48px; font-size: 16px; line-height: 1.45; }
+.he-category-links { gap: 8px 18px; }
+.he-category-links a { min-height: 46px; padding-block: 9px; font-size: 16px; font-weight: 750; }
+.he-category-all { margin-top: auto; padding-top: 22px; font-size: 17px; }
+.he-buy-help { margin-top: 96px; border-radius: 24px; }
+@media (max-width: 900px) {
+  .he-nav-main { flex-wrap: wrap; gap: 12px; }
+  .he-search { order: 3; flex-basis: 100%; }
+  .he-nav-links > .he-container { gap: 16px; overflow-x: auto; }
+  .he-nav-contact { margin-left: 0; }
+  .he-nav-cart { margin-left: auto; flex-shrink: 0; }
+}
+@media (max-width: 760px) {
+  .he-brand img { width: 142px; }
+  .he-nav-main { padding-block: 13px; }
+  .he-account-link, .he-account summary { min-height: 42px; padding: 0 11px; }
+  .he-hero-photo { min-height: 580px; background-position: 63% center; }
+  .he-hero-photo::before { content: ''; position: absolute; inset: 0; background: rgba(7, 28, 43, .45); }
+  .he-hero-photo-content { min-height: 580px; padding-block: 55px 50px; }
+  .he-hero h1 { font-size: clamp(40px, 11vw, 56px); }
+  .he-hero-description { font-size: 18px; }
+  .he-hero .he-actions { grid-template-columns: 1fr; }
+  .he-service-strip { width: calc(100% - 32px); margin-top: -24px; border-radius: 16px; }
+  .he-service-strip > div { min-height: 82px; }
+  .he-catalog-section { margin-top: 54px; }
+  .he-category-card { border-radius: 17px; }
+  .he-category-photo { min-height: 205px; }
+  .he-category-body { padding: 22px; }
+  .he-category-body > p { min-height: auto; }
+  .he-nav-links a { white-space: nowrap; }
+  .he-nav-cart span { display: inline; }
+}
