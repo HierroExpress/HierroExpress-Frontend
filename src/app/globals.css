@@ -2336,3 +2336,14 @@
     background-position: 62% center !important;
   }
 }
+
+/* La imagen se inserta como contenido para impedir que reglas heredadas oculten el banner. */
+.he-hero-wrap.he-hero-photo { isolation: isolate; }
+.he-hero-background-photo { position: absolute; z-index: 0; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.he-hero-wrap.he-hero-photo::before { content: ''; position: absolute; z-index: 1; inset: 0; background: linear-gradient(90deg, rgba(7, 28, 43, .91) 0%, rgba(10, 39, 57, .76) 43%, rgba(8, 29, 41, .18) 76%); }
+.he-hero-photo-content { z-index: 2; }
+.he-hero-photo::after { z-index: 3; }
+@media (max-width: 760px) {
+  .he-hero-background-photo { object-position: 62% center; }
+  .he-hero-wrap.he-hero-photo::before { background: rgba(7, 28, 43, .55); }
+}

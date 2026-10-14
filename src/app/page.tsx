@@ -5,7 +5,7 @@ import { CategoryFilter } from './components/MenuComponents/CategoryFilter';
 export default function Home() {
   return (
     <main className="he-home">
-      <section className="he-hero-wrap he-hero-photo">
+      <section className="he-hero-wrap he-hero-photo">`r`n        <img className="he-hero-background-photo" src="/materiales/hero-acero-almacen-v2.png" alt="" aria-hidden="true" />
         <div className="he-container he-hero he-hero-photo-content">
           <div className="he-hero-copy">
             <p className="he-eyebrow">HIERRO EXPRESS · MONTEVIDEO</p>
