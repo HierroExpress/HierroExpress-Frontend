@@ -1,31 +1,112 @@
 import Link from 'next/link';
-import { ArrowRight, CircleHelp, MapPin, Ruler, Truck } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, CircleHelp, FileText, MapPin, Ruler, Truck } from 'lucide-react';
 import { CategoryFilter } from './components/MenuComponents/CategoryFilter';
 
 export default function Home() {
   return (
     <main className="he-home">
-      <section className="he-hero-wrap he-hero-photo">
-        <img className="he-hero-background-photo" src="/materiales/hero-acero-almacen-v2.png" alt="" aria-hidden="true" />
-        <div className="he-container he-hero he-hero-photo-content">
+      <section className="he-hero-wrap" aria-labelledby="hero-title">
+        {/* Capa de fondo con fotografía industrial */}
+        <div className="he-hero-bg" aria-hidden="true">
+          <img src="/materiales/hero-acero-almacen-v2.png" alt="" className="he-hero-bg-img" />
+          <div className="he-hero-gradient" />
+        </div>
+
+        {/* Elemento decorativo geométrico industrial */}
+        <div className="he-hero-geometry" aria-hidden="true">
+          <div className="he-geometry-bar he-geometry-bar-1" />
+          <div className="he-geometry-bar he-geometry-bar-2" />
+          <div className="he-geometry-bar he-geometry-bar-3" />
+          <div className="he-geometry-accent" />
+        </div>
+
+        <div className="he-container he-hero">
           <div className="he-hero-copy">
-            <p className="he-eyebrow">HIERRO EXPRESS · MONTEVIDEO</p>
-            <h1>Todo el hierro que necesita su proyecto.</h1>
-            <p className="he-hero-description">Elija un tipo de material, revise las medidas y arme su pedido con tranquilidad.</p>
+            <div className="he-hero-brand-lockup">
+              <img src="/HierroExpressLogoOriginal.png" alt="Hierro Express" />
+              <span>Materiales para herrería y construcción</span>
+            </div>
+            <h1 id="hero-title" className="he-hero-title">
+              Materiales para<br /><span className="he-hero-title-accent">su proyecto.</span>
+            </h1>
+            <p className="he-hero-description">
+              Elija el material, revise las medidas y prepare su pedido.
+            </p>
             <div className="he-actions">
-              <Link className="he-button he-button-orange" href="#catalogo">
-                Elegir materiales <ArrowRight size={21} aria-hidden="true" />
+              <Link className="he-hero-round-action he-hero-round-order" href="#catalogo">
+                <ArrowUpRight size={28} aria-hidden="true" />
+                <span>Hacer<br />pedido</span>
               </Link>
-              <Link className="he-button he-button-outline" href="/menu2?objetivo=presupuesto">Pedir presupuesto</Link>
+              <Link className="he-hero-round-action he-hero-round-quote" href="/menu2?objetivo=presupuesto">
+                <FileText size={25} aria-hidden="true" />
+                <span>Pedir<br />presupuesto</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Showcase de materiales - tarjeta visual premium */}
+          <div className="he-hero-showcase" aria-hidden="true">
+            <div className="he-showcase-frame">
+              <div className="he-showcase-grid" />
+              <div className="he-showcase-materials">
+                <img src="/materiales/vigas.jpeg" alt="Vigas estructurales" className="he-showcase-img he-showcase-img-1" loading="eager" />
+                <img src="/materiales/canos.jpeg" alt="Caños estructurales" className="he-showcase-img he-showcase-img-2" loading="eager" />
+                <img src="/materiales/planchuelas.jpeg" alt="Planchuelas y perfiles" className="he-showcase-img he-showcase-img-3" loading="eager" />
+              </div>
+              <div className="he-showcase-overlay">
+                <div className="he-showcase-label">
+                  <span className="he-showcase-tag">MATERIALES EN STOCK</span>
+                  <strong>Catálogo técnico disponible</strong>
+                </div>
+                <div className="he-showcase-cta">
+                  <Link href="#catalogo" className="he-showcase-link">
+                    Explorar catálogo completo
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
+              <div className="he-showcase-corner" aria-hidden="true">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                  <rect x="0.5" y="0.5" width="31" height="31" rx="2" stroke="#f49b22" strokeWidth="2" />
+                </svg>
+              </div>
+            </div>
+            <div className="he-showcase-shadow" aria-hidden="true" />
+          </div>
+        </div>
+
+        {/* Franja de servicios integrada al hero */}
+        <div className="he-service-strip" role="list" aria-label="Servicios principales">
+          <div className="he-service-item" role="listitem">
+            <div className="he-service-icon" aria-hidden="true">
+              <Truck size={24} />
+            </div>
+            <div className="he-service-text">
+              <strong>Envío a obra o retiro</strong>
+              <small>Coordinamos la logística que necesite</small>
+            </div>
+          </div>
+          <div className="he-service-divider" aria-hidden="true" />
+          <div className="he-service-item" role="listitem">
+            <div className="he-service-icon" aria-hidden="true">
+              <Ruler size={24} />
+            </div>
+            <div className="he-service-text">
+              <strong>Medidas exactas</strong>
+              <small>Cortamos a la longitud que indique</small>
+            </div>
+          </div>
+          <div className="he-service-divider" aria-hidden="true" />
+          <div className="he-service-item" role="listitem">
+            <div className="he-service-icon" aria-hidden="true">
+              <CircleHelp size={24} />
+            </div>
+            <div className="he-service-text">
+              <strong>Asesoramiento técnico</strong>
+              <small>Le ayudamos a elegir el perfil correcto</small>
             </div>
           </div>
         </div>
-      </section>
-
-      <section className="he-container he-service-strip" aria-label="Ayuda para comprar">
-        <div><Truck aria-hidden="true" /><span><strong>Envío o retiro</strong><small>Elija la forma más conveniente.</small></span></div>
-        <div><Ruler aria-hidden="true" /><span><strong>Medidas claras</strong><small>Revise cada opción antes de sumar.</small></span></div>
-        <div><CircleHelp aria-hidden="true" /><span><strong>¿Tiene dudas?</strong><small>Le ayudamos a elegir el material.</small></span></div>
       </section>
 
       <section className="he-container he-catalog-section" id="catalogo">

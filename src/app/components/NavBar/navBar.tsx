@@ -80,7 +80,7 @@ export function Navbar({ onSelectProduct }: SearchProps) {
       </div>
       <div className="he-container he-nav-main">
         <Link href="/" className="he-brand" aria-label="Hierro Express — Inicio">
-          <img src="/HierroLogo.png" alt="Hierro Express" />
+          <img src="/HierroExpressLogoOriginal.png" alt="Hierro Express" />
         </Link>
         <form
           className="he-search"
