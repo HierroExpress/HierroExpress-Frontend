@@ -1,39 +1,22 @@
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, CircleHelp, FileText, MapPin, Ruler, Truck } from 'lucide-react';
-import { CategoryFilter } from './components/MenuComponents/CategoryFilter';
+import { ArrowRight, ArrowUpRight, FileText, MapPin, Ruler, Star, Truck } from 'lucide-react';
 
 export default function Home() {
   return (
     <main className="he-home">
-      <section className="he-hero-wrap" aria-labelledby="hero-title">
-        {/* Capa de fondo con fotografía industrial */}
-        <div className="he-hero-bg" aria-hidden="true">
-          <img src="/materiales/hero-acero-almacen-v2.png" alt="" className="he-hero-bg-img" />
-          <div className="he-hero-gradient" />
-        </div>
-
-        {/* Elemento decorativo geométrico industrial */}
-        <div className="he-hero-geometry" aria-hidden="true">
-          <div className="he-geometry-bar he-geometry-bar-1" />
-          <div className="he-geometry-bar he-geometry-bar-2" />
-          <div className="he-geometry-bar he-geometry-bar-3" />
-          <div className="he-geometry-accent" />
-        </div>
-
-        <div className="he-container he-hero">
-          <div className="he-hero-copy">
-            <div className="he-hero-brand-lockup">
+      <section className="he-hero-wrap he-home-slider" aria-label="Presentación de Hierro Express">
+        <article className="he-home-slide he-home-slide-materials">
+          <img src="/materiales/hero-acero-almacen-v2.png" alt="Perfiles y materiales de hierro en depósito" />
+          <div className="he-home-slide-overlay" />
+          <div className="he-container he-home-slide-content">
+            <div className="he-banner-brand">
               <img src="/HierroExpressLogoOriginal.png" alt="Hierro Express" />
               <span>Materiales para herrería y construcción</span>
             </div>
-            <h1 id="hero-title" className="he-hero-title">
-              Materiales para<br /><span className="he-hero-title-accent">su proyecto.</span>
-            </h1>
-            <p className="he-hero-description">
-              Elija el material, revise las medidas y prepare su pedido.
-            </p>
+            <h1 id="hero-title">20 años de experiencia.<span>Líderes en Mercado Libre.</span></h1>
+            <p>Elija los materiales, confirme su pedido y gane tiempo: preparamos todo para retiro o entrega en obra.</p>
             <div className="he-actions">
-              <Link className="he-hero-round-action he-hero-round-order" href="#catalogo">
+              <Link className="he-hero-round-action he-hero-round-order" href="/menu2">
                 <ArrowUpRight size={28} aria-hidden="true" />
                 <span>Hacer<br />pedido</span>
               </Link>
@@ -43,47 +26,17 @@ export default function Home() {
               </Link>
             </div>
           </div>
+        </article>
+      </section>
 
-          {/* Showcase de materiales - tarjeta visual premium */}
-          <div className="he-hero-showcase" aria-hidden="true">
-            <div className="he-showcase-frame">
-              <div className="he-showcase-grid" />
-              <div className="he-showcase-materials">
-                <img src="/materiales/vigas.jpeg" alt="Vigas estructurales" className="he-showcase-img he-showcase-img-1" loading="eager" />
-                <img src="/materiales/canos.jpeg" alt="Caños estructurales" className="he-showcase-img he-showcase-img-2" loading="eager" />
-                <img src="/materiales/planchuelas.jpeg" alt="Planchuelas y perfiles" className="he-showcase-img he-showcase-img-3" loading="eager" />
-              </div>
-              <div className="he-showcase-overlay">
-                <div className="he-showcase-label">
-                  <span className="he-showcase-tag">MATERIALES EN STOCK</span>
-                  <strong>Catálogo técnico disponible</strong>
-                </div>
-                <div className="he-showcase-cta">
-                  <Link href="#catalogo" className="he-showcase-link">
-                    Explorar catálogo completo
-                    <ArrowRight size={16} aria-hidden="true" />
-                  </Link>
-                </div>
-              </div>
-              <div className="he-showcase-corner" aria-hidden="true">
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                  <rect x="0.5" y="0.5" width="31" height="31" rx="2" stroke="#f49b22" strokeWidth="2" />
-                </svg>
-              </div>
-            </div>
-            <div className="he-showcase-shadow" aria-hidden="true" />
-          </div>
-        </div>
-
-        {/* Franja de servicios integrada al hero */}
-        <div className="he-service-strip" role="list" aria-label="Servicios principales">
+      <section className="he-service-strip" role="list" aria-label="Servicios principales">
           <div className="he-service-item" role="listitem">
             <div className="he-service-icon" aria-hidden="true">
               <Truck size={24} />
             </div>
             <div className="he-service-text">
-              <strong>Envío a obra o retiro</strong>
-              <small>Coordinamos la logística que necesite</small>
+              <strong>Envíos rápidos en MVD</strong>
+              <small>Coordinamos entrega a obra o retiro</small>
             </div>
           </div>
           <div className="he-service-divider" aria-hidden="true" />
@@ -92,33 +45,29 @@ export default function Home() {
               <Ruler size={24} />
             </div>
             <div className="he-service-text">
-              <strong>Medidas exactas</strong>
-              <small>Cortamos a la longitud que indique</small>
+              <strong>Cortes a medida</strong>
+              <small>Preparamos la longitud que indique</small>
             </div>
           </div>
           <div className="he-service-divider" aria-hidden="true" />
           <div className="he-service-item" role="listitem">
             <div className="he-service-icon" aria-hidden="true">
-              <CircleHelp size={24} />
+              <Star size={24} />
             </div>
             <div className="he-service-text">
-              <strong>Asesoramiento técnico</strong>
-              <small>Le ayudamos a elegir el perfil correcto</small>
+              <strong>20 años de trayectoria</strong>
+              <small>Atención para cada pedido y proyecto</small>
             </div>
           </div>
-        </div>
       </section>
 
-      <section className="he-container he-catalog-section" id="catalogo">
-        <div className="he-section-heading">
-          <div>
-            <p className="he-eyebrow">EMPIECE POR AQUÍ</p>
-            <h2>¿Qué material busca?</h2>
-            <p className="he-section-description">Seleccione un panel para ver productos, medidas y precios.</p>
-          </div>
-          <Link className="he-text-link" href="/menu2">Ver todo el catálogo <ArrowRight size={18} aria-hidden="true" /></Link>
+      <section className="he-container he-home-information" id="empresa">
+        <div>
+          <p className="he-eyebrow">HIERRO EXPRESS</p>
+          <h2>Materiales y atención para cada obra.</h2>
         </div>
-        <CategoryFilter />
+        <p>Trabajamos con herrerías, constructoras y particulares. Nuestro equipo le ayuda a definir el material, las medidas y la forma de entrega antes de confirmar el pedido.</p>
+        <a className="he-text-link" href="https://www.facebook.com/HierroExpressSA" target="_blank" rel="noreferrer">Conozca Hierro Express <ArrowRight size={18} aria-hidden="true" /></a>
       </section>
 
       <section id="como-comprar" className="he-container he-buy-help">

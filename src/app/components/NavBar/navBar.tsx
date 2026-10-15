@@ -71,11 +71,10 @@ export function Navbar({ onSelectProduct }: SearchProps) {
   return (
     <header className="he-header">
       <div className="he-topbar">
-        <div className="he-container">
-          <span>Materiales para herrería y construcción</span>
-          <span>
-            Montevideo, Uruguay <i /> Desde 2006
-          </span>
+        <div className="he-container he-topbar-content">
+          <strong className="he-topbar-promo">15% OFF en contado y débito</strong>
+          <span className="he-topbar-benefits">Cortes a medida <i /> Envíos rápidos en MVD <i /> Líderes en Mercado Libre</span>
+          <span className="he-topbar-location">Montevideo, Uruguay <i /> 20 años funcionando</span>
         </div>
       </div>
       <div className="he-container he-nav-main">
