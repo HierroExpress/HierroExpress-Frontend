@@ -4,8 +4,8 @@ import { ArrowRight, ArrowUpRight, FileText, MapPin, Ruler, Star, Truck } from '
 export default function Home() {
   return (
     <main className="he-home">
-      <section className="he-hero-wrap he-home-slider" aria-label="Presentación de Hierro Express">
-        <article className="he-home-slide he-home-slide-materials">
+      <section className="he-hero-wrap he-home-slider" aria-label="Presentación de Hierro Express" style={{ minHeight: 650 }}>
+        <article className="he-home-slide he-home-slide-materials" style={{ height: 650 }}>
           <img src="/materiales/hero-acero-almacen-v2.png" alt="Perfiles y materiales de hierro en depósito" />
           <div className="he-home-slide-overlay" />
           <div className="he-container he-home-slide-content">

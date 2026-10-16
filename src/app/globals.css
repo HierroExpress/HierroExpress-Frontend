@@ -3238,3 +3238,65 @@
   .he-home-slider { min-height: 600px; }
   .he-home-slide-content h1 { font-size: clamp(42px, 4.8vw, 66px); }
 }
+
+/* Teléfonos: cabecera sin desborde, controles táctiles y contenido a una columna. */
+@media (max-width: 760px) {
+  html, body { overflow-x: clip; }
+  .he-nav-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+  }
+  .he-brand { min-width: 0; margin-right: 0; }
+  .he-brand img { width: min(166px, 48vw); height: auto; }
+  .he-nav-actions { display: flex; align-items: center; gap: 8px; }
+  .he-nav-actions > a,
+  .he-menu-toggle {
+    display: inline-flex !important;
+    min-width: 46px;
+    width: 46px;
+    min-height: 46px;
+    padding: 0;
+    justify-content: center;
+  }
+  .he-account-link span, .he-menu-toggle span { display: none !important; }
+  .he-search {
+    grid-column: 1 / -1;
+    order: initial;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    gap: 0;
+    box-sizing: border-box;
+  }
+  .he-search input { min-width: 0; width: 0; }
+  .he-search > button { flex: 0 0 52px; }
+  .he-home-slider { min-height: 650px; }
+  .he-home-slide-content { justify-content: flex-start; padding-top: 36px; padding-bottom: 30px; }
+  .he-home-slide-content h1 { max-width: 100%; font-size: clamp(39px, 11.5vw, 48px); line-height: 1.02; }
+  .he-home-slide-content > p:not(:first-child) { max-width: 100%; margin-top: 15px; font-size: 16px; }
+  .he-home-slider .he-actions { gap: 14px; margin-top: 22px; }
+  .he-home-slider .he-hero-round-action { width: 104px; height: 104px; font-size: 14px; }
+  .he-home > .he-service-strip { grid-template-columns: 1fr; }
+  .he-home .he-service-item { min-height: 82px; padding: 17px 18px; }
+  .he-home .he-service-divider { display: none; }
+  .he-home-information { margin-top: 34px; }
+}
+@media (max-width: 360px) {
+  .he-brand img { width: 142px; }
+  .he-nav-main { gap: 7px; }
+  .he-nav-actions { gap: 5px; }
+  .he-nav-actions > a, .he-menu-toggle { min-width: 42px; width: 42px; min-height: 42px; }
+  .he-home-slider { min-height: 630px; }
+}
+@media (max-width: 760px) {
+  .he-nav-actions {
+    grid-column: 2;
+    grid-row: 1;
+    width: auto !important;
+    order: initial !important;
+    justify-content: flex-end !important;
+  }
+  .he-nav-actions > .he-account-link > span { display: none !important; }
+}
