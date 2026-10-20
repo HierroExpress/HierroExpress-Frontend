@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 // import { Poppins, Mochiy_Pop_One } from 'next/font/google';
 import './globals.css';
-import Footer from './components/footer/footer';
 import { Navbar } from './components/NavBar/navBar';
 import { AuthProvider } from './contexts/AuthContext';
 import { CacheProvider } from './contexts/CacheContext';
@@ -20,6 +19,9 @@ export const metadata: Metadata = {
   title: 'Hierro Express',
   description:
     'Hierros, perfiles e insumos para herrería y construcción en Montevideo. Materiales y atención personalizada desde 2006.',
+  icons: {
+    icon: '/HierroLogo.png',
+  }
 };
 
 export default function RootLayout({
@@ -39,7 +41,6 @@ export default function RootLayout({
                 <FloatingCart />
               </ToastProvider>
             </ReactQueryProvider>
-            <Footer />
           </CacheProvider>
         </AuthProvider>
         {/* <ChatBot /> */}

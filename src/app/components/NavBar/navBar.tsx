@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { usePathname } from 'next/navigation';
-import { Menu, Search, ShoppingCart, UserRound, X } from 'lucide-react';
+import { CalendarDays, Facebook, Instagram, MapPin, Menu, Scissors, Search, ShoppingCart, UserRound, X, Youtube } from 'lucide-react';
 
 interface SearchResult {
   id: string;
@@ -70,13 +70,47 @@ export function Navbar({ onSelectProduct }: SearchProps) {
   const admin = user?.role === 'admin' || user?.role === 'superadmin';
   return (
     <header className="he-header">
-      <div className="he-topbar">
-        <div className="he-container he-topbar-content">
-          <strong className="he-topbar-promo">15% OFF en contado y débito</strong>
-          <span className="he-topbar-benefits">Cortes a medida <i /> Envíos rápidos en MVD <i /> Líderes en Mercado Libre</span>
-          <span className="he-topbar-location">Montevideo, Uruguay <i /> 20 años funcionando</span>
-        </div>
-      </div>
+      
+<div className="he-topbar">
+  <div className="he-container he-topbar-content">
+    <strong className="he-topbar-promo">
+      15% OFF en contado y débito
+    </strong>
+
+    <div className="he-topbar-benefits">
+      <span>
+        <Scissors size={13} aria-hidden="true" />
+        Cortes a medida
+      </span>
+
+      <i aria-hidden="true" />
+
+      <span>
+        <CalendarDays size={13} aria-hidden="true" />
+        Desde 2006
+      </span>
+
+      <i aria-hidden="true" />
+
+      <a
+        href="https://www.google.com/maps/search/?api=1&query=Setembrino+Pereda+3233+Montevideo"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <MapPin size={13} aria-hidden="true" />
+        Ver ubicación del local
+      </a>
+    </div>
+    {/* Redes sociales */}
+          <div className="flex items-center gap-3">
+            <a href="#" className="hover:text-amber-400"><Instagram className="w-3.5 h-3.5" /></a>
+            <a href="#" className="hover:text-amber-400"><Facebook className="w-3.5 h-3.5" /></a>
+            <a href="#" className="hover:text-amber-400 text-xs font-bold">TikTok</a>
+            <a href="#" className="hover:text-amber-400"><Youtube className="w-3.5 h-3.5" /></a>
+          </div>
+  </div>
+</div>
+
       <div className="he-container he-nav-main">
         <Link href="/" className="he-brand" aria-label="Hierro Express — Inicio">
           <img src="/HierroExpressLogoOriginal.png" alt="Hierro Express" />
@@ -147,7 +181,12 @@ export function Navbar({ onSelectProduct }: SearchProps) {
               <UserRound size={20} aria-hidden="true" />
               <span>Mi cuenta</span>
             </Link>
+            
           )}
+          <Link href="/cart" className="he-cart he-nav-cart">
+            <ShoppingCart size={20} aria-hidden="true" />
+            <span>Carrito</span>
+          </Link>
           <button
             className="he-menu-toggle"
             aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
@@ -176,10 +215,6 @@ export function Navbar({ onSelectProduct }: SearchProps) {
           <Link href="/menu2/accesorios">Insumos y accesorios</Link>
           <Link href="/aboutUs">Quiénes somos</Link>
           <Link href="/contact" className="he-nav-contact">Contacto y consultas</Link>
-          <Link href="/cart" className="he-cart he-nav-cart">
-            <ShoppingCart size={21} aria-hidden="true" />
-            <span>Ver mi carrito</span>
-          </Link>
         </div>
       </nav>
     </header>

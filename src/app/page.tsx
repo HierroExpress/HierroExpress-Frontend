@@ -1,89 +1,220 @@
-import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, FileText, MapPin, Ruler, Star, Truck } from 'lucide-react';
+import React from 'react';
+import Image from 'next/image';
+import { 
+  Search, 
+  User, 
+  ShoppingCart, 
+  Menu, 
+  Truck, 
+  FileText, 
+  Scissors, 
+  Calendar, 
+  MapPin, 
+  Send,
+  Grid,
+  CheckCircle2,
+  Instagram,
+  Facebook,
+  Youtube
+} from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="he-home">
-      <section className="he-hero-wrap he-home-slider" aria-label="Presentación de Hierro Express" style={{ minHeight: 650 }}>
-        <article className="he-home-slide he-home-slide-materials" style={{ height: 650 }}>
-          <img src="/materiales/hero-acero-almacen-v2.png" alt="Perfiles y materiales de hierro en depósito" />
-          <div className="he-home-slide-overlay" />
-          <div className="he-container he-home-slide-content">
-            <div className="he-banner-brand">
-              <img src="/HierroExpressLogoOriginal.png" alt="Hierro Express" />
-              <span>Materiales para herrería y construcción</span>
-            </div>
-            <h1 id="hero-title">20 años de experiencia.<span>Líderes en Mercado Libre.</span></h1>
-            <p>Elija los materiales, confirme su pedido y gane tiempo: preparamos todo para retiro o entrega en obra.</p>
-            <div className="he-actions">
-              <Link className="he-hero-round-action he-hero-round-order" href="/menu2">
-                <ArrowUpRight size={28} aria-hidden="true" />
-                <span>Hacer<br />pedido</span>
-              </Link>
-              <Link className="he-hero-round-action he-hero-round-quote" href="/menu2?objetivo=presupuesto">
-                <FileText size={25} aria-hidden="true" />
-                <span>Pedir<br />presupuesto</span>
-              </Link>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <section className="he-service-strip" role="list" aria-label="Servicios principales">
-          <div className="he-service-item" role="listitem">
-            <div className="he-service-icon" aria-hidden="true">
-              <Truck size={24} />
-            </div>
-            <div className="he-service-text">
-              <strong>Envíos rápidos en MVD</strong>
-              <small>Coordinamos entrega a obra o retiro</small>
-            </div>
-          </div>
-          <div className="he-service-divider" aria-hidden="true" />
-          <div className="he-service-item" role="listitem">
-            <div className="he-service-icon" aria-hidden="true">
-              <Ruler size={24} />
-            </div>
-            <div className="he-service-text">
-              <strong>Cortes a medida</strong>
-              <small>Preparamos la longitud que indique</small>
-            </div>
-          </div>
-          <div className="he-service-divider" aria-hidden="true" />
-          <div className="he-service-item" role="listitem">
-            <div className="he-service-icon" aria-hidden="true">
-              <Star size={24} />
-            </div>
-            <div className="he-service-text">
-              <strong>20 años de trayectoria</strong>
-              <small>Atención para cada pedido y proyecto</small>
-            </div>
-          </div>
-      </section>
-
-      <section className="he-container he-home-information" id="empresa">
-        <div>
-          <p className="he-eyebrow">HIERRO EXPRESS</p>
-          <h2>Materiales y atención para cada obra.</h2>
+    <div className="min-h-screen bg-white text-slate-800 flex flex-col font-sans">
+      {/* 3. HERO BANNER */}
+      <section className="relative bg-slate-900 text-white min-h-[380px] md:min-h-[420px] flex items-center overflow-hidden">
+        {/* Imagen de fondo */}
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="/materiales/hero-acero-almacen-v2.png" 
+            alt="Hierros y perfiles" 
+            fill
+            className="object-cover opacity-35"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent"></div>
         </div>
-        <p>Trabajamos con herrerías, constructoras y particulares. Nuestro equipo le ayuda a definir el material, las medidas y la forma de entrega antes de confirmar el pedido.</p>
-        <a className="he-text-link" href="https://www.facebook.com/HierroExpressSA" target="_blank" rel="noreferrer">Conozca Hierro Express <ArrowRight size={18} aria-hidden="true" /></a>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 md:py-12 w-full">
+          <div className="max-w-xl">
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+              Elegí los materiales. <br />
+              <span className="text-amber-400">Armá tu pedido.</span>
+            </h1>
+            <p className="mt-2 text-sm md:text-base text-slate-300">
+              Preparamos todo para retiro o entrega en obra.
+            </p>
+
+            {/* BOTONES RESPONSIVOS (Rectangulares en PC, Circulares en móvil) */}
+            <div className="mt-8 flex items-center justify-center md:justify-start gap-6 md:gap-4">
+              
+<button
+  className="flex flex-col md:flex-row items-center justify-center text-center md:text-left
+    bg-white text-slate-900 border border-slate-200 shadow-md
+    hover:shadow-lg hover:border-amber-300 hover:bg-amber-50/50
+    transition-all duration-200
+    w-[144px] h-[144px] shrink-0 rounded-full p-3
+    md:w-auto md:h-auto md:rounded-xl md:px-7 md:py-5"
+>
+  <FileText className="w-8 h-8 md:w-6 md:h-6 text-amber-500 mb-2 md:mb-0 md:mr-3 shrink-0" />
+
+  <div>
+    <div className="font-bold text-xs md:text-base leading-tight">
+      Pedir presupuesto
+    </div>
+
+    <div className="text-xs text-slate-500 hidden md:block mt-1">
+      Descargalo en PDF
+    </div>
+  </div>
+</button>
+
+{/* Botón 2: Hacer pedido */}
+<button
+  className="flex flex-col md:flex-row items-center justify-center text-center md:text-left
+    bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold
+    shadow-md hover:shadow-lg hover:-translate-y-0.5
+    transition-all duration-200
+    w-[144px] h-[144px] shrink-0 rounded-full p-3
+    md:w-auto md:h-auto md:rounded-xl md:px-8 md:py-5"
+>
+  <Truck className="w-8 h-8 md:w-6 md:h-6 mb-2 md:mb-0 md:mr-3 shrink-0" />
+
+  <span className="text-xs md:text-base leading-tight">
+    Hacer pedido
+  </span>
+</button>
+
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section id="como-comprar" className="he-container he-buy-help">
-        <div className="he-buy-help-heading"><p className="he-eyebrow">SU PEDIDO, PASO A PASO</p><h2>Fácil de revisar antes de confirmar.</h2><p>Puede modificar cantidades, consultar el envío y pedir ayuda en cualquier momento.</p></div>
-        <ol>
-          <li><span>1</span><div><strong>Elija los materiales</strong><p>Vea las medidas y agregue solo lo que necesita.</p></div></li>
-          <li><span>2</span><div><strong>Revise su carrito</strong><p>Corrija cantidades y confirme la entrega o el retiro.</p></div></li>
-          <li><span>3</span><div><strong>Envíe el pedido</strong><p>Puede pagar con Mercado Pago o coordinar con nuestro equipo.</p></div></li>
-        </ol>
-        <Link className="he-button he-button-orange" href="/menu2">Ver materiales <ArrowRight size={21} aria-hidden="true" /></Link>
+      {/* 4. BLOQUES DE SERVICIOS / BENEFICIOS */}
+{/* Banner de envíos */}
+<section className="max-w-7xl mx-auto px-4 py-4 md:py-8 w-full">
+  <div className="relative w-full h-[200px] sm:h-[260px] md:h-[450px] rounded-xl overflow-hidden shadow-md bg-slate-100 transition-all duration-300 ease-out hover:shadow-xl hover:shadow-slate-900/15 hover:ring-1 hover:ring-amber-400/50">
+    <Image
+      src="/bannerdatos.png"
+      alt="Envíos de Hierro Express"
+      fill
+      priority
+      sizes="(max-width: 768px) 100vw, 1480px"
+      className="object-contain md:object-cover transition-transform duration-500 ease-out md:hover:scale-[1.02]"
+    />
+  </div>
+</section>
+
+      {/* 5. PASOS DE PEDIDO */}
+      <section className="max-w-4xl mx-auto px-4 py-8 text-center w-full">
+        <h2 className="text-lg md:text-2xl font-extrabold text-[#0b283d] mb-6">
+          Hacé tu pedido en 3 pasos
+        </h2>
+        
+        <div className="flex items-center justify-between relative max-w-xl mx-auto">
+          {/* Paso 1 */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-dashed border-amber-400 flex items-center justify-center text-amber-500 mb-2">
+              <Grid className="w-5 h-5 md:w-7 md:h-7" />
+            </div>
+            <p className="text-xs md:text-sm font-bold text-slate-700">1. Elegís<br/>los materiales</p>
+          </div>
+
+          <div className="border-t-2 border-dotted border-slate-300 w-8 md:w-16 -mt-6"></div>
+
+          {/* Paso 2 */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-dashed border-amber-400 flex items-center justify-center text-amber-500 mb-2">
+              <ShoppingCart className="w-5 h-5 md:w-7 md:h-7" />
+            </div>
+            <p className="text-xs md:text-sm font-bold text-slate-700">2. Revisás<br/>el carrito</p>
+          </div>
+
+          <div className="border-t-2 border-dotted border-slate-300 w-8 md:w-16 -mt-6"></div>
+
+          {/* Paso 3 */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-dashed border-amber-400 flex items-center justify-center text-amber-500 mb-2">
+              <CheckCircle2 className="w-5 h-5 md:w-7 md:h-7" />
+            </div>
+            <p className="text-xs md:text-sm font-bold text-slate-700">3. Confirmás<br/>el pedido</p>
+          </div>
+        </div>
       </section>
 
-      <section className="he-container he-location">
-        <div><p className="he-eyebrow">ATENCIÓN Y RETIRO</p><h2>Visítenos en Montevideo</h2><p>Setembrino Pereda 3233. Le orientamos para elegir el material adecuado.</p></div>
-        <div className="he-location-links"><a className="he-button he-button-outline" href="https://www.google.com/maps/search/?api=1&query=Setembrino+Pereda+3233+Montevideo" target="_blank" rel="noreferrer"><MapPin size={19} /> Ver ubicación</a><a className="he-text-link" href="https://www.google.com/maps/d/viewer?mid=1ZxdcJnurObNLbegwaRS8tOupeMsEcCU" target="_blank" rel="noreferrer">Ver zonas de entrega <ArrowRight size={18} aria-hidden="true" /></a></div>
-      </section>
-    </main>
+{/* 6. UBICACIÓN / MAPA */}
+<section className="max-w-7xl mx-auto px-4 py-6 w-full">
+  <div className="mb-3">
+    <h2 className="text-lg md:text-2xl font-bold text-[#0b283d]">
+      Encontranos
+    </h2>
+    <p className="text-sm text-slate-500 mt-1">
+      Hierro Express · Nuestra ubicación
+    </p>
+  </div>
+
+  <div className="relative w-full h-64 md:h-96 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3273.4935157876243!2d-56.16517508761803!3d-34.868951671442666!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959f80631130a295%3A0xb16f7469e2a9a0cf!2sHierro%20Express!5e0!3m2!1ses-419!2sar!4v1792523366382!5m2!1ses-419!2sar"
+      className="absolute inset-0 w-full h-full"
+      style={{ border: 0 }}
+      allowFullScreen
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
+      title="Ubicación de Hierro Express en Google Maps"
+    />
+
+    <a
+      href="https://www.google.com/maps/dir/?api=1&destination=Hierro+Express&destination_place_id=0xb16f7469e2a9a0cf"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="absolute bottom-3 right-3 inline-flex items-center gap-2
+        bg-white text-[#0b283d] font-bold text-sm px-4 py-3
+        rounded-lg shadow-lg border border-slate-200
+        hover:bg-amber-50 transition-colors"
+    >
+      <Send className="w-4 h-4 text-amber-500" />
+      Cómo llegar
+    </a>
+  </div>
+</section>
+
+      {/* 7. FOOTER */}
+      <footer className="bg-[#0b283d] text-white py-4 px-4 mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded text-[10px]">H</span>
+            <span className="font-bold tracking-wider">HIERRO EXPRESS</span>
+            <span className="text-slate-400">| Desde 2006</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-slate-300">
+            <Instagram className="w-4 h-4 cursor-pointer hover:text-amber-400" />
+            <Facebook className="w-4 h-4 cursor-pointer hover:text-amber-400" />
+            <span className="font-bold text-xs cursor-pointer hover:text-amber-400">TikTok</span>
+            <Youtube className="w-4 h-4 cursor-pointer hover:text-amber-400" />
+          </div>
+        </div>
+      </footer>
+
+      {/* BOTÓN FLOTANTE DE WHATSAPP */}
+<div className="fixed bottom-4 right-4 z-50 flex items-center gap-2">
+  <div className="bg-white text-slate-800 text-xs px-3 py-1 rounded-full shadow-lg font-medium border border-slate-100 hidden sm:block">
+    ¿En qué te ayudamos?
+  </div>
+
+  <a
+    href="https://wa.me/59898151680"
+    target="_blank"
+    rel="noreferrer"
+    className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+  >
+    <span className="font-bold text-xl">
+      <FaWhatsapp />
+    </span>
+  </a>
+</div>
+    </div>
   );
 }
