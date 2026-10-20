@@ -1,15 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
 import { 
-  Search, 
-  User, 
   ShoppingCart, 
-  Menu, 
   Truck, 
   FileText, 
-  Scissors, 
-  Calendar, 
-  MapPin, 
   Send,
   Grid,
   CheckCircle2,
