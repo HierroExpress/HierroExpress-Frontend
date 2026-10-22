@@ -183,10 +183,10 @@ export function Navbar({ onSelectProduct }: SearchProps) {
             </Link>
             
           )}
-          <Link href="/cart" className="he-cart he-nav-cart">
-            <ShoppingCart size={20} aria-hidden="true" />
-            <span>Carrito</span>
-          </Link>
+<Link href="/cart" className="he-cart he-nav-cart">
+  <ShoppingCart size={20} aria-hidden="true" />
+  <span className="he-cart-label">Carrito</span>
+</Link>
           <button
             className="he-menu-toggle"
             aria-label={open ? 'Cerrar menú' : 'Abrir menú'}

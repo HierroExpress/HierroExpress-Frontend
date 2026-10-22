@@ -9,8 +9,9 @@ import {
   CheckCircle2,
   Instagram,
   Facebook,
-  Youtube
+  Youtube,
 } from 'lucide-react';
+import Link from 'next/link';
 import { FaWhatsapp } from 'react-icons/fa';
 
 export default function HomePage() {
@@ -39,67 +40,102 @@ export default function HomePage() {
             <p className="mt-2 text-sm md:text-base text-slate-300">
               Preparamos todo para retiro o entrega en obra.
             </p>
+</div>
 
             {/* BOTONES RESPONSIVOS (Rectangulares en PC, Circulares en móvil) */}
-            <div className="mt-8 flex items-center justify-center md:justify-start gap-6 md:gap-4">
-              
-<button
-  className="flex flex-col md:flex-row items-center justify-center text-center md:text-left
-    bg-white text-slate-900 border border-slate-200 shadow-md
-    hover:shadow-lg hover:border-amber-300 hover:bg-amber-50/50
-    transition-all duration-200
-    w-[144px] h-[144px] shrink-0 rounded-full p-3
-    md:w-auto md:h-auto md:rounded-xl md:px-7 md:py-5"
->
-  <FileText className="w-8 h-8 md:w-6 md:h-6 text-amber-500 mb-2 md:mb-0 md:mr-3 shrink-0" />
+    <div className="mt-8 flex items-center justify-center md:justify-start gap-6 md:gap-4">
 
-  <div>
-    <div className="font-bold text-xs md:text-base leading-tight">
-      Pedir presupuesto
+  {/* Botón 1: Pedir presupuesto */}
+  <Link
+    href="/menu2?objetivo=presupuesto"
+    className="flex flex-col md:flex-row items-center justify-center text-center md:text-left
+      bg-white text-slate-900 border border-slate-200 shadow-md
+      hover:shadow-lg hover:border-amber-300 hover:bg-amber-50/50
+      transition-all duration-200
+      w-[144px] h-[144px] shrink-0 rounded-full p-3
+      md:w-auto md:h-auto md:rounded-xl md:px-7 md:py-5"
+  >
+    <FileText className="w-10 h-10 md:w-6 md:h-6 text-amber-500 mb-2 md:mb-0 md:mr-3 shrink-0" />
+
+    <div>
+      <div className="font-bold text-xs md:text-base leading-tight">
+        Pedir presupuesto
+      </div>
+
+      <div className="text-xs text-slate-500 hidden md:block mt-1">
+        Descargalo en PDF
+      </div>
     </div>
+  </Link>
 
-    <div className="text-xs text-slate-500 hidden md:block mt-1">
-      Descargalo en PDF
-    </div>
-  </div>
-</button>
+  {/* Botón 2: Hacer pedido */}
+  <Link
+    href="/menu2"
+    className="flex flex-col md:flex-row items-center justify-center text-center md:text-left
+      bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold
+      shadow-md hover:shadow-lg hover:-translate-y-0.5
+      transition-all duration-200
+      w-[144px] h-[144px] shrink-0 rounded-full p-3
+      md:w-auto md:h-auto md:rounded-xl md:px-8 md:py-5"
+  >
+    <Truck className="w-10 h-10 md:w-6 md:h-6 mb-2 md:mb-0 md:mr-3 shrink-0" />
 
-{/* Botón 2: Hacer pedido */}
-<button
-  className="flex flex-col md:flex-row items-center justify-center text-center md:text-left
-    bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold
-    shadow-md hover:shadow-lg hover:-translate-y-0.5
-    transition-all duration-200
-    w-[144px] h-[144px] shrink-0 rounded-full p-3
-    md:w-auto md:h-auto md:rounded-xl md:px-8 md:py-5"
->
-  <Truck className="w-8 h-8 md:w-6 md:h-6 mb-2 md:mb-0 md:mr-3 shrink-0" />
+    <span className="text-xs md:text-base leading-tight">
+      Hacer pedido
+    </span>
+  </Link>
 
-  <span className="text-xs md:text-base leading-tight">
-    Hacer pedido
-  </span>
-</button>
-
-            </div>
-          </div>
+</div>
         </div>
       </section>
 
       {/* 4. BLOQUES DE SERVICIOS / BENEFICIOS */}
-{/* Banner de envíos */}
-<section className="max-w-7xl mx-auto px-4 py-4 md:py-8 w-full">
-  <div className="relative w-full h-[200px] sm:h-[260px] md:h-[450px] rounded-xl overflow-hidden shadow-md bg-slate-100 transition-all duration-300 ease-out hover:shadow-xl hover:shadow-slate-900/15 hover:ring-1 hover:ring-amber-400/50">
+<section className="max-w-7xl mx-auto px-4 py-4 md:py-8 w-full flex flex-col gap-3 md:gap-4">
+
+  {/* Banner 1 */}
+  <div className="group w-full rounded-xl overflow-hidden shadow-sm border border-slate-700/40 
+                  transition-all duration-500 ease-out 
+                  hover:-translate-y-1 hover:shadow-xl hover:border-slate-500/50 cursor-pointer">
     <Image
-      src="/bannerdatos.png"
-      alt="Envíos de Hierro Express"
-      fill
+      src="/Banner_1.png"
+      alt="Envíos a todo Montevideo"
+      width={0}
+      height={0}
+      sizes="100vw"
       priority
-      sizes="(max-width: 768px) 100vw, 1480px"
-      className="object-contain md:object-cover transition-transform duration-500 ease-out md:hover:scale-[1.02]"
+      className="w-full h-auto block transition-transform duration-500 ease-out group-hover:scale-[1.015]"
     />
   </div>
-</section>
 
+  {/* Banner 2 */}
+  <div className="group w-full rounded-xl overflow-hidden shadow-sm border border-slate-700/40 
+                  transition-all duration-500 ease-out 
+                  hover:-translate-y-1 hover:shadow-xl hover:border-slate-500/50 cursor-pointer">
+    <Image
+      src="/Banner_2.png"
+      alt="Hacemos cortes en el momento"
+      width={0}
+      height={0}
+      sizes="100vw"
+      className="w-full h-auto block transition-transform duration-500 ease-out group-hover:scale-[1.015]"
+    />
+  </div>
+
+  {/* Banner 3 */}
+  <div className="group w-full rounded-xl overflow-hidden shadow-sm border border-slate-700/40 
+                  transition-all duration-500 ease-out 
+                  hover:-translate-y-1 hover:shadow-xl hover:border-slate-500/50 cursor-pointer">
+    <Image
+      src="/Banner_3.png"
+      alt="Destacados en Mercado Libre"
+      width={0}
+      height={0}
+      sizes="100vw"
+      className="w-full h-auto block transition-transform duration-500 ease-out group-hover:scale-[1.015]"
+    />
+  </div>
+
+</section>
       {/* 5. PASOS DE PEDIDO */}
       <section className="max-w-4xl mx-auto px-4 py-8 text-center w-full">
         <h2 className="text-lg md:text-2xl font-extrabold text-[#0b283d] mb-6">
@@ -178,7 +214,6 @@ export default function HomePage() {
       <footer className="bg-[#0b283d] text-white py-4 px-4 mt-auto">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3 text-xs">
           <div className="flex items-center gap-2">
-            <span className="bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded text-[10px]">H</span>
             <span className="font-bold tracking-wider">HIERRO EXPRESS</span>
             <span className="text-slate-400">| Desde 2006</span>
           </div>

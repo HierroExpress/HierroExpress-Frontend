@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import url('https://fonts.cdnfonts.com/css/us-101');
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -3351,4 +3351,9 @@
     justify-content: flex-end !important;
   }
   .he-nav-actions > .he-account-link > span { display: none !important; }
+}
+@media screen and (max-width: 767px) {
+  a.he-nav-cart > .he-cart-label {
+    display: none !important;
+  }
 }
